@@ -1,0 +1,29 @@
+<?php
+/**
+ * Site Configuration
+ * 
+ * INSTRUCTIONS:
+ * 1. Copy this file to site.php
+ * 2. Update the values below with your site information
+ * 3. site.php is in .gitignore for security
+ */
+
+$siteConfig = [
+    'name' => 'S3V Forklift Solutions',
+    'description' => 'Professional forklift sales, rental, and service in Cambodia',
+    'url' => 'https://yourdomain.com',
+    'contact' => [
+        'phone' => '+855 23 123 456',
+        'email' => 'sales@s3v-forklift.com',
+        'address' => 'Phnom Penh, Cambodia',
+        'hours' => 'Mon-Fri: 8AM-6PM, Sat: 9AM-5PM',
+    ],
+    'social' => [
+        'facebook' => 'https://facebook.com/s3v-forklift',
+        'linkedin' => 'https://linkedin.com/company/s3v-forklift',
+    ],
+];
+
+// Admin credentials (CHANGE THESE!)
+define('ADMIN_EMAIL', 'admin@s3vtgroup.com');
+define('ADMIN_PASSWORD', 'admin123'); // Change this to a secure password!

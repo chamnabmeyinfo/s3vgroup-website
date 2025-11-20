@@ -1,0 +1,127 @@
+-- S3V Forklift Website Database Schema
+-- MySQL/MariaDB compatible for cPanel hosting
+
+-- Create database (run this in cPanel MySQL Database section first)
+-- CREATE DATABASE your_database_name CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- Categories Table
+CREATE TABLE IF NOT EXISTS categories (
+    id VARCHAR(255) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) UNIQUE NOT NULL,
+    description TEXT,
+    icon VARCHAR(255),
+    priority INT DEFAULT 0,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_slug (slug)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Products Table
+CREATE TABLE IF NOT EXISTS products (
+    id VARCHAR(255) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) UNIQUE NOT NULL,
+    sku VARCHAR(255),
+    summary TEXT,
+    description TEXT,
+    specs JSON,
+    heroImage VARCHAR(500),
+    price DECIMAL(12, 2),
+    status ENUM('DRAFT', 'PUBLISHED', 'ARCHIVED') DEFAULT 'DRAFT',
+    highlights JSON,
+    categoryId VARCHAR(255) NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_slug (slug),
+    INDEX idx_category (categoryId),
+    INDEX idx_status (status),
+    FOREIGN KEY (categoryId) REFERENCES categories(id) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Product Media Table
+CREATE TABLE IF NOT EXISTS product_media (
+    id VARCHAR(255) PRIMARY KEY,
+    url VARCHAR(500) NOT NULL,
+    alt VARCHAR(255),
+    featured BOOLEAN DEFAULT FALSE,
+    productId VARCHAR(255) NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_product (productId),
+    FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Product Tags Table
+CREATE TABLE IF NOT EXISTS product_tags (
+    id VARCHAR(255) PRIMARY KEY,
+    label VARCHAR(255) NOT NULL,
+    productId VARCHAR(255) NOT NULL,
+    UNIQUE KEY unique_product_tag (productId, label),
+    FOREIGN KEY (productId) REFERENCES products(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Quote Requests Table
+CREATE TABLE IF NOT EXISTS quote_requests (
+    id VARCHAR(255) PRIMARY KEY,
+    companyName VARCHAR(255) NOT NULL,
+    contactName VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    phone VARCHAR(50),
+    message TEXT,
+    items JSON,
+    status ENUM('NEW', 'IN_PROGRESS', 'RESOLVED', 'CLOSED') DEFAULT 'NEW',
+    source VARCHAR(255),
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_email (email),
+    INDEX idx_status (status),
+    INDEX idx_created (createdAt)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Team Members Table
+CREATE TABLE IF NOT EXISTS team_members (
+    id VARCHAR(255) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    bio TEXT,
+    photo VARCHAR(500),
+    email VARCHAR(255),
+    phone VARCHAR(50),
+    linkedin VARCHAR(500),
+    priority INT DEFAULT 0,
+    status ENUM('ACTIVE', 'INACTIVE') DEFAULT 'ACTIVE',
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_status (status),
+    INDEX idx_priority (priority)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Portfolio Projects Table
+CREATE TABLE IF NOT EXISTS portfolio_projects (
+    id VARCHAR(255) PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) UNIQUE NOT NULL,
+    industry VARCHAR(255) NOT NULL,
+    client VARCHAR(255),
+    description TEXT,
+    challenge TEXT,
+    solution TEXT,
+    results TEXT,
+    heroImage VARCHAR(500),
+    images JSON,
+    completionDate DATE,
+    status ENUM('DRAFT', 'PUBLISHED', 'FEATURED', 'ARCHIVED') DEFAULT 'DRAFT',
+    priority INT DEFAULT 0,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_slug (slug),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Sample Data (Optional - for testing)
+-- Insert sample categories
+INSERT INTO categories (id, name, slug, description, priority) VALUES
+('cat_001', 'Electric Forklifts', 'electric-forklifts', 'Environmentally friendly, quiet operation, perfect for indoor use', 100),
+('cat_002', 'Diesel Forklifts', 'diesel-forklifts', 'Powerful and durable, ideal for heavy-duty outdoor applications', 90),
+('cat_003', 'Gas Forklifts', 'gas-forklifts', 'Versatile and cost-effective solution for various applications', 80)
+ON DUPLICATE KEY UPDATE name=name;

@@ -19,14 +19,14 @@ include __DIR__ . '/includes/header.php';
     <div class="container mx-auto px-4 py-24">
         <div class="max-w-4xl mx-auto text-center space-y-6">
             <h1 class="text-5xl md:text-6xl font-bold">
-                Premium Forklifts for Your Business
+                Warehouse & Factory Equipment Solutions
             </h1>
             <p class="text-xl text-gray-200 max-w-2xl mx-auto">
-                Leading supplier of industrial forklifts in Cambodia. Sales, rental, and professional service.
+                Leading supplier of industrial equipment in Cambodia. Forklifts, material handling systems, storage solutions, and warehouse equipment.
             </p>
             <div class="flex gap-4 justify-center pt-4">
                 <a href="/products.php" class="px-6 py-3 bg-white text-[#0b3a63] rounded-md font-semibold hover:bg-gray-100 transition-colors">
-                    Browse Forklifts
+                    Browse Products
                 </a>
                 <a href="/quote.php" class="px-6 py-3 border-2 border-white text-white rounded-md font-semibold hover:bg-white/10 transition-colors">
                     Request Quote
@@ -46,7 +46,7 @@ include __DIR__ . '/includes/header.php';
                 </svg>
                 <h3 class="font-semibold text-lg mb-2">Wide Selection</h3>
                 <p class="text-gray-600 text-sm">
-                    Electric, diesel, and gas forklifts from top brands
+                    Comprehensive range of warehouse and factory equipment from trusted brands
                 </p>
             </div>
             <div class="rounded-lg border border-gray-200 bg-white shadow-sm p-6 text-center">
@@ -86,10 +86,10 @@ include __DIR__ . '/includes/header.php';
     <div class="container mx-auto px-4">
         <div class="text-center mb-12">
             <h2 class="text-4xl font-bold text-[#0b3a63] mb-4">
-                Forklift Types
+                Product Categories
             </h2>
             <p class="text-gray-600 max-w-2xl mx-auto">
-                Choose from our wide range of forklift categories
+                Explore our comprehensive range of warehouse and factory equipment
             </p>
         </div>
         <div class="grid md:grid-cols-3 gap-6">
@@ -111,9 +111,10 @@ include __DIR__ . '/includes/header.php';
                 <!-- Default categories if database is empty -->
                 <?php
                 $defaultCategories = [
-                    ['name' => 'Electric Forklifts', 'description' => 'Environmentally friendly, quiet operation, perfect for indoor use'],
-                    ['name' => 'Diesel Forklifts', 'description' => 'Powerful and durable, ideal for heavy-duty outdoor applications'],
-                    ['name' => 'Gas Forklifts', 'description' => 'Versatile and cost-effective solution for various applications'],
+                    ['name' => 'Forklifts', 'description' => 'Electric, diesel, and gas forklifts for all your material handling needs'],
+                    ['name' => 'Material Handling', 'description' => 'Pallet jacks, hand trucks, and lifting equipment'],
+                    ['name' => 'Storage Solutions', 'description' => 'Shelving, racks, and warehouse storage systems'],
+                    ['name' => 'Industrial Equipment', 'description' => 'Conveyors, dock equipment, and factory machinery'],
                 ];
                 foreach ($defaultCategories as $cat):
                 ?>
@@ -121,7 +122,7 @@ include __DIR__ . '/includes/header.php';
                         <h3 class="text-xl font-semibold text-[#0b3a63] mb-3"><?php echo htmlspecialchars($cat['name']); ?></h3>
                         <p class="text-gray-600 mb-4"><?php echo htmlspecialchars($cat['description']); ?></p>
                         <a href="/products.php" class="block w-full px-4 py-2 text-center border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
-                            View Models →
+                            View Products →
                         </a>
                     </div>
                 <?php endforeach; ?>
@@ -135,8 +136,8 @@ include __DIR__ . '/includes/header.php';
 <section class="py-20 bg-white">
     <div class="container mx-auto px-4">
         <div class="text-center mb-12">
-            <h2 class="text-4xl font-bold text-[#0b3a63] mb-4">Featured Forklifts</h2>
-            <p class="text-gray-600">Our most popular models</p>
+            <h2 class="text-4xl font-bold text-[#0b3a63] mb-4">Featured Products</h2>
+            <p class="text-gray-600">Our most popular warehouse and factory equipment</p>
         </div>
         <div class="grid md:grid-cols-3 gap-6">
             <?php foreach ($products as $product): ?>
@@ -166,9 +167,9 @@ include __DIR__ . '/includes/header.php';
 <!-- CTA Section -->
 <section class="py-20 bg-[#0b3a63] text-white">
     <div class="container mx-auto px-4 text-center">
-        <h2 class="text-4xl font-bold mb-4">Ready to Find Your Perfect Forklift?</h2>
+        <h2 class="text-4xl font-bold mb-4">Ready to Equip Your Warehouse or Factory?</h2>
         <p class="text-xl text-gray-200 mb-8 max-w-2xl mx-auto">
-            Contact our experts today for personalized recommendations and competitive pricing
+            Contact our experts today for personalized recommendations and competitive pricing on all your industrial equipment needs
         </p>
         <div class="flex gap-4 justify-center">
             <a href="/quote.php" class="px-6 py-3 bg-white text-[#0b3a63] rounded-md font-semibold hover:bg-gray-100 transition-colors">

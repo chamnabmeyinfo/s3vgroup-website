@@ -24,7 +24,7 @@ include __DIR__ . '/includes/header.php';
 <div class="container mx-auto px-4 py-8">
     <div class="mb-8">
         <h1 class="text-3xl font-semibold text-[#0b3a63]">Operations Overview</h1>
-        <p class="text-sm text-gray-600 mt-2">Snapshot of catalog and quote activity</p>
+            <p class="text-sm text-gray-600 mt-2">Snapshot of product catalog and quote activity</p>
     </div>
 
     <!-- Statistics -->

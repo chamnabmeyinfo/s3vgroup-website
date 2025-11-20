@@ -9,18 +9,18 @@
  */
 
 $siteConfig = [
-    'name' => 'S3V Forklift Solutions',
-    'description' => 'Professional forklift sales, rental, and service in Cambodia',
+    'name' => 'S3vgroup',
+    'description' => 'Leading supplier of warehouse and factory equipment in Cambodia. Forklifts, material handling, storage solutions, and industrial equipment.',
     'url' => 'https://yourdomain.com',
     'contact' => [
         'phone' => '+855 23 123 456',
-        'email' => 'sales@s3v-forklift.com',
+        'email' => 'sales@s3vgroup.com',
         'address' => 'Phnom Penh, Cambodia',
         'hours' => 'Mon-Fri: 8AM-6PM, Sat: 9AM-5PM',
     ],
     'social' => [
-        'facebook' => 'https://facebook.com/s3v-forklift',
-        'linkedin' => 'https://linkedin.com/company/s3v-forklift',
+        'facebook' => 'https://facebook.com/s3vgroup',
+        'linkedin' => 'https://linkedin.com/company/s3vgroup',
     ],
 ];
 

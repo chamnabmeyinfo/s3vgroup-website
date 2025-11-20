@@ -16,8 +16,8 @@ include __DIR__ . '/includes/header.php';
 
 <div class="container mx-auto px-4 py-12">
     <div class="mb-8">
-        <h1 class="text-4xl font-bold text-[#0b3a63] mb-4">Our Forklift Collection</h1>
-        <p class="text-gray-600">Browse our complete selection of industrial forklifts</p>
+        <h1 class="text-4xl font-bold text-[#0b3a63] mb-4">Our Product Catalog</h1>
+        <p class="text-gray-600">Browse our complete selection of warehouse and factory equipment</p>
     </div>
 
     <!-- Category Filter -->

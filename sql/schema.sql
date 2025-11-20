@@ -1,5 +1,6 @@
--- S3V Forklift Website Database Schema
+-- S3vgroup Website Database Schema
 -- MySQL/MariaDB compatible for cPanel hosting
+-- Warehouse and Factory Equipment E-commerce Platform
 
 -- Create database (run this in cPanel MySQL Database section first)
 -- CREATE DATABASE your_database_name CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -119,9 +120,12 @@ CREATE TABLE IF NOT EXISTS portfolio_projects (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Sample Data (Optional - for testing)
--- Insert sample categories
+-- Insert sample categories for warehouse and factory equipment
 INSERT INTO categories (id, name, slug, description, priority) VALUES
-('cat_001', 'Electric Forklifts', 'electric-forklifts', 'Environmentally friendly, quiet operation, perfect for indoor use', 100),
-('cat_002', 'Diesel Forklifts', 'diesel-forklifts', 'Powerful and durable, ideal for heavy-duty outdoor applications', 90),
-('cat_003', 'Gas Forklifts', 'gas-forklifts', 'Versatile and cost-effective solution for various applications', 80)
+('cat_001', 'Forklifts', 'forklifts', 'Electric, diesel, and gas forklifts for material handling', 100),
+('cat_002', 'Material Handling', 'material-handling', 'Pallet jacks, hand trucks, and lifting equipment', 90),
+('cat_003', 'Storage Solutions', 'storage-solutions', 'Shelving, racks, and warehouse storage systems', 85),
+('cat_004', 'Industrial Equipment', 'industrial-equipment', 'Conveyors, dock equipment, and factory machinery', 80),
+('cat_005', 'Safety Equipment', 'safety-equipment', 'Safety barriers, signage, and protective equipment', 75),
+('cat_006', 'Warehouse Accessories', 'warehouse-accessories', 'Bins, containers, and warehouse organization tools', 70)
 ON DUPLICATE KEY UPDATE name=name;

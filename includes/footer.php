@@ -8,17 +8,17 @@
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                         </svg>
-                        <span class="text-xl font-bold">S3V Forklift</span>
+                        <span class="text-xl font-bold">S3vgroup</span>
                     </div>
                     <p class="text-gray-300 text-sm">
-                        Professional forklift solutions in Cambodia. Sales, rental, and service.
+                        Leading supplier of warehouse and factory equipment in Cambodia. Forklifts, material handling, storage solutions, and more.
                     </p>
                 </div>
 
                 <div>
                     <h3 class="font-semibold mb-4">Quick Links</h3>
                     <ul class="space-y-2 text-sm text-gray-300">
-                        <li><a href="/products.php" class="hover:text-white transition-colors">Browse Forklifts</a></li>
+                        <li><a href="/products.php" class="hover:text-white transition-colors">Browse Products</a></li>
                         <li><a href="/quote.php" class="hover:text-white transition-colors">Request Quote</a></li>
                         <li><a href="/contact.php" class="hover:text-white transition-colors">Contact Us</a></li>
                     </ul>
@@ -56,7 +56,7 @@
             </div>
 
             <div class="border-t border-white/20 mt-8 pt-8 text-center text-sm text-gray-300">
-                <p>&copy; <?php echo date('Y'); ?> S3V Forklift Solutions. All rights reserved.</p>
+                <p>&copy; <?php echo date('Y'); ?> S3vgroup. All rights reserved.</p>
             </div>
         </div>
     </footer>

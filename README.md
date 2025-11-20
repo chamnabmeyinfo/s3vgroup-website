@@ -1,10 +1,10 @@
-# S3V Forklift Website - PHP Version for cPanel
+# S3vgroup Website - PHP Version for cPanel
 
-A complete PHP website for S3V Forklift Solutions, designed for easy deployment on cPanel hosting.
+A complete PHP website for S3vgroup, designed for easy deployment on cPanel hosting. S3vgroup is a leading supplier of warehouse and factory equipment in Cambodia, including forklifts, material handling systems, storage solutions, and industrial equipment.
 
 ## 📋 Features
 
-- **Product Catalog** - Browse and view forklift products
+- **Product Catalog** - Browse and view warehouse and factory equipment
 - **Quote Request System** - Customers can request quotes online
 - **Admin Dashboard** - Manage products, categories, and quotes
 - **Responsive Design** - Works on all devices

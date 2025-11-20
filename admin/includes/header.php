@@ -12,7 +12,7 @@
         <aside class="hidden md:flex w-64 flex-col border-r border-gray-200 bg-white px-6 py-8">
             <div class="mb-8">
                 <p class="text-xs uppercase tracking-wide text-gray-500">Admin</p>
-                <h2 class="text-xl font-semibold text-[#0b3a63]">S3 V Trading</h2>
+                <h2 class="text-xl font-semibold text-[#0b3a63]">S3vgroup</h2>
             </div>
             <nav class="flex flex-1 flex-col gap-2 text-sm font-medium text-gray-700">
                 <a href="/admin/" class="rounded-lg px-4 py-2 hover:bg-gray-100 <?php echo basename($_SERVER['PHP_SELF']) === 'index.php' ? 'bg-gray-100 text-[#0b3a63]' : ''; ?>">

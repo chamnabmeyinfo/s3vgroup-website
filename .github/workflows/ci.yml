@@ -1,0 +1,56 @@
+name: CI - Code Quality Check
+
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Check PHP syntax
+        run: |
+          echo "Checking PHP syntax..."
+          find . -name "*.php" -not -path "./vendor/*" -not -path "./node_modules/*" | while read file; do
+            php -l "$file" || exit 1
+          done
+      
+      - name: Check for sensitive files
+        run: |
+          echo "Checking for sensitive configuration files..."
+          if [ -f "config/database.php" ] && ! grep -q "your_database_name" "config/database.php"; then
+            echo "⚠️  Warning: config/database.php may contain real credentials"
+          fi
+          if [ -f "config/site.php" ] && ! grep -q "admin123" "config/site.php"; then
+            echo "⚠️  Warning: config/site.php may contain real credentials"
+          fi
+          echo "✅ Sensitive files check complete"
+      
+      - name: Verify required files
+        run: |
+          echo "Verifying required files..."
+          required_files=(
+            "index.php"
+            "config/database.php.example"
+            "config/site.php.example"
+            "sql/schema.sql"
+            ".htaccess"
+          )
+          for file in "${required_files[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "❌ Missing required file: $file"
+              exit 1
+            fi
+          done
+          echo "✅ All required files present"
+

@@ -1,0 +1,99 @@
+/* Price Blur Effect - Hide digits for prices under 10k and highest value */
+
+/* Blur effect for the last digit(s) */
+.price-blur-digit {
+    position: relative;
+    display: inline-block;
+    filter: blur(6px);
+    opacity: 0.2;
+    user-select: none;
+    -webkit-user-select: none;
+    color: currentColor;
+    font-weight: inherit;
+    letter-spacing: 0.5px;
+    /* Multiple techniques for strong blur effect */
+    text-shadow: 
+        0 0 12px currentColor,
+        0 0 24px currentColor,
+        0 0 36px currentColor;
+    background: linear-gradient(90deg, currentColor 0%, transparent 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    /* Additional blur via backdrop */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    /* Make it harder to read */
+    transform: scale(1.1);
+    margin: 0 1px;
+}
+
+/* Alternative: Hide the digit completely */
+.price-blur-digit.hidden {
+    visibility: hidden;
+    width: 0.5em;
+    display: inline-block;
+}
+
+/* Price display container */
+.price-display {
+    display: inline-block;
+    font-weight: 700;
+    color: inherit;
+}
+
+.price-display .price-blur-digit {
+    font-weight: inherit;
+}
+
+/* Enhanced blur for better effect */
+.price-blur-digit::before {
+    content: attr(data-digit);
+    position: absolute;
+    left: 0;
+    top: 0;
+    filter: blur(4px);
+    opacity: 0.4;
+    z-index: -1;
+}
+
+/* Hover effect - slightly reveal on hover (optional) */
+.price-display:hover .price-blur-digit {
+    filter: blur(2px);
+    opacity: 0.7;
+    transition: filter 0.3s, opacity 0.3s;
+}
+
+/* Price placeholder */
+.price-placeholder {
+    color: #6b7280;
+    font-style: italic;
+    font-weight: normal;
+}
+
+/* Mobile specific adjustments */
+@media (max-width: 768px) {
+    .price-blur-digit {
+        filter: blur(2.5px);
+        opacity: 0.5;
+    }
+}
+
+/* Tablet specific */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .price-blur-digit {
+        filter: blur(3px);
+        opacity: 0.6;
+    }
+}
+
+/* Print - don't blur in print */
+@media print {
+    .price-blur-digit {
+        filter: none;
+        opacity: 1;
+        background: none;
+        -webkit-text-fill-color: currentColor;
+    }
+}
+

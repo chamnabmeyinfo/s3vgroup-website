@@ -1,0 +1,44 @@
+name: Deploy to cPanel
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Create deployment package
+        run: |
+          zip -r deployment.zip . \
+            -x "*.git*" \
+            -x "node_modules/*" \
+            -x ".DS_Store" \
+            -x "Thumbs.db" \
+            -x "*.log"
+      
+      - name: Upload deployment package
+        uses: actions/upload-artifact@v3
+        with:
+          name: deployment-package
+          path: deployment.zip
+      
+      - name: Display deployment info
+        run: |
+          echo "✅ Deployment package created successfully!"
+          echo "📦 Package: deployment.zip"
+          echo ""
+          echo "Next steps:"
+          echo "1. Download the artifact from this workflow run"
+          echo "2. Upload to cPanel File Manager"
+          echo "3. Extract in public_html/"
+          echo ""
+          echo "Or use cPanel Git Version Control for automatic deployment."
+

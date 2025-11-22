@@ -1,0 +1,195 @@
+/* Category Grid Layout - Image Left, Label Right */
+
+.category-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: inherit;
+    min-height: 80px;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.category-item:hover {
+    transform: translateY(-2px);
+}
+
+.category-item:active {
+    transform: translateY(0);
+}
+
+/* Category Image Container */
+.category-image-wrapper {
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.category-icon-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s ease;
+}
+
+.category-icon-loader {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.category-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: relative;
+    z-index: 1;
+}
+
+.category-image-wrapper:hover .category-image {
+    transform: scale(1.1);
+}
+
+.category-fallback-icon {
+    position: relative;
+    z-index: 1;
+    animation: fadeIn 0.3s ease-in;
+}
+
+.category-initial-badge {
+    background: linear-gradient(135deg, var(--primary-color, #0b3a63), var(--secondary-color, #1a5a8a));
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.category-item:hover .category-initial-badge {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+}
+
+/* Category Label */
+.category-item h3 {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    margin: 0;
+    color: #1f2937;
+    transition: color 0.3s ease;
+}
+
+.category-item:hover h3 {
+    color: var(--primary-color, #0b3a63);
+}
+
+/* Responsive Grid */
+@media (min-width: 640px) {
+    .category-item {
+        min-height: 90px;
+    }
+    
+    .category-image-wrapper {
+        width: 72px;
+        height: 72px;
+    }
+    
+    .category-item h3 {
+        font-size: 15px;
+    }
+}
+
+@media (min-width: 768px) {
+    .category-item {
+        min-height: 100px;
+        padding: 16px;
+    }
+    
+    .category-image-wrapper {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .category-item h3 {
+        font-size: 16px;
+    }
+}
+
+/* Line clamp utility */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Loading skeleton animation */
+.category-icon-placeholder::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+/* Image loaded state */
+.category-image-wrapper.image-loaded .category-icon-placeholder {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.category-image-wrapper.image-loaded .category-image {
+    opacity: 1;
+}
+
+.category-image-wrapper.image-error .category-icon-placeholder {
+    opacity: 1;
+}
+
+/* Hover effects */
+.category-item:hover .category-image-wrapper {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: scale(1.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+

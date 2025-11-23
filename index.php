@@ -4,6 +4,9 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0); // Don't show errors to users, log them instead
 ini_set('log_errors', 1);
 
+// Load bootstrap FIRST to ensure env() and other helper functions are available
+require_once __DIR__ . '/bootstrap/app.php';
+
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/site.php';
 require_once __DIR__ . '/includes/functions.php';
@@ -25,18 +28,17 @@ try {
     $products = [];
 }
 
-// Load bootstrap before header to ensure option() function is available
-require_once __DIR__ . '/bootstrap/app.php';
+// Get site options (bootstrap already loaded above)
 $primaryColor = option('primary_color', '#0b3a63');
 $secondaryColor = option('secondary_color', '#1a5a8a');
 $accentColor = option('accent_color', '#fa4f26');
 
-include __DIR__ . '/includes/header.php';
-?>
-
 // Check if homepage builder is enabled and has sections (homepage has page_id = null)
 $useHomepageBuilder = option('enable_homepage_builder', '0') === '1';
 $homepagePageId = null; // Homepage uses null page_id
+
+include __DIR__ . '/includes/header.php';
+?>
 
 if ($useHomepageBuilder) {
     // Use homepage builder sections (pass null for homepage)

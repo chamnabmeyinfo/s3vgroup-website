@@ -87,7 +87,9 @@ $categoryPublished = 0;
 if ($categoryRepo) {
     try {
         $categoryTotal = count($categoryRepo->all());
-        $categoryPublished = count($categoryRepo->all());
+        // Categories don't have a status field, so all categories are considered "published"
+        // If categories had status, this would call: $categoryRepo->published()
+        $categoryPublished = $categoryTotal;
     } catch (Exception $e) {
         error_log('Categories count error: ' . $e->getMessage());
     }

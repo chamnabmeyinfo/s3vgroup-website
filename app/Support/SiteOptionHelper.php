@@ -54,7 +54,19 @@ final class SiteOptionHelper
 
     public static function grouped(): array
     {
-        $all = self::repository()->all();
+        try {
+            $all = self::repository()->all();
+        } catch (\PDOException $e) {
+            // If table doesn't exist, return empty grouped array
+            if (strpos($e->getMessage(), "doesn't exist") !== false || 
+                strpos($e->getMessage(), "Base table or view not found") !== false) {
+                error_log("Site options table missing. Please import sql/site_options.sql: " . $e->getMessage());
+                return [];
+            }
+            // Re-throw other database errors
+            throw $e;
+        }
+
         $grouped = [];
 
         foreach ($all as $option) {

@@ -59,3 +59,16 @@ if (!function_exists('base_url')) {
     }
 }
 
+if (!function_exists('asset_version')) {
+    function asset_version(string $path): string
+    {
+        if (class_exists('App\Support\AssetVersion')) {
+            return \App\Support\AssetVersion::url($path);
+        }
+        // Fallback to old method
+        $version = date('Ymd');
+        $separator = strpos($path, '?') !== false ? '&' : '?';
+        return asset($path) . $separator . 'v=' . $version;
+    }
+}
+

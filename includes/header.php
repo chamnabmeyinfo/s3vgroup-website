@@ -42,16 +42,24 @@ $headerBackground = option('header_background', '#ffffff');
         <link rel="icon" type="image/x-icon" href="<?php echo e($favicon); ?>">
     <?php endif; ?>
     
-    <!-- Tailwind CSS CDN -->
+    <!-- Resource Hints for Performance -->
+    <link rel="dns-prefetch" href="https://images.unsplash.com">
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+    
+    <!-- Tailwind CSS CDN - TODO: Replace with local optimized build (see PERFORMANCE-RECOMMENDATIONS.md) -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Professional Frontend CSS -->
-    <link rel="stylesheet" href="<?php echo asset('includes/css/frontend.css'); ?>?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="<?php echo asset('includes/css/pages.css'); ?>?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="<?php echo asset('includes/css/mobile-app.css'); ?>?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="<?php echo asset('includes/css/categories.css'); ?>?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="<?php echo asset('includes/css/modern-animations.css'); ?>?v=<?php echo time(); ?>">
-    <script src="<?php echo asset('includes/js/category-images.js'); ?>?v=<?php echo time(); ?>" defer></script>
+    <!-- Professional Frontend CSS - Using version numbers for proper caching -->
+    <?php
+    // Use AssetVersion for proper cache busting (better than time())
+    $assetVersion = class_exists('App\Support\AssetVersion') ? \App\Support\AssetVersion::get() : date('Ymd');
+    ?>
+    <link rel="stylesheet" href="<?php echo asset('includes/css/frontend.css'); ?>?v=<?php echo $assetVersion; ?>">
+    <link rel="stylesheet" href="<?php echo asset('includes/css/pages.css'); ?>?v=<?php echo $assetVersion; ?>">
+    <link rel="stylesheet" href="<?php echo asset('includes/css/mobile-app.css'); ?>?v=<?php echo $assetVersion; ?>">
+    <link rel="stylesheet" href="<?php echo asset('includes/css/categories.css'); ?>?v=<?php echo $assetVersion; ?>">
+    <link rel="stylesheet" href="<?php echo asset('includes/css/modern-animations.css'); ?>?v=<?php echo $assetVersion; ?>">
+    <script src="<?php echo asset('includes/js/category-images.js'); ?>?v=<?php echo $assetVersion; ?>" defer></script>
     
     <!-- Mobile Viewport -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">

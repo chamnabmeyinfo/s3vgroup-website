@@ -58,7 +58,7 @@ $headerBackground = option('header_background', '#ffffff');
     <!-- Modern Features Script -->
     <script>
         // Set base path for JavaScript (works on both localhost and live)
-        window.BASE_PATH = <?php echo json_encode(AssetHelper::basePath()); ?>;
+        window.BASE_PATH = <?php echo json_encode(\App\Support\AssetHelper::basePath()); ?>;
         
         // Make option() function available globally for JS
         window.option = function(key, defaultValue) {

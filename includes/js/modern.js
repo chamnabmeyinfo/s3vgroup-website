@@ -6,6 +6,14 @@
 (function() {
     'use strict';
 
+    // Wait for DOM to be ready before initializing
+    const init = () => {
+        // DOM is ready, proceed with initialization
+        if (!document.body) {
+            setTimeout(init, 10);
+            return;
+        }
+
     // ========================================
     // Toast Notification System
     // ========================================
@@ -21,10 +29,20 @@
                 return;
             }
 
-            this.container = document.createElement('div');
-            this.container.id = 'toast-container';
-            this.container.className = 'fixed top-4 right-4 z-50 space-y-2 pointer-events-none';
-            document.body.appendChild(this.container);
+            // Wait for body to be available
+            const initContainer = () => {
+                if (!document.body) {
+                    setTimeout(initContainer, 10);
+                    return;
+                }
+
+                this.container = document.createElement('div');
+                this.container.id = 'toast-container';
+                this.container.className = 'fixed top-4 right-4 z-50 space-y-2 pointer-events-none';
+                document.body.appendChild(this.container);
+            };
+
+            initContainer();
         }
 
         show(message, type = 'info', duration = 3000) {
@@ -150,13 +168,30 @@
             const observer = new MutationObserver(updateIcon);
             observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 
-            document.body.appendChild(toggle);
+            // Wait for body to be available
+            const appendToggle = () => {
+                if (!document.body) {
+                    setTimeout(appendToggle, 10);
+                    return;
+                }
+                document.body.appendChild(toggle);
+            };
+
+            appendToggle();
         }
     }
 
-    // Initialize dark mode
-    if (typeof option === 'function' && option('enable_dark_mode', '1') === '1') {
-        new DarkMode();
+    // Initialize dark mode when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof option === 'function' && option('enable_dark_mode', '1') === '1') {
+                new DarkMode();
+            }
+        });
+    } else {
+        if (typeof option === 'function' && option('enable_dark_mode', '1') === '1') {
+            new DarkMode();
+        }
     }
 
     // ========================================
@@ -318,45 +353,63 @@
     }
 
     // CSS for animations
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+    const addStyles = () => {
+        if (!document.head) {
+            setTimeout(addStyles, 10);
+            return;
         }
-        .animate-fade-in {
-            animation: fadeIn 0.7s ease-out forwards;
-        }
-        .dark {
-            color-scheme: dark;
-        }
-        .dark body {
-            background-color: #111827;
-            color: #f9fafb;
-        }
-        .dark header {
-            background-color: #1f2937;
-            border-color: #374151;
-        }
-        .dark footer {
-            background-color: #1f2937;
-        }
-        .dark .bg-white {
-            background-color: #1f2937;
-        }
-        .dark .bg-gray-50 {
-            background-color: #111827;
-        }
-        .dark .text-gray-900 {
-            color: #f9fafb;
-        }
-        .dark .text-gray-700 {
-            color: #d1d5db;
-        }
-        .dark .border-gray-200 {
-            border-color: #374151;
-        }
-    `;
-    document.head.appendChild(style);
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .animate-fade-in {
+                animation: fadeIn 0.7s ease-out forwards;
+            }
+            .dark {
+                color-scheme: dark;
+            }
+            .dark body {
+                background-color: #111827;
+                color: #f9fafb;
+            }
+            .dark header {
+                background-color: #1f2937;
+                border-color: #374151;
+            }
+            .dark footer {
+                background-color: #1f2937;
+            }
+            .dark .bg-white {
+                background-color: #1f2937;
+            }
+            .dark .bg-gray-50 {
+                background-color: #111827;
+            }
+            .dark .text-gray-900 {
+                color: #f9fafb;
+            }
+            .dark .text-gray-700 {
+                color: #d1d5db;
+            }
+            .dark .border-gray-200 {
+                border-color: #374151;
+            }
+        `;
+        document.head.appendChild(style);
+    };
+
+    addStyles();
+    };
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        // DOM already ready
+        init();
+    }
 })();
 

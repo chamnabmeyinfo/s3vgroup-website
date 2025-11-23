@@ -57,10 +57,10 @@ if (empty($slides)) {
                 <h1 class="text-5xl md:text-6xl font-bold fade-in-up"><?php echo e($heroTitle); ?></h1>
                 <p class="text-xl text-gray-200 max-w-2xl mx-auto fade-in-up" style="animation-delay: 0.2s;"><?php echo e($heroSubtitle); ?></p>
                 <div class="flex gap-4 justify-center pt-4 fade-in-up" style="animation-delay: 0.4s;">
-                    <a href="/products.php" class="px-6 py-3 bg-white rounded-md font-semibold hover:bg-gray-100 transition-colors hover:scale-105 transform" style="color: <?php echo e($primaryColor); ?>;">
+                    <a href="<?php echo base_url('products.php'); ?>" class="px-6 py-3 bg-white rounded-md font-semibold hover:bg-gray-100 transition-colors hover:scale-105 transform" style="color: <?php echo e($primaryColor); ?>;">
                         Browse Products
                     </a>
-                    <a href="/quote.php" class="px-6 py-3 border-2 border-white text-white rounded-md font-semibold hover:bg-white/10 transition-colors hover:scale-105 transform" style="background-color: <?php echo e($accentColor); ?>; border-color: <?php echo e($accentColor); ?>;">
+                    <a href="<?php echo base_url('quote.php'); ?>" class="px-6 py-3 border-2 border-white text-white rounded-md font-semibold hover:bg-white/10 transition-colors hover:scale-105 transform" style="background-color: <?php echo e($accentColor); ?>; border-color: <?php echo e($accentColor); ?>;">
                         Request Quote
                     </a>
                 </div>

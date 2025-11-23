@@ -1,0 +1,15 @@
+<?php
+/**
+ * Local Site Configuration Override
+ * 
+ * Copy this file to site.local.php (not tracked in git)
+ * to override settings for local development
+ */
+
+// Override site URL for local development
+$siteConfig['url'] = 'http://localhost:8080';
+
+// Override admin credentials for local (optional)
+define('ADMIN_EMAIL', 'admin@s3vtgroup.com');
+define('ADMIN_PASSWORD', 'admin123'); // Change for local if needed
+

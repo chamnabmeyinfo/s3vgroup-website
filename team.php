@@ -63,7 +63,7 @@ include __DIR__ . '/includes/header.php';
                             <?php echo e($member['title']); ?>
                         </p>
                         
-                        <?php if ($member['department']): ?>
+                        <?php if (!empty($member['department'] ?? null)): ?>
                             <p class="text-xs text-gray-500 mb-2"><?php echo e($member['department']); ?></p>
                         <?php endif; ?>
                         

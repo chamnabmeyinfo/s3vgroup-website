@@ -32,12 +32,13 @@ See `LIVE-SETUP-GUIDE.md` for complete setup instructions.
 
 ## 📚 Documentation
 
-- **README.md** (this file) - Project overview
+- **README.md** (this file) - Project overview and quick start
 - **FEATURES-OVERVIEW.md** - Complete features list
 - **ADMIN-ORGANIZATION.md** - Admin panel structure
 - **LOCAL-SETUP.md** - Local development setup
 - **LIVE-SETUP-GUIDE.md** - Live server setup
 - **AUTO-IMPORT-DATABASE.md** - Database import guide
+- **PERFORMANCE-RECOMMENDATIONS.md** - Performance optimization guide
 
 ## 🗄️ Database
 

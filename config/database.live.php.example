@@ -1,0 +1,39 @@
+<?php
+/**
+ * Live Database Configuration (cPanel)
+ * 
+ * INSTRUCTIONS:
+ * 1. Copy this file to: database.live.php
+ * 2. Fill in your cPanel database credentials
+ * 3. This file is in .gitignore for security
+ * 
+ * IMPORTANT: This file should NOT be committed to git!
+ * 
+ * For automatic database sync to work, you need:
+ * - Remote MySQL access enabled in cPanel
+ * - Your local IP address whitelisted in cPanel Remote MySQL
+ * - Or use a VPN/tunnel to access the database
+ */
+
+return [
+    // Database host (usually your cPanel server IP or domain)
+    // Example: 'yourdomain.com' or '123.456.789.0'
+    'host' => 'your-cpanel-domain.com',
+    
+    // Database name (from cPanel MySQL Databases)
+    // Format: username_database_name
+    // Example: 'myname_s3vgroup_db'
+    'database' => 'YOUR_LIVE_DATABASE_NAME',
+    
+    // Database username (from cPanel MySQL Databases)
+    // Format: username_database_user
+    // Example: 'myname_s3vgroup_user'
+    'username' => 'YOUR_LIVE_DATABASE_USER',
+    
+    // Database password
+    'password' => 'YOUR_LIVE_DATABASE_PASSWORD',
+    
+    // Character set
+    'charset' => 'utf8mb4',
+];
+

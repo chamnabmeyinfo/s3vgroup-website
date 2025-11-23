@@ -2,6 +2,50 @@
 
 Sync your database between **localhost** (local development) and **cPanel** (live server).
 
+## 🚀 Automatic Sync (Recommended)
+
+**Automatically sync from cPanel to localhost when live database has updates:**
+
+```powershell
+php bin/auto-sync-database.php
+```
+
+This script will:
+1. ✅ Connect to both local and live databases
+2. ✅ Compare last update timestamps
+3. ✅ Automatically import if live is newer
+4. ✅ Show detailed comparison and sync status
+
+**Setup for automatic sync:**
+
+1. **Create live database config:**
+   ```powershell
+   # Copy the example file
+   copy config\database.live.php.example config\database.live.php
+   ```
+
+2. **Edit `config/database.live.php`** with your cPanel database credentials
+
+3. **Enable Remote MySQL in cPanel:**
+   - Go to cPanel → Remote MySQL
+   - Add your local IP address
+   - Or use your cPanel server's IP/domain
+
+4. **Run automatic sync:**
+   ```powershell
+   php bin/auto-sync-database.php
+   ```
+
+**Options:**
+- `--force` - Force sync even if databases are the same
+- `--check-only` - Only check, don't sync
+
+**Schedule automatic sync (Windows):**
+- Use `bin/auto-sync-scheduled.ps1` as a scheduled task
+- Runs automatically every hour/day (your choice)
+
+---
+
 ---
 
 ## 📋 Quick Start

@@ -38,6 +38,7 @@ See `LIVE-SETUP-GUIDE.md` for complete setup instructions.
 - **LOCAL-SETUP.md** - Local development setup
 - **LIVE-SETUP-GUIDE.md** - Live server setup
 - **AUTO-IMPORT-DATABASE.md** - Database import guide
+- **DATABASE-SYNC-GUIDE.md** - Database synchronization guide (local ↔ cPanel)
 - **PERFORMANCE-RECOMMENDATIONS.md** - Performance optimization guide
 
 ## 🗄️ Database
@@ -49,6 +50,8 @@ The project includes SQL files for easy setup:
 - `sql/sample_data.sql` - Sample data (products, teams, testimonials, etc.)
 
 **Import automatically:** Visit `import-database.php` after deployment (delete after use!)
+
+**Sync databases:** Use `bin/sync-database.php` to sync between localhost and cPanel - See `DATABASE-SYNC-GUIDE.md`
 
 ## 🛠️ Project Structure
 

@@ -41,6 +41,11 @@ import-database.php
 create-env-file.php
 setup-live-site.php
 
+# Database exports (contain sensitive data)
+database-*.sql
+*-backup.sql
+*-export.sql
+
 # cPanel specific
 .htpasswd
 .cpanel/

@@ -330,6 +330,43 @@ include __DIR__ . '/includes/header.php';
         }
     }
 
+    // Hero image upload
+    document.getElementById('product-hero-image-file')?.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const input = document.getElementById('product-hero-image-input');
+        const preview = document.getElementById('product-hero-image-preview');
+        
+        // Show loading
+        if (preview) {
+            preview.innerHTML = '<p class="text-sm text-gray-500">Uploading...</p>';
+        }
+
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const response = await fetch('/api/admin/upload.php', {
+                method: 'POST',
+                body: formData,
+            });
+
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                input.value = result.data.url;
+                preview.innerHTML = `<img src="${result.data.url}" alt="Preview" class="h-32 w-auto rounded border border-gray-300 object-contain">`;
+            } else {
+                preview.innerHTML = '';
+                alert('Upload failed: ' + (result.message || 'Unknown error'));
+            }
+        } catch (error) {
+            preview.innerHTML = '';
+            alert('Upload error: ' + error.message);
+        }
+    });
+
     openBtn.addEventListener('click', () => showModal(null));
     closeBtn.addEventListener('click', hideModal);
     cancelBtn.addEventListener('click', hideModal);

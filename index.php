@@ -1,16 +1,29 @@
 <?php
+// Enable error reporting for debugging (remove in production)
+error_reporting(E_ALL);
+ini_set('display_errors', 0); // Don't show errors to users, log them instead
+ini_set('log_errors', 1);
+
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/site.php';
 require_once __DIR__ . '/includes/functions.php';
 
 $pageTitle = 'Home';
-$pageDescription = $siteConfig['description'];
+$pageDescription = $siteConfig['description'] ?? 'S3V Group - Warehouse Equipment';
 
-// Fetch featured categories
-$db = getDB();
-$allCategories = getFeaturedCategories($db, 12);
-$categories = array_slice($allCategories, 0, 12); // Limit to 12 for 3x4 grid
-$products = getFeaturedProducts($db, 6);
+// Fetch featured categories - with error handling
+try {
+    $db = getDB();
+    $allCategories = getFeaturedCategories($db, 12);
+    $categories = array_slice($allCategories, 0, 12); // Limit to 12 for 3x4 grid
+    $products = getFeaturedProducts($db, 6);
+} catch (Exception $e) {
+    // Log error but don't break the page
+    error_log('Homepage error: ' . $e->getMessage());
+    $allCategories = [];
+    $categories = [];
+    $products = [];
+}
 
 include __DIR__ . '/includes/header.php';
 ?>

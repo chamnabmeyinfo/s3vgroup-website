@@ -15,35 +15,68 @@ use App\Domain\Content\TestimonialRepository;
 use App\Domain\Content\NewsletterRepository;
 use App\Domain\Content\SliderRepository;
 
-$db = getDB();
+try {
+    $db = getDB();
+} catch (Exception $e) {
+    error_log('Admin dashboard database error: ' . $e->getMessage());
+    die('Database connection failed. Please check your configuration.');
+}
 
-// Get statistics
-$productRepo = new ProductRepository($db);
-$categoryRepo = new CategoryRepository($db);
-$quoteRepo = new QuoteRequestRepository($db);
-$teamRepo = new TeamMemberRepository($db);
-$testimonialRepo = new TestimonialRepository($db);
-$newsletterRepo = new NewsletterRepository($db);
-$sliderRepo = new SliderRepository($db);
+// Get statistics - with error handling
+try {
+    $productRepo = new ProductRepository($db);
+    $categoryRepo = new CategoryRepository($db);
+    $quoteRepo = new QuoteRequestRepository($db);
+    $teamRepo = new TeamMemberRepository($db);
+    $testimonialRepo = new TestimonialRepository($db);
+    $newsletterRepo = new NewsletterRepository($db);
+    $sliderRepo = new SliderRepository($db);
+} catch (Exception $e) {
+    error_log('Admin dashboard repository error: ' . $e->getMessage());
+    // Continue with empty repos to show dashboard
+    $productRepo = null;
+    $categoryRepo = null;
+    $quoteRepo = null;
+    $teamRepo = null;
+    $testimonialRepo = null;
+    $newsletterRepo = null;
+    $sliderRepo = null;
+}
 
 // Get product counts using direct queries (ProductRepository doesn't have all()/published() methods)
 try {
-    $productTotalStmt = $db->query("SELECT COUNT(*) FROM products");
-    $productPublishedStmt = $db->query("SELECT COUNT(*) FROM products WHERE status = 'PUBLISHED'");
-    $productTotal = (int) ($productTotalStmt ? $productTotalStmt->fetchColumn() : 0);
-    $productPublished = (int) ($productPublishedStmt ? $productPublishedStmt->fetchColumn() : 0);
+    // Check if table exists first
+    $tableCheck = $db->query("SHOW TABLES LIKE 'products'");
+    if ($tableCheck && $tableCheck->rowCount() > 0) {
+        $productTotalStmt = $db->query("SELECT COUNT(*) FROM products");
+        $productPublishedStmt = $db->query("SELECT COUNT(*) FROM products WHERE status = 'PUBLISHED'");
+        $productTotal = (int) ($productTotalStmt ? $productTotalStmt->fetchColumn() : 0);
+        $productPublished = (int) ($productPublishedStmt ? $productPublishedStmt->fetchColumn() : 0);
+    } else {
+        $productTotal = 0;
+        $productPublished = 0;
+    }
 } catch (Exception $e) {
+    error_log('Product count error: ' . $e->getMessage());
     $productTotal = 0;
     $productPublished = 0;
 }
 
 // Get quote counts - use direct query for better performance
 try {
-    $quoteTotalStmt = $db->query("SELECT COUNT(*) FROM quote_requests");
-    $quoteNewStmt = $db->query("SELECT COUNT(*) FROM quote_requests WHERE status = 'NEW'");
-    $quoteTotal = (int) ($quoteTotalStmt ? $quoteTotalStmt->fetchColumn() : 0);
-    $quoteNew = (int) ($quoteNewStmt ? $quoteNewStmt->fetchColumn() : 0);
+    // Check if table exists first
+    $tableCheck = $db->query("SHOW TABLES LIKE 'quote_requests'");
+    if ($tableCheck && $tableCheck->rowCount() > 0) {
+        $quoteTotalStmt = $db->query("SELECT COUNT(*) FROM quote_requests");
+        $quoteNewStmt = $db->query("SELECT COUNT(*) FROM quote_requests WHERE status = 'NEW'");
+        $quoteTotal = (int) ($quoteTotalStmt ? $quoteTotalStmt->fetchColumn() : 0);
+        $quoteNew = (int) ($quoteNewStmt ? $quoteNewStmt->fetchColumn() : 0);
+    } else {
+        $quoteTotal = 0;
+        $quoteNew = 0;
+    }
 } catch (Exception $e) {
+    error_log('Quote count error: ' . $e->getMessage());
     $quoteTotal = 0;
     $quoteNew = 0;
 }
@@ -58,8 +91,8 @@ $stats = [
         'url' => '/admin/products.php',
     ],
     'categories' => [
-        'total' => count($categoryRepo->all()),
-        'published' => count($categoryRepo->all()),
+        'total' => $categoryRepo ? count($categoryRepo->all()) : 0,
+        'published' => $categoryRepo ? count($categoryRepo->all()) : 0,
         'label' => 'Categories',
         'icon' => '🏷️',
         'color' => 'purple',
@@ -74,32 +107,32 @@ $stats = [
         'url' => '/admin/quotes.php',
     ],
     'team' => [
-        'total' => count($teamRepo->all()),
-        'active' => count($teamRepo->active()),
+        'total' => $teamRepo ? count($teamRepo->all()) : 0,
+        'active' => $teamRepo ? count($teamRepo->active()) : 0,
         'label' => 'Team Members',
         'icon' => '👥',
         'color' => 'green',
         'url' => '/admin/team.php',
     ],
     'testimonials' => [
-        'total' => count($testimonialRepo->all()),
-        'published' => count($testimonialRepo->published()),
+        'total' => $testimonialRepo ? count($testimonialRepo->all()) : 0,
+        'published' => $testimonialRepo ? count($testimonialRepo->published()) : 0,
         'label' => 'Testimonials',
         'icon' => '⭐',
         'color' => 'yellow',
         'url' => '/admin/testimonials.php',
     ],
     'newsletter' => [
-        'total' => count($newsletterRepo->all()),
-        'active' => count($newsletterRepo->active()),
+        'total' => $newsletterRepo ? count($newsletterRepo->all()) : 0,
+        'active' => $newsletterRepo ? count($newsletterRepo->active()) : 0,
         'label' => 'Newsletter Subscribers',
         'icon' => '📧',
         'color' => 'pink',
         'url' => '/admin/newsletter.php',
     ],
     'sliders' => [
-        'total' => count($sliderRepo->all()),
-        'published' => count($sliderRepo->published()),
+        'total' => $sliderRepo ? count($sliderRepo->all()) : 0,
+        'published' => $sliderRepo ? count($sliderRepo->published()) : 0,
         'label' => 'Hero Slider Slides',
         'icon' => '🖼️',
         'color' => 'indigo',
@@ -230,7 +263,12 @@ include __DIR__ . '/includes/header.php';
         <h2 class="text-lg font-semibold text-gray-900 mb-4">Recent Quote Requests</h2>
         <?php
         // Get recent quotes using paginate method
-        $recentQuotes = $quoteRepo->paginate([], 5, 0);
+        try {
+            $recentQuotes = $quoteRepo ? $quoteRepo->paginate([], 5, 0) : [];
+        } catch (Exception $e) {
+            error_log('Recent quotes error: ' . $e->getMessage());
+            $recentQuotes = [];
+        }
         ?>
         <?php if (empty($recentQuotes)): ?>
             <p class="text-sm text-gray-500">No quote requests yet.</p>

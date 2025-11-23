@@ -261,7 +261,7 @@ function renderCategoriesSection($title, $settings, $styles, $primaryColor, $db)
             <?php endif; ?>
             <div class="grid <?php echo $gridCols[$columns] ?? $gridCols[4]; ?> gap-4 stagger-children">
                 <?php foreach ($categories as $index => $category): ?>
-                    <a href="/products.php?category=<?php echo urlencode($category['slug']); ?>" 
+                    <a href="<?php echo base_url('products.php?category=' . urlencode($category['slug'])); ?>" 
                        class="category-item bg-white rounded-lg border border-gray-200 hover-lift p-4 flex items-center gap-3 animate-on-scroll group"
                        data-animation="fadeInUp"
                        data-delay="<?php echo ($index * 0.05); ?>">
@@ -344,7 +344,7 @@ function renderProductsSection($title, $settings, $styles, $primaryColor, $db) {
             <?php endif; ?>
             <div class="grid <?php echo $gridCols[$columns] ?? $gridCols[3]; ?> gap-6">
                 <?php foreach ($products as $product): ?>
-                    <a href="/product.php?slug=<?php echo urlencode($product['slug']); ?>" 
+                    <a href="<?php echo base_url('product.php?slug=' . urlencode($product['slug'])); ?>" 
                        class="group rounded-xl border border-gray-200 bg-white shadow-sm hover-lift overflow-hidden animate-on-scroll flex flex-col image-hover-scale"
                        data-animation="fadeInUp">
                         <?php if ($product['heroImage']): ?>

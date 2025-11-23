@@ -35,7 +35,7 @@ $primaryColor = option('primary_color', '#0b3a63');
 $secondaryColor = option('secondary_color', '#1a5a8a');
 $accentColor = option('accent_color', '#fa4f26');
 $headerBg = option('header_background', '#ffffff');
-$footerBg = option('footer_background', '#0b3a63');
+$footerBg = option('footer_background', $primaryColor);
 
 // Use primary color for links if not specified
 if (empty($linkColor)) {

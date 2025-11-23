@@ -2,9 +2,11 @@
 
 /* Global Enhancements */
 :root {
-    --primary-color: #0b3a63;
-    --secondary-color: #1a5a8a;
-    --accent-color: #fa4f26;
+    /* Colors are now dynamically set via design-system.php from site options */
+    /* Default fallback values (will be overridden by design-system.php) */
+    --primary-color: #086D3B;
+    --secondary-color: #FAA623;
+    --accent-color: #F4162B;
     --text-color: #1f2937;
     --text-light: #6b7280;
     --bg-light: #f9fafb;

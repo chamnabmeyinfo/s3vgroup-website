@@ -2,7 +2,8 @@
 
     <?php
     require_once __DIR__ . '/../bootstrap/app.php';
-    $footerBg = option('footer_background', '#0b3a63');
+    $primaryColor = option('primary_color', '#086D3B');
+    $footerBg = option('footer_background', $primaryColor);
     $siteName = option('site_name', $siteConfig['name'] ?? 'S3V Group');
     $siteLogo = option('site_logo', '');
     $contactEmail = option('contact_email', $siteConfig['contact']['email'] ?? '');

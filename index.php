@@ -38,7 +38,6 @@ $useHomepageBuilder = option('enable_homepage_builder', '0') === '1';
 $homepagePageId = null; // Homepage uses null page_id
 
 include __DIR__ . '/includes/header.php';
-?>
 
 if ($useHomepageBuilder) {
     // Use homepage builder sections (pass null for homepage)
@@ -325,4 +324,4 @@ if (!$useHomepageBuilder) {
 </section>
 <?php } ?>
 
-<?php include __DIR__ . '/includes/footer.php'; ?>
+<?php include __DIR__ . '/includes/footer.php';

@@ -1,9 +1,9 @@
 # 🔒 Quick Fix: Exposed GitHub Token
 
 ## The Problem
-GitHub blocked your push because it found a Personal Access Token in `notepad.txt` in commit `99116d6`.
+GitHub blocked your push because it found a Personal Access Token in your repository.
 
-**Exposed Token**: `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`
+⚠️ **Security Alert**: If you see any token values in this file or git history, they are compromised and must be revoked immediately.
 
 ---
 
@@ -11,9 +11,10 @@ GitHub blocked your push because it found a Personal Access Token in `notepad.tx
 
 ### Option 1: Fast Fix (5 minutes) ⚡
 
-1. **Revoke the token** (DO THIS FIRST!):
+1. **Revoke the exposed token** (DO THIS FIRST!):
    - Go to: https://github.com/settings/tokens
-   - Find and revoke: `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`
+   - Find and revoke any exposed tokens
+   - Create a new token if needed
 
 2. **Allow the secret via GitHub**:
    - Visit: https://github.com/chamnabmeyinfo/s3vgroup-website/security/secret-scanning/unblock-secret/35rhz7HXpdKy9yB2oQjCkzpckMf

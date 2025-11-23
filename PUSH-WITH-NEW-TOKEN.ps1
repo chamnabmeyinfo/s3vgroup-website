@@ -6,7 +6,15 @@ Write-Host "Push to GitHub with New Token" -ForegroundColor Cyan
 Write-Host "===========================================" -ForegroundColor Cyan
 Write-Host ""
 
-$newToken = "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"
+# Security: Prompt for token instead of hardcoding
+$newToken = Read-Host "Enter your GitHub Personal Access Token" -AsSecureString
+$newToken = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($newToken))
+
+if ([string]::IsNullOrWhiteSpace($newToken)) {
+    Write-Host "Error: Token cannot be empty" -ForegroundColor Red
+    exit 1
+}
+
 $username = "chamnabmeyinfo"
 $repo = "s3vgroup-website"
 

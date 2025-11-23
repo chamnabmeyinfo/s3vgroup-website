@@ -1,9 +1,12 @@
 # 🔑 Using Your New GitHub Token
 
 ## ✅ New Token Created
-Your new token: `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`
+Your new token: `YOUR_NEW_TOKEN_HERE`
 
-⚠️ **IMPORTANT**: Keep this token secure and never commit it to git!
+⚠️ **IMPORTANT**: 
+- Replace `YOUR_NEW_TOKEN_HERE` with your actual token
+- Keep this token secure and never commit it to git!
+- Never share your token in documentation or code
 
 ---
 
@@ -12,8 +15,10 @@ Your new token: `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`
 Before using the new token, make sure you've revoked the old one:
 
 1. Go to: https://github.com/settings/tokens
-2. Find old token: `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`
+2. Find and revoke any old/exposed tokens
 3. Click **"Revoke"** ✅
+
+⚠️ **Security Note**: If you see any tokens in this documentation, they are compromised and should be revoked immediately.
 
 ---
 

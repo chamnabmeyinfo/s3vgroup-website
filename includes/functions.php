@@ -91,6 +91,45 @@ function e($string) {
 }
 
 /**
+ * Convert relative image URL to full URL
+ * Ensures all image URLs have the full domain
+ */
+function fullImageUrl(?string $url): string {
+    if (empty($url)) {
+        return '';
+    }
+    
+    // If already a full URL (starts with http:// or https://), return as is
+    if (preg_match('/^https?:\/\//', $url)) {
+        return $url;
+    }
+    
+    // Get site URL from config
+    global $siteConfig;
+    if (!isset($siteConfig)) {
+        require_once __DIR__ . '/../config/site.php';
+    }
+    
+    $siteUrl = $siteConfig['url'] ?? '';
+    
+    // Auto-detect if site URL not set
+    if (empty($siteUrl)) {
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $siteUrl = $protocol . '://' . $host;
+    }
+    
+    // Remove trailing slash from site URL
+    $siteUrl = rtrim($siteUrl, '/');
+    
+    // Ensure URL starts with /
+    $url = '/' . ltrim($url, '/');
+    
+    // Return full URL
+    return $siteUrl . $url;
+}
+
+/**
  * Check if user is logged in (admin)
  */
 function isAdminLoggedIn() {

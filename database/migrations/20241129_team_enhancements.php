@@ -34,23 +34,32 @@ return new class ('20241129_team_enhancements') extends Migration {
      */
     private function statements(): array
     {
-        return [
-            <<<'SQL'
-ALTER TABLE team_members 
-ADD COLUMN IF NOT EXISTS twitter VARCHAR(500) NULL AFTER linkedin,
-ADD COLUMN IF NOT EXISTS facebook VARCHAR(500) NULL AFTER twitter,
-ADD COLUMN IF NOT EXISTS instagram VARCHAR(500) NULL AFTER facebook,
-ADD COLUMN IF NOT EXISTS website VARCHAR(500) NULL AFTER instagram,
-ADD COLUMN IF NOT EXISTS github VARCHAR(500) NULL AFTER website,
-ADD COLUMN IF NOT EXISTS youtube VARCHAR(500) NULL AFTER github,
-ADD COLUMN IF NOT EXISTS telegram VARCHAR(500) NULL AFTER youtube,
-ADD COLUMN IF NOT EXISTS whatsapp VARCHAR(100) NULL AFTER telegram,
-ADD COLUMN IF NOT EXISTS department VARCHAR(255) NULL AFTER title,
-ADD COLUMN IF NOT EXISTS location VARCHAR(255) NULL AFTER phone,
-ADD COLUMN IF NOT EXISTS expertise TEXT NULL AFTER bio,
-ADD COLUMN IF NOT EXISTS languages VARCHAR(255) NULL AFTER location
-SQL,
+        // MySQL doesn't support IF NOT EXISTS for ALTER TABLE ADD COLUMN
+        // So we need to check each column separately
+        $columns = [
+            'department' => "VARCHAR(255) NULL AFTER title",
+            'expertise' => "TEXT NULL AFTER bio",
+            'location' => "VARCHAR(255) NULL AFTER phone",
+            'languages' => "VARCHAR(255) NULL AFTER location",
+            'twitter' => "VARCHAR(500) NULL AFTER linkedin",
+            'facebook' => "VARCHAR(500) NULL AFTER twitter",
+            'instagram' => "VARCHAR(500) NULL AFTER facebook",
+            'website' => "VARCHAR(500) NULL AFTER instagram",
+            'github' => "VARCHAR(500) NULL AFTER website",
+            'youtube' => "VARCHAR(500) NULL AFTER github",
+            'telegram' => "VARCHAR(500) NULL AFTER youtube",
+            'whatsapp' => "VARCHAR(100) NULL AFTER telegram",
         ];
+        
+        $statements = [];
+        foreach ($columns as $column => $definition) {
+            $statements[] = <<<SQL
+ALTER TABLE team_members 
+ADD COLUMN `{$column}` {$definition}
+SQL;
+        }
+        
+        return $statements;
     }
 };
 

@@ -20,6 +20,44 @@ try {
     $allCategories = getFeaturedCategories($db, 12);
     $categories = array_slice($allCategories, 0, 12); // Limit to 12 for 3x4 grid
     $products = getFeaturedProducts($db, 6);
+    
+    // OPTIMIZATION: Pre-fetch category images in ONE query instead of N queries (N+1 fix)
+    // This prevents running a database query for each category (much faster!)
+    if (!empty($categories)) {
+        $categoryIds = array_column($categories, 'id');
+        if (!empty($categoryIds)) {
+            $placeholders = implode(',', array_fill(0, count($categoryIds), '?'));
+            try {
+                $imageQuery = $db->prepare("
+                    SELECT DISTINCT categoryId, heroImage 
+                    FROM products 
+                    WHERE categoryId IN ($placeholders) 
+                    AND heroImage IS NOT NULL 
+                    AND heroImage != '' 
+                    AND status = 'PUBLISHED'
+                    ORDER BY updatedAt DESC
+                ");
+                $imageQuery->execute($categoryIds);
+                $categoryImages = [];
+                while ($row = $imageQuery->fetch(PDO::FETCH_ASSOC)) {
+                    if (!isset($categoryImages[$row['categoryId']])) {
+                        $categoryImages[$row['categoryId']] = $row['heroImage'];
+                    }
+                }
+                
+                // Attach images to categories
+                foreach ($categories as &$category) {
+                    if (empty($category['icon']) && isset($categoryImages[$category['id']])) {
+                        $category['icon'] = $categoryImages[$category['id']];
+                    }
+                }
+                unset($category); // Break reference
+            } catch (Exception $e) {
+                // Ignore image query errors, continue without images
+                error_log('Category image query error: ' . $e->getMessage());
+            }
+        }
+    }
 } catch (Exception $e) {
     // Log error but don't break the page
     error_log('Homepage error: ' . $e->getMessage());

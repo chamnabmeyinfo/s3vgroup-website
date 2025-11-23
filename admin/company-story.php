@@ -139,10 +139,18 @@ include __DIR__ . '/includes/header.php';
         const file = e.target.files[0];
         if (!file) return;
 
-        const formData = new FormData();
-        formData.append('image', file);
+        const input = document.getElementById('hero-image-input');
+        const preview = document.getElementById('hero-image-preview');
+        
+        // Show loading
+        if (preview) {
+            preview.innerHTML = '<p class="text-sm text-gray-500">Uploading...</p>';
+        }
 
         try {
+            const formData = new FormData();
+            formData.append('file', file); // Fixed: was 'image', should be 'file'
+
             const response = await fetch('/api/admin/upload.php', {
                 method: 'POST',
                 body: formData,
@@ -150,12 +158,16 @@ include __DIR__ . '/includes/header.php';
             const result = await response.json();
 
             if (result.status === 'success') {
-                document.getElementById('hero-image-input').value = result.url;
-                document.getElementById('hero-image-preview').innerHTML = `<img src="${result.url}" alt="Hero Preview" class="h-32 w-auto rounded-md object-cover border-2 border-gray-300">`;
+                input.value = result.data.url; // Fixed: was result.url, should be result.data.url
+                if (preview) {
+                    preview.innerHTML = `<img src="${result.data.url}" alt="Hero Preview" class="h-32 w-auto rounded-md object-cover border-2 border-gray-300">`;
+                }
             } else {
-                alert('Upload failed: ' + result.message);
+                if (preview) preview.innerHTML = '';
+                alert('Upload failed: ' + (result.message || 'Unknown error'));
             }
         } catch (error) {
+            if (preview) preview.innerHTML = '';
             alert('Upload error: ' + error.message);
         }
     });

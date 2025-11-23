@@ -141,18 +141,8 @@ if (!$useHomepageBuilder) {
                         <!-- Category Image/Icon -->
                         <div class="category-image-wrapper flex-shrink-0 w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-md overflow-hidden flex items-center justify-center relative">
                             <?php
-                            // Get category image (icon or fallback to first product image)
+                            // Get category image (already pre-fetched in optimization above)
                             $categoryImage = $category['icon'] ?? null;
-                            if (!$categoryImage) {
-                                try {
-                                    $productStmt = $db->prepare('SELECT heroImage FROM products WHERE categoryId = :categoryId AND heroImage IS NOT NULL AND heroImage != "" AND status = "PUBLISHED" LIMIT 1');
-                                    $productStmt->execute([':categoryId' => $category['id']]);
-                                    $product = $productStmt->fetch(PDO::FETCH_ASSOC);
-                                    $categoryImage = $product['heroImage'] ?? null;
-                                } catch (Exception $e) {
-                                    // Ignore errors
-                                }
-                            }
                             
                             // Get first letter for icon fallback
                             $firstLetter = strtoupper(substr($category['name'], 0, 1));

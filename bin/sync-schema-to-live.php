@@ -123,21 +123,32 @@ function connectToLiveDatabase(): ?PDO {
         return null;
     }
     
-    require $liveConfigFile;
+    $liveDbConfig = require $liveConfigFile;
     
-    if (!isset($liveDbConfig)) {
+    if (!is_array($liveDbConfig)) {
         printError("Live database config not properly set!");
+        return null;
+    }
+    
+    // Support both naming conventions
+    $host = $liveDbConfig['host'] ?? $liveDbConfig['hostname'] ?? 'localhost';
+    $database = $liveDbConfig['database'] ?? $liveDbConfig['name'] ?? $liveDbConfig['dbname'] ?? '';
+    $username = $liveDbConfig['username'] ?? $liveDbConfig['user'] ?? '';
+    $password = $liveDbConfig['password'] ?? $liveDbConfig['pass'] ?? '';
+    
+    if (empty($database) || empty($username)) {
+        printError("Live database config missing required fields (database, username)!");
         return null;
     }
     
     try {
         $dsn = sprintf(
             'mysql:host=%s;dbname=%s;charset=utf8mb4',
-            $liveDbConfig['host'],
-            $liveDbConfig['name']
+            $host,
+            $database
         );
         
-        $pdo = new PDO($dsn, $liveDbConfig['user'], $liveDbConfig['pass'], [
+        $pdo = new PDO($dsn, $username, $password, [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         ]);

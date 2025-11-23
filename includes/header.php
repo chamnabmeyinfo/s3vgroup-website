@@ -42,12 +42,12 @@ $headerBackground = option('header_background', '#ffffff');
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Professional Frontend CSS -->
-    <link rel="stylesheet" href="/includes/css/frontend.css?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="/includes/css/pages.css?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="/includes/css/mobile-app.css?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="/includes/css/categories.css?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="/includes/css/modern-animations.css?v=<?php echo time(); ?>">
-    <script src="/includes/js/category-images.js?v=<?php echo time(); ?>" defer></script>
+    <link rel="stylesheet" href="<?php echo asset('includes/css/frontend.css'); ?>?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="<?php echo asset('includes/css/pages.css'); ?>?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="<?php echo asset('includes/css/mobile-app.css'); ?>?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="<?php echo asset('includes/css/categories.css'); ?>?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="<?php echo asset('includes/css/modern-animations.css'); ?>?v=<?php echo time(); ?>">
+    <script src="<?php echo asset('includes/js/category-images.js'); ?>?v=<?php echo time(); ?>" defer></script>
     
     <!-- Mobile Viewport -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
@@ -57,6 +57,9 @@ $headerBackground = option('header_background', '#ffffff');
     
     <!-- Modern Features Script -->
     <script>
+        // Set base path for JavaScript (works on both localhost and live)
+        window.BASE_PATH = <?php echo json_encode(AssetHelper::basePath()); ?>;
+        
         // Make option() function available globally for JS
         window.option = function(key, defaultValue) {
             const options = {
@@ -74,7 +77,7 @@ $headerBackground = option('header_background', '#ffffff');
     <script src="/includes/js/mobile-app.js?v=<?php echo time(); ?>" defer></script>
     <script src="/includes/js/mobile-touch.js?v=<?php echo time(); ?>"></script>
     <?php if (option('enable_social_sharing', '1') === '1'): ?>
-        <script src="/includes/js/social-sharing.js?v=<?php echo time(); ?>"></script>
+        <script src="<?php echo asset('includes/js/social-sharing.js'); ?>?v=<?php echo time(); ?>"></script>
     <?php endif; ?>
     
     <?php if ($customJSHead = option('custom_js_head', '')): ?>
@@ -107,7 +110,7 @@ $headerBackground = option('header_background', '#ffffff');
     <header class="sticky top-0 z-50 w-full border-b backdrop-blur desktop-only" style="background-color: <?php echo e($headerBackground); ?>;">
         <div class="container mx-auto px-4">
             <div class="flex h-16 items-center justify-between">
-                <a href="/" class="flex items-center gap-2">
+                <a href="<?php echo base_url('/'); ?>" class="flex items-center gap-2">
                     <?php if ($siteLogo): ?>
                         <img src="<?php echo e($siteLogo); ?>" alt="<?php echo e($siteName); ?>" class="h-8 w-auto">
                     <?php else: ?>
@@ -133,19 +136,19 @@ $headerBackground = option('header_background', '#ffffff');
                             </svg>
                         </div>
                     <?php endif; ?>
-                    <a href="/products.php" class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors" style="color: var(--text-color); --hover-color: <?php echo e($primaryColor); ?>;">
+                    <a href="<?php echo base_url('products.php'); ?>" class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors" style="color: var(--text-color); --hover-color: <?php echo e($primaryColor); ?>;">
                         Products
                     </a>
-                    <a href="/about.php" class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors" style="color: var(--text-color); --hover-color: <?php echo e($primaryColor); ?>;">
+                    <a href="<?php echo base_url('about.php'); ?>" class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors" style="color: var(--text-color); --hover-color: <?php echo e($primaryColor); ?>;">
                         About
                     </a>
-                    <a href="/team.php" class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors" style="color: var(--text-color); --hover-color: <?php echo e($primaryColor); ?>;">
+                    <a href="<?php echo base_url('team.php'); ?>" class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors" style="color: var(--text-color); --hover-color: <?php echo e($primaryColor); ?>;">
                         Team
                     </a>
-                    <a href="/quote.php" class="text-sm font-semibold text-white px-5 py-2 rounded-full transition-all hover:shadow-lg hover:scale-105 transform" style="background-color: <?php echo e($primaryColor); ?>;">
+                    <a href="<?php echo base_url('quote.php'); ?>" class="text-sm font-semibold text-white px-5 py-2 rounded-full transition-all hover:shadow-lg hover:scale-105 transform" style="background-color: <?php echo e($primaryColor); ?>;">
                         Get Quote
                     </a>
-                    <a href="/contact.php" class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors" style="color: var(--text-color); --hover-color: <?php echo e($primaryColor); ?>;">
+                    <a href="<?php echo base_url('contact.php'); ?>" class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors" style="color: var(--text-color); --hover-color: <?php echo e($primaryColor); ?>;">
                         Contact
                     </a>
                 </nav>
@@ -174,19 +177,19 @@ $headerBackground = option('header_background', '#ffffff');
                     </div>
                 <?php endif; ?>
                 <nav class="flex flex-col gap-2">
-                    <a href="/products.php" class="px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
+                    <a href="<?php echo base_url('products.php'); ?>" class="px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
                         Products
                     </a>
-                    <a href="/about.php" class="px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
+                    <a href="<?php echo base_url('about.php'); ?>" class="px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
                         About Us
                     </a>
-                    <a href="/team.php" class="px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
+                    <a href="<?php echo base_url('team.php'); ?>" class="px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
                         Our Team
                     </a>
-                    <a href="/quote.php" class="px-4 py-3 text-sm font-semibold text-white rounded-lg transition-colors" style="background-color: <?php echo e($primaryColor); ?>;">
+                    <a href="<?php echo base_url('quote.php'); ?>" class="px-4 py-3 text-sm font-semibold text-white rounded-lg transition-colors" style="background-color: <?php echo e($primaryColor); ?>;">
                         Get Quote
                     </a>
-                    <a href="/contact.php" class="px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
+                    <a href="<?php echo base_url('contact.php'); ?>" class="px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
                         Contact Us
                     </a>
                 </nav>

@@ -269,7 +269,9 @@
 
         async search(query) {
             try {
-                const response = await fetch(`/api/products/index.php?search=${encodeURIComponent(query)}&limit=5`);
+                // Get base path from window (set by header.php)
+                const basePath = window.BASE_PATH || '';
+                const response = await fetch(`${basePath}/api/products/index.php?search=${encodeURIComponent(query)}&limit=5`);
                 const result = await response.json();
 
                 if (result.status === 'success' && result.data.products) {

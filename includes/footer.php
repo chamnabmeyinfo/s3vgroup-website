@@ -61,11 +61,11 @@
                 <div>
                     <h3 class="font-semibold mb-4">Quick Links</h3>
                     <ul class="space-y-2 text-sm text-gray-300">
-                        <li><a href="/products.php" class="hover:text-white transition-colors">Browse Products</a></li>
-                        <li><a href="/about.php" class="hover:text-white transition-colors">About Us</a></li>
-                        <li><a href="/team.php" class="hover:text-white transition-colors">Our Team</a></li>
-                        <li><a href="/quote.php" class="hover:text-white transition-colors">Request Quote</a></li>
-                        <li><a href="/contact.php" class="hover:text-white transition-colors">Contact Us</a></li>
+                        <li><a href="<?php echo base_url('products.php'); ?>" class="hover:text-white transition-colors">Browse Products</a></li>
+                        <li><a href="<?php echo base_url('about.php'); ?>" class="hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="<?php echo base_url('team.php'); ?>" class="hover:text-white transition-colors">Our Team</a></li>
+                        <li><a href="<?php echo base_url('quote.php'); ?>" class="hover:text-white transition-colors">Request Quote</a></li>
+                        <li><a href="<?php echo base_url('contact.php'); ?>" class="hover:text-white transition-colors">Contact Us</a></li>
                     </ul>
                 </div>
 
@@ -122,7 +122,7 @@
     </footer>
     
     <?php include __DIR__ . '/widgets/loading-screen.php'; ?>
-    <script src="/includes/js/loading-screen.js?v=<?php echo time(); ?>"></script>
+    <script src="<?php echo asset('includes/js/loading-screen.js'); ?>?v=<?php echo time(); ?>"></script>
 
     <script>
         function toggleMobileMenu() {

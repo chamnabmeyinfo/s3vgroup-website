@@ -134,7 +134,7 @@ if (!$useHomepageBuilder) {
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 stagger-children">
             <?php if (!empty($categories)): ?>
                 <?php foreach ($categories as $index => $category): ?>
-                    <a href="/products.php?category=<?php echo urlencode($category['slug']); ?>" 
+                    <a href="<?php echo base_url('products.php?category=' . urlencode($category['slug'])); ?>" 
                        class="category-item bg-white rounded-lg border border-gray-200 hover-lift p-4 flex items-center gap-3 animate-on-scroll group"
                        data-animation="fadeInUp"
                        data-delay="<?php echo ($index * 0.05); ?>">
@@ -221,7 +221,7 @@ if (!$useHomepageBuilder) {
                 ];
                 foreach ($defaultCategories as $index => $cat):
                 ?>
-                    <a href="/products.php" 
+                    <a href="<?php echo base_url('products.php'); ?>" 
                        class="category-item bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all p-4 flex items-center gap-3 animate-on-scroll group"
                        style="animation-delay: <?php echo ($index * 0.05); ?>s;">
                         <div class="flex-shrink-0 w-16 h-16 bg-gray-100 rounded-md overflow-hidden flex items-center justify-center">
@@ -289,7 +289,7 @@ if (!$useHomepageBuilder) {
                                 </div>
                             </div>
                         <?php endif; ?>
-                        <a href="/product.php?slug=<?php echo urlencode($product['slug']); ?>" 
+                        <a href="<?php echo base_url('product.php?slug=' . urlencode($product['slug'])); ?>" 
                            class="block w-full px-4 py-2.5 text-center text-white rounded-lg font-medium transition-all hover:scale-105 transform shadow-md hover:shadow-lg"
                            style="background-color: <?php echo e($primaryColor); ?>;"
                            onmouseover="this.style.backgroundColor='<?php echo e($secondaryColor); ?>'"
@@ -315,10 +315,10 @@ if (!$useHomepageBuilder) {
             Contact our experts today for personalized recommendations and competitive pricing on all your industrial equipment needs
         </p>
         <div class="flex gap-4 justify-center stagger-children">
-            <a href="/quote.php" class="px-6 py-3 bg-white text-[#0b3a63] rounded-md font-semibold hover:bg-gray-100 transition-colors btn-animate magnetic">
+            <a href="<?php echo base_url('quote.php'); ?>" class="px-6 py-3 bg-white text-[#0b3a63] rounded-md font-semibold hover:bg-gray-100 transition-colors btn-animate magnetic">
                 Get Free Quote
             </a>
-            <a href="/contact.php" class="px-6 py-3 border-2 border-white text-white rounded-md font-semibold hover:bg-white/10 transition-colors btn-animate magnetic">
+            <a href="<?php echo base_url('contact.php'); ?>" class="px-6 py-3 border-2 border-white text-white rounded-md font-semibold hover:bg-white/10 transition-colors btn-animate magnetic">
                 Contact Us
             </a>
         </div>

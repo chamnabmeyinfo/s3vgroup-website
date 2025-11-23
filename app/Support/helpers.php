@@ -45,3 +45,17 @@ if (!function_exists('option')) {
     }
 }
 
+if (!function_exists('asset')) {
+    function asset(string $path): string
+    {
+        return \App\Support\AssetHelper::asset($path);
+    }
+}
+
+if (!function_exists('base_url')) {
+    function base_url(string $path = ''): string
+    {
+        return \App\Support\AssetHelper::url($path);
+    }
+}
+

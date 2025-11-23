@@ -6,6 +6,10 @@ if (!defined('BASE_PATH')) {
 if (!function_exists('option')) {
     require_once __DIR__ . '/../bootstrap/app.php';
 }
+// Ensure AssetHelper class is loaded (autoloader should handle it, but safety check)
+if (!class_exists('App\Support\AssetHelper')) {
+    require_once __DIR__ . '/../app/Support/AssetHelper.php';
+}
 
 // Get site config fallback
 $siteConfigFallback = [

@@ -162,6 +162,7 @@ use App\Database\Connection;
                 $sqlFiles = [
                     'schema.sql' => 'Main database schema (tables, indexes, foreign keys)',
                     'site_options.sql' => 'Site options and default settings',
+                    'sample_data.sql' => 'Sample data (products, teams, testimonials, sliders, quotes)',
                 ];
 
                 $totalQueries = 0;

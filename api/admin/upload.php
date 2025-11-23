@@ -67,8 +67,22 @@ if (!move_uploaded_file($file['tmp_name'], $destination)) {
     JsonResponse::error('Failed to save uploaded file.', 500);
 }
 
-// Generate URL
-$url = '/uploads/site/' . $filename;
+// Generate full URL with domain (works on both localhost and live)
+require_once __DIR__ . '/../../config/site.php';
+
+// Auto-detect protocol and host
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+
+// Get site URL from config or auto-detect
+$siteUrl = $siteConfig['url'] ?? ($protocol . '://' . $host);
+
+// Remove trailing slash from site URL
+$siteUrl = rtrim($siteUrl, '/');
+
+// Generate full URL
+$relativePath = '/uploads/site/' . $filename;
+$url = $siteUrl . $relativePath;
 
 JsonResponse::success([
     'url' => $url,

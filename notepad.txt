@@ -1,3 +1,0 @@
-cd "C:\Coding Development\s3v-web-php"
-git remote set-url origin https://chamnabmeyinfo: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@github.com/chamnabmeyinfo/s3vgroup-website.git
-git push origin main

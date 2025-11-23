@@ -29,6 +29,7 @@ error_log
 *.tmp
 *.temp
 *.bak
+notepad.txt
 
 # cPanel specific
 .htpasswd

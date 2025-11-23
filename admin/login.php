@@ -1,5 +1,7 @@
 <?php
 session_start();
+// Load bootstrap FIRST to ensure env() function is available
+require_once __DIR__ . '/../bootstrap/app.php';
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/site.php';
 

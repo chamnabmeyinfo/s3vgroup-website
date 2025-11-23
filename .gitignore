@@ -31,6 +31,16 @@ error_log
 *.bak
 notepad.txt
 
+# Debug and test files (should not be committed)
+debug-*.php
+test-*.php
+*-test.php
+
+# Setup scripts (delete after use)
+import-database.php
+create-env-file.php
+setup-live-site.php
+
 # cPanel specific
 .htpasswd
 .cpanel/

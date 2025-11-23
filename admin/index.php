@@ -81,6 +81,62 @@ try {
     $quoteNew = 0;
 }
 
+// Get counts safely with error handling
+$categoryTotal = 0;
+$categoryPublished = 0;
+if ($categoryRepo) {
+    try {
+        $categoryTotal = count($categoryRepo->all());
+        $categoryPublished = count($categoryRepo->all());
+    } catch (Exception $e) {
+        error_log('Categories count error: ' . $e->getMessage());
+    }
+}
+
+$teamTotal = 0;
+$teamActive = 0;
+if ($teamRepo) {
+    try {
+        $teamTotal = count($teamRepo->all());
+        $teamActive = count($teamRepo->active());
+    } catch (Exception $e) {
+        error_log('Team count error: ' . $e->getMessage());
+    }
+}
+
+$testimonialTotal = 0;
+$testimonialPublished = 0;
+if ($testimonialRepo) {
+    try {
+        $testimonialTotal = count($testimonialRepo->all());
+        $testimonialPublished = count($testimonialRepo->published());
+    } catch (Exception $e) {
+        error_log('Testimonials count error: ' . $e->getMessage());
+    }
+}
+
+$newsletterTotal = 0;
+$newsletterActive = 0;
+if ($newsletterRepo) {
+    try {
+        $newsletterTotal = count($newsletterRepo->all());
+        $newsletterActive = count($newsletterRepo->active());
+    } catch (Exception $e) {
+        error_log('Newsletter count error: ' . $e->getMessage());
+    }
+}
+
+$sliderTotal = 0;
+$sliderPublished = 0;
+if ($sliderRepo) {
+    try {
+        $sliderTotal = count($sliderRepo->all());
+        $sliderPublished = count($sliderRepo->published());
+    } catch (Exception $e) {
+        error_log('Sliders count error: ' . $e->getMessage());
+    }
+}
+
 $stats = [
     'products' => [
         'total' => $productTotal,
@@ -91,8 +147,8 @@ $stats = [
         'url' => '/admin/products.php',
     ],
     'categories' => [
-        'total' => $categoryRepo ? count($categoryRepo->all()) : 0,
-        'published' => $categoryRepo ? count($categoryRepo->all()) : 0,
+        'total' => $categoryTotal,
+        'published' => $categoryPublished,
         'label' => 'Categories',
         'icon' => '🏷️',
         'color' => 'purple',
@@ -107,32 +163,32 @@ $stats = [
         'url' => '/admin/quotes.php',
     ],
     'team' => [
-        'total' => $teamRepo ? count($teamRepo->all()) : 0,
-        'active' => $teamRepo ? count($teamRepo->active()) : 0,
+        'total' => $teamTotal,
+        'active' => $teamActive,
         'label' => 'Team Members',
         'icon' => '👥',
         'color' => 'green',
         'url' => '/admin/team.php',
     ],
     'testimonials' => [
-        'total' => $testimonialRepo ? count($testimonialRepo->all()) : 0,
-        'published' => $testimonialRepo ? count($testimonialRepo->published()) : 0,
+        'total' => $testimonialTotal,
+        'published' => $testimonialPublished,
         'label' => 'Testimonials',
         'icon' => '⭐',
         'color' => 'yellow',
         'url' => '/admin/testimonials.php',
     ],
     'newsletter' => [
-        'total' => $newsletterRepo ? count($newsletterRepo->all()) : 0,
-        'active' => $newsletterRepo ? count($newsletterRepo->active()) : 0,
+        'total' => $newsletterTotal,
+        'active' => $newsletterActive,
         'label' => 'Newsletter Subscribers',
         'icon' => '📧',
         'color' => 'pink',
         'url' => '/admin/newsletter.php',
     ],
     'sliders' => [
-        'total' => $sliderRepo ? count($sliderRepo->all()) : 0,
-        'published' => $sliderRepo ? count($sliderRepo->published()) : 0,
+        'total' => $sliderTotal,
+        'published' => $sliderPublished,
         'label' => 'Hero Slider Slides',
         'icon' => '🖼️',
         'color' => 'indigo',

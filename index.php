@@ -25,14 +25,14 @@ try {
     $products = [];
 }
 
-include __DIR__ . '/includes/header.php';
-?>
-
-<?php
+// Load bootstrap before header to ensure option() function is available
 require_once __DIR__ . '/bootstrap/app.php';
 $primaryColor = option('primary_color', '#0b3a63');
 $secondaryColor = option('secondary_color', '#1a5a8a');
 $accentColor = option('accent_color', '#fa4f26');
+
+include __DIR__ . '/includes/header.php';
+?>
 
 // Check if homepage builder is enabled and has sections (homepage has page_id = null)
 $useHomepageBuilder = option('enable_homepage_builder', '0') === '1';

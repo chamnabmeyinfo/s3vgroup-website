@@ -1,15 +1,21 @@
 /**
- * Modern Loading Screen Handler
- * Handles page loading animation and prevents FOUC
+ * Modern Loading Screen Handler - Optimized for Fast Loading
+ * Handles page loading animation without waiting for all images
  */
 
 (function() {
     'use strict';
 
     // Check if loading animation is enabled
-    const isEnabled = typeof option !== 'undefined' && option('enable_loading_animation', '1') === '1';
+    const isEnabled = typeof window.option !== 'undefined' && window.option('enable_loading_animation', '1') === '1';
     
     if (!isEnabled) {
+        // If disabled, hide loader immediately
+        const loader = document.getElementById('page-loader');
+        if (loader) {
+            loader.style.display = 'none';
+            loader.remove();
+        }
         return;
     }
 
@@ -31,72 +37,15 @@
         document.body.classList.add('loading');
     }
     
-    // If page is already loaded when script runs, wait a bit for smooth transition
-    if (document.readyState === 'complete') {
-        setTimeout(() => {
-            fadeOutLoader();
-        }, 500);
-    }
-
-    // Handle page load
-    window.addEventListener('load', () => {
-        // Wait a minimum time for smooth transition
-        const minLoadTime = 800; // Minimum display time in ms
-        const startTime = performance.now();
-        
-        const fadeOutAfterMinTime = () => {
-            const elapsed = performance.now() - startTime;
-            const remaining = Math.max(0, minLoadTime - elapsed);
-            
-            setTimeout(() => {
-                fadeOutLoader();
-            }, remaining);
-        };
-
-        // If images are still loading, wait for them
-        const images = document.querySelectorAll('img');
-        let loadedImages = 0;
-        const totalImages = images.length;
-
-        if (totalImages === 0) {
-            // No images, just wait minimum time
-            fadeOutAfterMinTime();
+    let hasFadedOut = false;
+    
+    function fadeOutLoader() {
+        // Prevent multiple calls
+        if (hasFadedOut) {
             return;
         }
-
-        images.forEach(img => {
-            if (img.complete) {
-                loadedImages++;
-            } else {
-                img.addEventListener('load', () => {
-                    loadedImages++;
-                    checkAllLoaded();
-                });
-                img.addEventListener('error', () => {
-                    loadedImages++;
-                    checkAllLoaded();
-                });
-            }
-        });
-
-        function checkAllLoaded() {
-            if (loadedImages >= totalImages) {
-                fadeOutAfterMinTime();
-            }
-        }
-
-        // Check if all images are already loaded
-        if (loadedImages >= totalImages) {
-            fadeOutAfterMinTime();
-        } else {
-            // Fallback: fade out after maximum wait time (3 seconds)
-            setTimeout(() => {
-                fadeOutLoader();
-            }, 3000);
-        }
-    });
-
-    function fadeOutLoader() {
+        hasFadedOut = true;
+        
         const loader = document.getElementById('page-loader');
         
         if (!loader || loader.classList.contains('hidden')) {
@@ -105,40 +54,85 @@
 
         // Fade out animation
         loader.style.opacity = '0';
-        loader.style.visibility = 'hidden';
-        loader.classList.remove('show');
-        loader.classList.add('hidden');
-
+        loader.style.transition = 'opacity 0.3s ease-out';
+        
         // Remove from DOM after animation completes
         setTimeout(() => {
             if (loader && loader.parentNode) {
+                loader.style.display = 'none';
                 loader.remove();
             }
             // Restore body scroll
             if (document.body) {
                 document.body.style.overflow = '';
-                document.body.style.overflowX = 'hidden'; // Prevent horizontal scroll
+                document.body.style.overflowX = 'hidden';
+                document.body.classList.remove('loading');
             }
             
             // Trigger page ready event
             document.dispatchEvent(new CustomEvent('pageloaded'));
-            
-            // Remove body overflow hidden class if exists
-            document.body.classList.remove('loading');
-        }, 500);
+        }, 300);
     }
 
-    // Fallback: Hide loader after 5 seconds max (prevents stuck loading screen)
-    setTimeout(() => {
-        fadeOutLoader();
-    }, 5000);
+    // OPTIMIZED: Don't wait for all images - just wait for DOM and critical resources
+    // This is much faster, especially for 3G networks
+    
+    // Strategy 1: If DOM is already ready, hide quickly
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        // Page is already loaded, hide loader after brief delay for smooth transition
+        setTimeout(() => {
+            fadeOutLoader();
+        }, 300);
+        return;
+    }
 
-    // Handle browser back/forward navigation
+    // Strategy 2: Wait for DOMContentLoaded (faster than window.load)
+    let domReady = false;
+    let windowLoaded = false;
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        domReady = true;
+        // Hide loader after DOM is ready (don't wait for images)
+        setTimeout(() => {
+            fadeOutLoader();
+        }, 200);
+    });
+
+    // Strategy 3: Fallback - hide after window.load (but with shorter timeout)
+    window.addEventListener('load', () => {
+        windowLoaded = true;
+        // If DOM was already ready, loader should be gone
+        // Otherwise, hide it now (but don't wait for images)
+        if (!hasFadedOut) {
+            setTimeout(() => {
+                fadeOutLoader();
+            }, 100);
+        }
+    });
+
+    // Strategy 4: Safety timeout - ALWAYS hide after max 2 seconds (prevents stuck loading)
+    // This ensures the page is never stuck on loading screen
+    setTimeout(() => {
+        if (!hasFadedOut) {
+            fadeOutLoader();
+        }
+    }, 2000); // Reduced from 5 seconds to 2 seconds for faster loading
+
+    // Strategy 5: Handle browser back/forward navigation (cached pages)
     window.addEventListener('pageshow', (event) => {
         // If page was loaded from cache, hide loader immediately
         if (event.persisted) {
             fadeOutLoader();
         }
+    });
+
+    // Strategy 6: Hide if user starts interacting (they don't want to wait)
+    ['click', 'keydown', 'scroll', 'touchstart'].forEach(eventType => {
+        document.addEventListener(eventType, () => {
+            if (!hasFadedOut) {
+                fadeOutLoader();
+            }
+        }, { once: true });
     });
 
 })();

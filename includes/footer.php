@@ -122,7 +122,11 @@
     </footer>
     
     <?php include __DIR__ . '/widgets/loading-screen.php'; ?>
-    <script src="<?php echo asset('includes/js/loading-screen.js'); ?>?v=<?php echo time(); ?>"></script>
+    <?php
+    // Use AssetVersion for proper cache busting (better than time())
+    $assetVersion = class_exists('App\Support\AssetVersion') ? \App\Support\AssetVersion::get() : date('Ymd');
+    ?>
+    <script src="<?php echo asset('includes/js/loading-screen.js'); ?>?v=<?php echo $assetVersion; ?>"></script>
 
     <script>
         function toggleMobileMenu() {

@@ -1,6 +1,10 @@
 <?php
 http_response_code(404);
+// Load bootstrap FIRST to ensure env() function is available
+require_once __DIR__ . '/bootstrap/app.php';
+require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/site.php';
+require_once __DIR__ . '/includes/functions.php';
 $pageTitle = '404 - Page Not Found';
 include __DIR__ . '/includes/header.php';
 ?>

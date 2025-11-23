@@ -1,4 +1,6 @@
 <?php
+// Load bootstrap FIRST to ensure env() function is available
+require_once __DIR__ . '/bootstrap/app.php';
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/site.php';
 require_once __DIR__ . '/includes/functions.php';
@@ -12,8 +14,6 @@ $team = $repository->active();
 
 $pageTitle = 'Our Team';
 $pageDescription = 'Meet our experienced team of warehouse and factory equipment specialists';
-
-require_once __DIR__ . '/bootstrap/app.php';
 $primaryColor = option('primary_color', '#0b3a63');
 $secondaryColor = option('secondary_color', '#1a5a8a');
 $accentColor = option('accent_color', '#fa4f26');

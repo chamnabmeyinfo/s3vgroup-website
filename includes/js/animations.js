@@ -95,20 +95,12 @@
     // ========================================
     // Loading Animation
     // ========================================
+    // NOTE: Loading animation is now handled by loading-screen.js
+    // This function is kept for backwards compatibility but does nothing
     function initLoadingAnimation() {
-        if (typeof option === 'undefined' || option('enable_loading_animation', '1') !== '1') {
-            return;
-        }
-
-        const loader = document.getElementById('page-loader');
-        if (loader) {
-            window.addEventListener('load', () => {
-                loader.style.opacity = '0';
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                }, 500);
-            });
-        }
+        // Loading screen is handled by dedicated loading-screen.js
+        // This prevents conflicts and ensures fast loading
+        return;
     }
 
     // ========================================

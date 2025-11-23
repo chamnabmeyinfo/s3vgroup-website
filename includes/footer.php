@@ -126,6 +126,7 @@
     // Use AssetVersion for proper cache busting (better than time())
     $assetVersion = class_exists('App\Support\AssetVersion') ? \App\Support\AssetVersion::get() : date('Ymd');
     ?>
+    <!-- Loading screen script - NOT deferred, must run immediately -->
     <script src="<?php echo asset('includes/js/loading-screen.js'); ?>?v=<?php echo $assetVersion; ?>"></script>
 
     <script>

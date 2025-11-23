@@ -1,42 +1,12 @@
 /**
  * Modern Loading Screen Handler - Optimized for Fast Loading
  * Handles page loading animation without waiting for all images
+ * CRITICAL: This script must run immediately, not deferred
  */
 
 (function() {
     'use strict';
 
-    // Check if loading animation is enabled
-    const isEnabled = typeof window.option !== 'undefined' && window.option('enable_loading_animation', '1') === '1';
-    
-    if (!isEnabled) {
-        // If disabled, hide loader immediately
-        const loader = document.getElementById('page-loader');
-        if (loader) {
-            loader.style.display = 'none';
-            loader.remove();
-        }
-        return;
-    }
-
-    const loadingScreen = document.getElementById('page-loader');
-    
-    if (!loadingScreen) {
-        return;
-    }
-
-    // Show loading screen immediately
-    loadingScreen.style.opacity = '1';
-    loadingScreen.style.display = 'flex';
-    loadingScreen.style.visibility = 'visible';
-    loadingScreen.classList.add('show');
-    
-    // Prevent scrolling while loading
-    if (document.body) {
-        document.body.style.overflow = 'hidden';
-        document.body.classList.add('loading');
-    }
-    
     let hasFadedOut = false;
     
     function fadeOutLoader() {
@@ -48,8 +18,8 @@
         
         const loader = document.getElementById('page-loader');
         
-        if (!loader || loader.classList.contains('hidden')) {
-            return; // Already hidden
+        if (!loader) {
+            return; // No loader found
         }
 
         // Fade out animation
@@ -74,10 +44,47 @@
         }, 300);
     }
 
-    // OPTIMIZED: Don't wait for all images - just wait for DOM and critical resources
-    // This is much faster, especially for 3G networks
+    // Check if loading animation is enabled (with fallback if window.option not available)
+    function isEnabled() {
+        if (typeof window.option === 'function') {
+            return window.option('enable_loading_animation', '1') === '1';
+        }
+        // Default to enabled if option() not available yet
+        return true;
+    }
+
+    // Get loader element
+    const loadingScreen = document.getElementById('page-loader');
     
-    // Strategy 1: If DOM is already ready, hide quickly
+    if (!loadingScreen) {
+        return; // No loader on page
+    }
+
+    // Check if disabled
+    if (!isEnabled()) {
+        // If disabled, hide loader immediately
+        loadingScreen.style.display = 'none';
+        loadingScreen.remove();
+        if (document.body) {
+            document.body.style.overflow = '';
+            document.body.classList.remove('loading');
+        }
+        return;
+    }
+
+    // Show loading screen immediately (already shown by inline script, but ensure it's visible)
+    loadingScreen.style.opacity = '1';
+    loadingScreen.style.display = 'flex';
+    loadingScreen.style.visibility = 'visible';
+    loadingScreen.classList.add('show');
+    
+    // Prevent scrolling while loading
+    if (document.body) {
+        document.body.style.overflow = 'hidden';
+        document.body.classList.add('loading');
+    }
+
+    // STRATEGY 1: If DOM is already ready, hide quickly
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
         // Page is already loaded, hide loader after brief delay for smooth transition
         setTimeout(() => {
@@ -86,21 +93,19 @@
         return;
     }
 
-    // Strategy 2: Wait for DOMContentLoaded (faster than window.load)
-    let domReady = false;
-    let windowLoaded = false;
-    
-    document.addEventListener('DOMContentLoaded', () => {
-        domReady = true;
-        // Hide loader after DOM is ready (don't wait for images)
-        setTimeout(() => {
-            fadeOutLoader();
-        }, 200);
-    });
+    // STRATEGY 2: Wait for DOMContentLoaded (faster than window.load)
+    // This fires when HTML is parsed, before images load
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            // Hide loader after DOM is ready (don't wait for images)
+            setTimeout(() => {
+                fadeOutLoader();
+            }, 200);
+        });
+    }
 
-    // Strategy 3: Fallback - hide after window.load (but with shorter timeout)
+    // STRATEGY 3: Fallback - hide after window.load (but with shorter timeout)
     window.addEventListener('load', () => {
-        windowLoaded = true;
         // If DOM was already ready, loader should be gone
         // Otherwise, hide it now (but don't wait for images)
         if (!hasFadedOut) {
@@ -108,31 +113,31 @@
                 fadeOutLoader();
             }, 100);
         }
-    });
+    }, { once: true });
 
-    // Strategy 4: Safety timeout - ALWAYS hide after max 2 seconds (prevents stuck loading)
-    // This ensures the page is never stuck on loading screen
+    // STRATEGY 4: Safety timeout - ALWAYS hide after max 1.5 seconds (prevents stuck loading)
+    // This ensures the page is NEVER stuck on loading screen
     setTimeout(() => {
         if (!hasFadedOut) {
             fadeOutLoader();
         }
-    }, 2000); // Reduced from 5 seconds to 2 seconds for faster loading
+    }, 1500); // Reduced to 1.5 seconds for faster loading
 
-    // Strategy 5: Handle browser back/forward navigation (cached pages)
+    // STRATEGY 5: Handle browser back/forward navigation (cached pages)
     window.addEventListener('pageshow', (event) => {
         // If page was loaded from cache, hide loader immediately
-        if (event.persisted) {
+        if (event.persisted && !hasFadedOut) {
             fadeOutLoader();
         }
-    });
+    }, { once: true });
 
-    // Strategy 6: Hide if user starts interacting (they don't want to wait)
+    // STRATEGY 6: Hide if user starts interacting (they don't want to wait)
     ['click', 'keydown', 'scroll', 'touchstart'].forEach(eventType => {
         document.addEventListener(eventType, () => {
             if (!hasFadedOut) {
                 fadeOutLoader();
             }
-        }, { once: true });
+        }, { once: true, passive: true });
     });
 
 })();

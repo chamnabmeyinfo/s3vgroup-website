@@ -160,8 +160,14 @@ include __DIR__ . '/includes/header.php';
                     <input type="text" name="sku" class="mt-1 w-full rounded border border-gray-300 px-3 py-2">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Hero Image URL</label>
-                    <input type="url" name="heroImage" class="mt-1 w-full rounded border border-gray-300 px-3 py-2">
+                    <label class="block text-sm font-medium text-gray-700">Hero Image</label>
+                    <div class="flex items-center gap-3">
+                        <input type="url" name="heroImage" id="product-hero-image-input" placeholder="https://example.com/image.jpg or upload" class="flex-1 mt-1 rounded border border-gray-300 px-3 py-2">
+                        <input type="file" accept="image/*" class="hidden" id="product-hero-image-file" data-target="product-hero-image-input">
+                        <button type="button" onclick="document.getElementById('product-hero-image-file').click()" class="mt-1 px-4 py-2 bg-gray-100 border border-gray-300 rounded text-sm font-medium text-gray-700 hover:bg-gray-200 transition-colors">Upload</button>
+                    </div>
+                    <div id="product-hero-image-preview" class="mt-2"></div>
+                    <p class="text-xs text-gray-500 mt-1">Recommended: 1200x800px or larger</p>
                 </div>
             </div>
 
@@ -247,6 +253,7 @@ include __DIR__ . '/includes/header.php';
     function hideModal() {
         modal.classList.add('hidden');
         modal.classList.remove('flex');
+        document.getElementById('product-hero-image-preview').innerHTML = '';
     }
 
     function parseJsonField(value, fieldName) {

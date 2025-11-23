@@ -58,6 +58,11 @@ include __DIR__ . '/includes/header.php';
             </div>
             <div id="hero-image-preview" class="mt-2">
                 <?php if (!empty($story['heroImage'])): ?>
+                    <img src="<?php echo e($story['heroImage']); ?>" alt="Preview" class="h-32 w-auto rounded border border-gray-300 object-contain">
+                <?php endif; ?>
+            </div>
+            <div id="hero-image-preview" class="mt-2">
+                <?php if (!empty($story['heroImage'])): ?>
                     <img src="<?php echo e($story['heroImage']); ?>" alt="Hero Preview" class="h-32 w-auto rounded-md object-cover border-2 border-gray-300">
                 <?php endif; ?>
             </div>

@@ -200,9 +200,17 @@ include __DIR__ . '/includes/header.php';
         const file = e.target.files[0];
         if (!file) return;
 
+        const input = document.getElementById('ceo-photo-input');
+        const preview = document.getElementById('ceo-photo-preview');
+        
+        // Show loading
+        if (preview) {
+            preview.innerHTML = '<p class="text-sm text-gray-500">Uploading...</p>';
+        }
+
         try {
             const formData = new FormData();
-            formData.append('image', file);
+            formData.append('file', file); // Fixed: was 'image', should be 'file'
 
             const response = await fetch('/api/admin/upload.php', {
                 method: 'POST',
@@ -211,12 +219,14 @@ include __DIR__ . '/includes/header.php';
             const result = await response.json();
 
             if (result.status === 'success') {
-                document.getElementById('ceo-photo-input').value = result.url;
-                document.getElementById('ceo-photo-preview').innerHTML = `<img src="${result.url}" alt="CEO Preview" class="h-32 w-32 rounded-full object-cover border-2 border-gray-300">`;
+                input.value = result.data.url; // Fixed: was result.url, should be result.data.url
+                preview.innerHTML = `<img src="${result.data.url}" alt="CEO Preview" class="h-32 w-32 rounded-full object-cover border-2 border-gray-300">`;
             } else {
-                alert('Upload failed: ' + result.message);
+                preview.innerHTML = '';
+                alert('Upload failed: ' + (result.message || 'Unknown error'));
             }
         } catch (error) {
+            preview.innerHTML = '';
             alert('Upload error: ' + error.message);
         }
     });

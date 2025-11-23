@@ -244,6 +244,14 @@ include __DIR__ . '/includes/header.php';
         const file = e.target.files[0];
         if (!file) return;
 
+        const input = document.getElementById('slider-image-input');
+        const preview = document.getElementById('slider-image-preview');
+        
+        // Show loading
+        if (preview) {
+            preview.innerHTML = '<p class="text-sm text-gray-500">Uploading...</p>';
+        }
+
         try {
             const formData = new FormData();
             formData.append('file', file);

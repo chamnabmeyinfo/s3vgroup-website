@@ -71,10 +71,10 @@ $headerBackground = option('header_background', '#ffffff');
             return options[key] !== undefined ? options[key] : defaultValue;
         };
     </script>
-    <script src="/includes/js/modern.js?v=<?php echo time(); ?>"></script>
-    <script src="/includes/js/modern-animations.js?v=<?php echo time(); ?>" defer></script>
-    <script src="/includes/js/animations.js?v=<?php echo time(); ?>"></script>
-    <script src="/includes/js/mobile-app.js?v=<?php echo time(); ?>" defer></script>
+    <script src="<?php echo asset('includes/js/modern.js'); ?>?v=<?php echo time(); ?>"></script>
+    <script src="<?php echo asset('includes/js/modern-animations.js'); ?>?v=<?php echo time(); ?>" defer></script>
+    <script src="<?php echo asset('includes/js/animations.js'); ?>?v=<?php echo time(); ?>"></script>
+    <script src="<?php echo asset('includes/js/mobile-app.js'); ?>?v=<?php echo time(); ?>" defer></script>
     <script src="/includes/js/mobile-touch.js?v=<?php echo time(); ?>"></script>
     <?php if (option('enable_social_sharing', '1') === '1'): ?>
         <script src="<?php echo asset('includes/js/social-sharing.js'); ?>?v=<?php echo time(); ?>"></script>

@@ -71,7 +71,9 @@ if (!move_uploaded_file($file['tmp_name'], $destination)) {
 require_once __DIR__ . '/../../config/site.php';
 
 // Auto-detect protocol and host
-$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || 
+            (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
+            ? 'https' : 'http';
 $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 
 // Get site URL from config or auto-detect
@@ -80,8 +82,24 @@ $siteUrl = $siteConfig['url'] ?? ($protocol . '://' . $host);
 // Remove trailing slash from site URL
 $siteUrl = rtrim($siteUrl, '/');
 
-// Generate full URL
+// Generate full URL - ensure it includes the base path if in subdirectory
 $relativePath = '/uploads/site/' . $filename;
+
+// Check if we need to add base path (for localhost subdirectories)
+// For live server, siteUrl already includes the full domain
+// For localhost, we might need to add subdirectory path
+if (strpos($siteUrl, 'localhost') !== false || strpos($siteUrl, '127.0.0.1') !== false) {
+    // For localhost, check if we're in a subdirectory
+    $scriptDir = dirname($_SERVER['SCRIPT_NAME'] ?? '/');
+    $scriptDir = str_replace('\\', '/', $scriptDir);
+    $scriptDir = rtrim($scriptDir, '/');
+    
+    if ($scriptDir !== '/' && $scriptDir !== '.' && $scriptDir !== '' && $scriptDir !== '\\') {
+        $relativePath = $scriptDir . $relativePath;
+    }
+}
+
+// Build full URL
 $url = $siteUrl . $relativePath;
 
 JsonResponse::success([

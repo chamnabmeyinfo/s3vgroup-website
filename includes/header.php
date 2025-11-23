@@ -90,7 +90,7 @@ $headerBackground = option('header_background', '#ffffff');
     <script src="<?php echo asset('includes/js/mobile-app.js'); ?>?v=<?php echo $assetVersion; ?>" defer></script>
     <script src="<?php echo asset('includes/js/mobile-touch.js'); ?>?v=<?php echo $assetVersion; ?>" defer></script>
     <?php if (option('enable_social_sharing', '1') === '1'): ?>
-        <script src="<?php echo asset('includes/js/social-sharing.js'); ?>?v=<?php echo time(); ?>"></script>
+        <script src="<?php echo asset('includes/js/social-sharing.js'); ?>?v=<?php echo $assetVersion; ?>" defer></script>
     <?php endif; ?>
     
     <?php if ($customJSHead = option('custom_js_head', '')): ?>

@@ -69,3 +69,7 @@ uploads/site/woocommerce-placeholder*.png
 
 # Optimized images (under 300KB) are now included in repository
 # Large unoptimized images (>1MB) should be optimized before committing
+
+# Corrupted/large files that cannot be processed
+uploads/img_29b0b7772b9e0254.png
+uploads/img_89c0fc7fb2ec1d55.png

@@ -51,3 +51,18 @@ database-*.sql
 # cPanel specific
 .htpasswd
 .cpanel/
+
+# Uploaded files (keep optimized images, ignore raw WordPress uploads)
+uploads/site/uploads/
+uploads/site/*/202*/
+uploads/site/*/202*/*
+uploads/site/elementor/
+uploads/site/redux/
+uploads/site/revslider/
+uploads/site/wc-logs/
+uploads/site/woocommerce_uploads/
+uploads/site/wp-file-manager-pro/
+uploads/site/wpcf7_uploads/
+uploads/site/fw_files_for_blog_1/
+uploads/site/merlin-wp/
+uploads/site/woocommerce-placeholder*.png

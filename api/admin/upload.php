@@ -7,6 +7,7 @@ require_once __DIR__ . '/../../config/database.php';
 use App\Http\AdminGuard;
 use App\Http\JsonResponse;
 use App\Support\Id;
+use App\Support\ImageOptimizer;
 
 AdminGuard::requireAuth();
 
@@ -43,10 +44,10 @@ if (!in_array($mimeType, $allowedTypes, true)) {
     JsonResponse::error('Invalid file type. Only images (JPEG, PNG, GIF, WebP, SVG) are allowed.', 400);
 }
 
-// Validate file size (max 5MB)
-$maxSize = 5 * 1024 * 1024; // 5MB
+// Validate file size (max 50MB) - we will downsize after upload
+$maxSize = 50 * 1024 * 1024; // 50MB
 if ($file['size'] > $maxSize) {
-    JsonResponse::error('File size exceeds maximum allowed size of 5MB.', 400);
+    JsonResponse::error('File size exceeds maximum allowed size of 50MB.', 400);
 }
 
 // Generate unique filename
@@ -65,6 +66,11 @@ $destination = $uploadDir . '/' . $filename;
 // Move uploaded file
 if (!move_uploaded_file($file['tmp_name'], $destination)) {
     JsonResponse::error('Failed to save uploaded file.', 500);
+}
+
+// Downsize large raster images to keep storage/perf in check
+if (in_array($mimeType, ['image/jpeg', 'image/png', 'image/webp'], true)) {
+    ImageOptimizer::resize($destination, $mimeType, 1920, 1200, 82);
 }
 
 // Generate full URL with domain (works on both localhost and live)

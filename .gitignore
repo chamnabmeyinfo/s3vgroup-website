@@ -67,6 +67,9 @@ uploads/site/fw_files_for_blog_1/
 uploads/site/merlin-wp/
 uploads/site/woocommerce-placeholder*.png
 
+# Large images (>1MB) - must be optimized before adding
+# Only optimized images under 1MB should be in Git
+
 # Large images (>10MB) - excluded from repository
 uploads/site/img_002812412b0e2e71.jpg
 uploads/site/img_00cce7c10fe015cc.jpg

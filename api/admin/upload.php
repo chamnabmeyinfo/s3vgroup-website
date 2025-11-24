@@ -68,9 +68,45 @@ if (!move_uploaded_file($file['tmp_name'], $destination)) {
     JsonResponse::error('Failed to save uploaded file.', 500);
 }
 
-// Downsize large raster images to keep storage/perf in check
+// Aggressively optimize images: resize, compress, and ensure fast loading
+// Target: Under 1MB file size, max 1200x1200 for products (good for web display)
 if (in_array($mimeType, ['image/jpeg', 'image/png', 'image/webp'], true)) {
-    ImageOptimizer::resize($destination, $mimeType, 1920, 1200, 82);
+    // Use smart optimization: maintain aspect ratio, target 1MB max file size
+    // For product images, 1200x1200 is plenty for web display and keeps files small
+    ImageOptimizer::resize(
+        $destination, 
+        $mimeType, 
+        1200,  // Max width (good for product images)
+        1200,  // Max height
+        false, // Don't crop - maintain aspect ratio
+        1024 * 1024 // Target: 1MB maximum file size
+    );
+    
+    // Check if converted to WebP (ImageOptimizer may convert for better compression)
+    $webpPath = preg_replace('/\.(jpg|jpeg|png)$/i', '.webp', $destination);
+    if (file_exists($webpPath) && $webpPath !== $destination) {
+        // WebP version exists and is different - check if it's better
+        $originalSize = file_exists($destination) ? filesize($destination) : 0;
+        $webpSize = filesize($webpPath);
+        
+        if ($webpSize < $originalSize * 0.9) {
+            // WebP is significantly smaller, use it
+            @unlink($destination); // Remove original
+            $filename = basename($webpPath);
+            $extension = 'webp';
+            $mimeType = 'image/webp';
+            $destination = $webpPath;
+        } else {
+            // Original is better, remove WebP
+            @unlink($webpPath);
+        }
+    }
+    
+    // Update file size after optimization
+    $file['size'] = file_exists($destination) ? filesize($destination) : $file['size'];
+    
+    // Update relative path if filename changed (e.g., WebP conversion)
+    $relativePath = '/uploads/site/' . $filename;
 }
 
 // Generate full URL with domain (works on both localhost and live)
@@ -88,8 +124,10 @@ $siteUrl = $siteConfig['url'] ?? ($protocol . '://' . $host);
 // Remove trailing slash from site URL
 $siteUrl = rtrim($siteUrl, '/');
 
-// Generate full URL - ensure it includes the base path if in subdirectory
-$relativePath = '/uploads/site/' . $filename;
+// Ensure relative path is set (in case optimization didn't run)
+if (!isset($relativePath)) {
+    $relativePath = '/uploads/site/' . $filename;
+}
 
 // Check if we need to add base path (for localhost subdirectories)
 // For live server, siteUrl already includes the full domain

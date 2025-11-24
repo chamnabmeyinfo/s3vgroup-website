@@ -8,13 +8,13 @@ namespace App\Support;
  * ImageOptimizer
  *
  * Aggressively optimizes images by resizing, cropping, and compressing them
- * to ensure fast loading times. Targets file sizes under 1MB while maintaining
+ * to ensure fast loading times. Targets file sizes under 300KB while maintaining
  * visual quality suitable for web display.
  */
 final class ImageOptimizer
 {
-    // Target maximum file size (1MB)
-    private const TARGET_MAX_SIZE = 1024 * 1024; // 1MB
+    // Target maximum file size (300KB for aggressive compression)
+    private const TARGET_MAX_SIZE = 300 * 1024; // 300KB
     
     // Maximum dimensions for different use cases
     private const MAX_WIDTH_PRODUCT = 1200;
@@ -22,17 +22,17 @@ final class ImageOptimizer
     private const MAX_WIDTH_HERO = 1920;
     private const MAX_HEIGHT_HERO = 1080;
     
-    // Quality settings (aggressive compression for web)
-    private const JPEG_QUALITY_START = 85;
-    private const JPEG_QUALITY_MIN = 60;
-    private const PNG_QUALITY_START = 8; // 0-9, lower = better compression
-    private const PNG_QUALITY_MIN = 6;
-    private const WEBP_QUALITY_START = 85;
-    private const WEBP_QUALITY_MIN = 60;
+    // Quality settings (aggressive compression for web - optimized for 300KB target)
+    private const JPEG_QUALITY_START = 75;
+    private const JPEG_QUALITY_MIN = 50;
+    private const PNG_QUALITY_START = 7; // 0-9, lower = better compression
+    private const PNG_QUALITY_MIN = 5;
+    private const WEBP_QUALITY_START = 75;
+    private const WEBP_QUALITY_MIN = 50;
 
     /**
      * Optimize an image with smart cropping and aggressive compression.
-     * Targets file size under 1MB while maintaining good visual quality.
+     * Targets file size under 300KB while maintaining good visual quality.
      *
      * @param string $path      Absolute path to the stored file.
      * @param string $mimeType  Original MIME type detected on upload.
@@ -142,10 +142,12 @@ final class ImageOptimizer
         $finalMimeType = $mimeType;
         
         // Try WebP conversion for better compression (if supported)
+        // Force WebP for PNG files over 1MB (they compress much better as WebP)
+        $forceWebP = $mimeType === 'image/png' && $fileSize > 1024 * 1024;
         $useWebP = function_exists('imagewebp') && 
                    ($mimeType === 'image/jpeg' || $mimeType === 'image/png');
         
-        if ($useWebP && $fileSize > $targetSize) {
+        if ($useWebP && ($fileSize > $targetSize || $forceWebP)) {
             $webpPath = preg_replace('/\.(jpg|jpeg|png)$/i', '.webp', $path);
             if ($webpPath !== $path) {
                 $finalPath = $webpPath;
@@ -241,12 +243,15 @@ final class ImageOptimizer
 
     private static function createResource(string $path, string $mimeType): ?\GdImage
     {
-        return match ($mimeType) {
+        $result = match ($mimeType) {
             'image/jpeg' => @imagecreatefromjpeg($path),
             'image/png' => @imagecreatefrompng($path),
             'image/webp' => @imagecreatefromwebp($path),
             default => null,
         };
+        
+        // imagecreatefrom* functions return false on error, but we need ?GdImage
+        return ($result instanceof \GdImage) ? $result : null;
     }
 }
 

@@ -87,7 +87,7 @@ if (in_array($mimeType, ['image/jpeg', 'image/png', 'image/webp'], true)) {
     $originalSize = $file['size'];
     $originalDimensions = @getimagesize($destination);
     
-    // Use smart optimization: maintain aspect ratio, target 1MB max file size
+    // Use smart optimization: maintain aspect ratio, target 300KB max file size
     // For product images, 1200x1200 is plenty for web display and keeps files small
     try {
         ImageOptimizer::resize(
@@ -96,7 +96,7 @@ if (in_array($mimeType, ['image/jpeg', 'image/png', 'image/webp'], true)) {
             1200,  // Max width (good for product images)
             1200,  // Max height
             false, // Don't crop - maintain aspect ratio
-            1024 * 1024 // Target: 1MB maximum file size
+            300 * 1024 // Target: 300KB maximum file size (aggressive compression)
         );
         
         // Check if converted to WebP (ImageOptimizer may convert for better compression)

@@ -1,5 +1,16 @@
 <?php
 http_response_code(404);
+
+// If this is an image request, return proper 404 without loading screen
+$requestUri = $_SERVER['REQUEST_URI'] ?? '';
+if (preg_match('/\.(jpg|jpeg|png|gif|webp|svg|ico)$/i', $requestUri)) {
+    // Image file not found - return minimal 404 response
+    header('Content-Type: text/plain');
+    http_response_code(404);
+    echo '404 Image Not Found';
+    exit;
+}
+
 // Load bootstrap FIRST to ensure env() function is available
 require_once __DIR__ . '/bootstrap/app.php';
 require_once __DIR__ . '/config/database.php';

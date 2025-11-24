@@ -13,6 +13,11 @@
     RewriteCond %{REQUEST_URI} !^/admin/
     RewriteCond %{REQUEST_URI} !\.(jpg|jpeg|png|gif|webp|svg|ico|css|js|woff|woff2|ttf|otf|pdf|zip)$ [NC]
     RewriteRule ^(.*)$ index.php [L,QSA]
+    
+    # For missing image files, return 404 directly (don't redirect)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_URI} \.(jpg|jpeg|png|gif|webp|svg|ico)$ [NC]
+    RewriteRule ^(.*)$ - [R=404,L]
 </IfModule>
 
 # ============================================

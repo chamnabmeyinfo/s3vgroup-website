@@ -61,32 +61,5 @@ $shareDescription = $description ?? (isset($pageDescription) ? $pageDescription 
     </button>
 </div>
 
-<script>
-if (typeof shareOnFacebook === 'undefined') {
-    function shareOnFacebook(url, title) {
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank', 'width=600,height=400');
-    }
-    function shareOnTwitter(url, title) {
-        window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`, '_blank', 'width=600,height=400');
-    }
-    function shareOnLinkedIn(url, title) {
-        window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank', 'width=600,height=400');
-    }
-    function copyToClipboard(text) {
-        navigator.clipboard.writeText(text).then(() => {
-            if (window.toast) {
-                window.toast.show('Link copied to clipboard!', 'success', 2000);
-            } else {
-                alert('Link copied to clipboard!');
-            }
-        }).catch(() => {
-            alert('Failed to copy link');
-        });
-    }
-    window.shareOnFacebook = shareOnFacebook;
-    window.shareOnTwitter = shareOnTwitter;
-    window.shareOnLinkedIn = shareOnLinkedIn;
-    window.copyToClipboard = copyToClipboard;
-}
-</script>
+<!-- Social sharing functions are handled by includes/js/social-sharing.js -->
 

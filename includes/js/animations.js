@@ -93,15 +93,7 @@
     }
 
     // ========================================
-    // Loading Animation
-    // ========================================
-    // NOTE: Loading animation is now handled by loading-screen.js
-    // This function is kept for backwards compatibility but does nothing
-    function initLoadingAnimation() {
-        // Loading screen is handled by dedicated loading-screen.js
-        // This prevents conflicts and ensures fast loading
-        return;
-    }
+    // Loading Animation - Removed (handled by loading-screen.js)
 
     // ========================================
     // Counter Animation
@@ -223,7 +215,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         initRevealAnimations();
         initParallax();
-        initLoadingAnimation();
+        // Loading animation handled by loading-screen.js
         initCounterAnimation();
         initScrollProgress();
         initTypingAnimation();

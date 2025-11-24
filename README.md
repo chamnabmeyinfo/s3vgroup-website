@@ -35,10 +35,11 @@ See `LIVE-SETUP-GUIDE.md` for complete setup instructions.
 - **README.md** (this file) - Project overview and quick start
 - **FEATURES-OVERVIEW.md** - Complete features list
 - **ADMIN-ORGANIZATION.md** - Admin panel structure
-- **LOCAL-SETUP.md** - Local development setup
-- **LIVE-SETUP-GUIDE.md** - Live server setup
-- **AUTO-IMPORT-DATABASE.md** - Database import guide
+- **DATABASE-MANAGER-GUIDE.md** - Database management tool guide
 - **DATABASE-SYNC-GUIDE.md** - Database synchronization guide (local ↔ cPanel)
+- **SCHEMA-SYNC-GUIDE.md** - Database schema synchronization
+- **IMAGE-OPTIMIZATION-GUIDE.md** - Image optimization reference
+- **AUTOMATIC-IMAGE-OPTIMIZATION.md** - Automatic image optimization guide
 - **PERFORMANCE-RECOMMENDATIONS.md** - Performance optimization guide
 
 ## 🗄️ Database
@@ -60,7 +61,7 @@ s3vgroup/
 ├── admin/              # Admin panel
 ├── api/                # API endpoints
 ├── app/                # Application core (Domain, Support, Database)
-├── bin/                # Utility scripts (migrations, seeding)
+├── bin/                # Utility scripts (see below)
 ├── bootstrap/          # Application bootstrap
 ├── config/             # Configuration files
 ├── database/           # Database migrations
@@ -69,6 +70,30 @@ s3vgroup/
 ├── uploads/            # Uploaded files
 └── index.php           # Homepage
 ```
+
+## 🔧 Utility Scripts (bin/)
+
+### Database Management
+- `db-manager.php` - Database management tool (backup, restore, etc.)
+- `sync-database.php` - Sync database between local and live
+- `auto-sync-database.php` - Automated database sync
+- `auto-sync-schema.php` - Sync database schema
+- `verify-database-schema.php` - Verify schema integrity
+- `migrate-wordpress-content.php` - WordPress content migration
+
+### Image Optimization
+- `compress-large-images-to-300kb.php` - Compress large images to 300KB
+- `optimize-product-images.php` - Optimize product images
+- `check-gd-support.php` - Check if GD extension is available
+
+### Maintenance
+- `cleanup.php` - General cleanup tasks
+- `comprehensive-cleanup.php` - Comprehensive cleanup
+- `project-cleanup.php` - Remove temporary files and old documentation
+
+### Automation
+- `auto-sync-scheduled.ps1` - Scheduled database sync (PowerShell)
+- `auto-sync-schema-scheduled.ps1` - Scheduled schema sync (PowerShell)
 
 ## 🔧 Configuration
 

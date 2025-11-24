@@ -39,8 +39,12 @@ final class ImageOptimizer
             return;
         }
 
-        // Already within bounds? Skip additional processing.
-        if ($width <= $maxWidth && $height <= $maxHeight) {
+        $fileSize = filesize($path);
+        $needsResize = $width > $maxWidth || $height > $maxHeight;
+        $needsCompression = $fileSize > 2 * 1024 * 1024; // > 2MB needs compression
+
+        // If dimensions are OK but file is large, still compress it
+        if (!$needsResize && !$needsCompression) {
             return;
         }
 
@@ -50,13 +54,19 @@ final class ImageOptimizer
         }
 
         // Maintain aspect ratio by fitting inside the bounding box.
-        $scale = min($maxWidth / $width, $maxHeight / $height);
-        if ($scale > 1) {
-            $scale = 1;
+        // If only compressing (not resizing), keep original dimensions
+        if ($needsResize) {
+            $scale = min($maxWidth / $width, $maxHeight / $height);
+            if ($scale > 1) {
+                $scale = 1;
+            }
+            $newWidth = (int) round($width * $scale);
+            $newHeight = (int) round($height * $scale);
+        } else {
+            // Just compress, keep original dimensions
+            $newWidth = $width;
+            $newHeight = $height;
         }
-
-        $newWidth = (int) round($width * $scale);
-        $newHeight = (int) round($height * $scale);
 
         $dst = imagecreatetruecolor($newWidth, $newHeight);
 

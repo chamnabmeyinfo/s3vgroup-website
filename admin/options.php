@@ -479,19 +479,49 @@ include __DIR__ . '/includes/header.php';
         }
     });
 
-    // Handle image uploads
+    // Handle image uploads with automatic optimization
     form.querySelectorAll('input[type="file"]').forEach(fileInput => {
         fileInput.addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (!file) return;
 
+            // Client-side validation: Check file size before upload
+            const maxSize = 50 * 1024 * 1024; // 50MB
+            if (file.size > maxSize) {
+                alert('❌ File is too large! Maximum size is 50MB. Please choose a smaller image.');
+                e.target.value = ''; // Clear selection
+                return;
+            }
+
+            // Warn about large files (but allow them - server will optimize)
+            const largeFileThreshold = 10 * 1024 * 1024; // 10MB
+            if (file.size > largeFileThreshold) {
+                const proceed = confirm(
+                    `⚠️ Large image detected (${(file.size / 1024 / 1024).toFixed(1)} MB).\n\n` +
+                    `The image will be automatically optimized to under 1MB after upload.\n\n` +
+                    `Continue with upload?`
+                );
+                if (!proceed) {
+                    e.target.value = '';
+                    return;
+                }
+            }
+
             const targetInputId = fileInput.dataset.target;
             const targetInput = document.getElementById(targetInputId);
             const preview = targetInput.parentElement.querySelector('img');
 
-            // Show loading state
+            // Show loading state with optimization message
             if (preview) {
                 preview.style.opacity = '0.5';
+            }
+            
+            // Show upload progress
+            const originalButton = fileInput.parentElement.querySelector('button');
+            const originalButtonText = originalButton ? originalButton.textContent : '';
+            if (originalButton) {
+                originalButton.disabled = true;
+                originalButton.textContent = 'Uploading & Optimizing...';
             }
 
             try {
@@ -525,12 +555,26 @@ include __DIR__ . '/includes/header.php';
                     targetInput.parentElement.appendChild(img);
                 }
 
-                alert('✅ Image uploaded successfully!');
+                // Show optimization results if available
+                let successMessage = '✅ Image uploaded successfully!';
+                if (result.data.optimized && result.data.sizeReduction) {
+                    successMessage = `✅ Image uploaded and optimized!\n\n` +
+                        `Size reduced by ${result.data.sizeReduction}%\n` +
+                        `Final size: ${(result.data.size / 1024 / 1024).toFixed(2)} MB`;
+                } else if (result.data.message) {
+                    successMessage = `✅ ${result.data.message}`;
+                }
+                
+                alert(successMessage);
             } catch (error) {
                 alert('❌ Upload error: ' + error.message);
             } finally {
                 if (preview) {
                     preview.style.opacity = '1';
+                }
+                if (originalButton) {
+                    originalButton.disabled = false;
+                    originalButton.textContent = originalButtonText;
                 }
             }
         });

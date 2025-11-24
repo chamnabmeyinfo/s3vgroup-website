@@ -330,17 +330,39 @@ include __DIR__ . '/includes/header.php';
         }
     }
 
-    // Hero image upload
+    // Hero image upload with automatic optimization
     document.getElementById('product-hero-image-file')?.addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
+        // Client-side validation: Check file size before upload
+        const maxSize = 50 * 1024 * 1024; // 50MB
+        if (file.size > maxSize) {
+            alert('❌ File is too large! Maximum size is 50MB. Please choose a smaller image.');
+            e.target.value = '';
+            return;
+        }
+
+        // Warn about large files (but allow them - server will optimize)
+        const largeFileThreshold = 10 * 1024 * 1024; // 10MB
+        if (file.size > largeFileThreshold) {
+            const proceed = confirm(
+                `⚠️ Large image detected (${(file.size / 1024 / 1024).toFixed(1)} MB).\n\n` +
+                `The image will be automatically optimized to under 1MB after upload.\n\n` +
+                `Continue with upload?`
+            );
+            if (!proceed) {
+                e.target.value = '';
+                return;
+            }
+        }
+
         const input = document.getElementById('product-hero-image-input');
         const preview = document.getElementById('product-hero-image-preview');
         
-        // Show loading
+        // Show loading with optimization message
         if (preview) {
-            preview.innerHTML = '<p class="text-sm text-gray-500">Uploading...</p>';
+            preview.innerHTML = '<p class="text-sm text-gray-500">Uploading & Optimizing...</p>';
         }
 
         try {
@@ -357,6 +379,11 @@ include __DIR__ . '/includes/header.php';
             if (result.status === 'success') {
                 input.value = result.data.url;
                 preview.innerHTML = `<img src="${result.data.url}" alt="Preview" class="h-32 w-auto rounded border border-gray-300 object-contain">`;
+                
+                // Show optimization results if available
+                if (result.data.optimized && result.data.sizeReduction) {
+                    console.log(`Image optimized: Reduced by ${result.data.sizeReduction}%`);
+                }
             } else {
                 preview.innerHTML = '';
                 alert('Upload failed: ' + (result.message || 'Unknown error'));

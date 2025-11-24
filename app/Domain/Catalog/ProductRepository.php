@@ -72,6 +72,42 @@ SQL;
         return array_map([$this, 'transform'], $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
+    public function all(array $filters = []): array
+    {
+        $conditions = [];
+        $params = [];
+
+        if (!empty($filters['status'])) {
+            $conditions[] = 'p.status = :status';
+            $params[':status'] = $filters['status'];
+        }
+
+        if (!empty($filters['categoryId'])) {
+            $conditions[] = 'p.categoryId = :categoryId';
+            $params[':categoryId'] = $filters['categoryId'];
+        }
+
+        $where = $conditions ? 'WHERE ' . implode(' AND ', $conditions) : '';
+
+        $sql = <<<SQL
+SELECT p.*, c.name AS category_name, c.slug AS category_slug
+FROM products p
+LEFT JOIN categories c ON p.categoryId = c.id
+$where
+ORDER BY p.updatedAt DESC
+SQL;
+
+        $statement = $this->pdo->prepare($sql);
+
+        foreach ($params as $key => $value) {
+            $statement->bindValue($key, $value, PDO::PARAM_STR);
+        }
+
+        $statement->execute();
+
+        return array_map([$this, 'transform'], $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
     public function paginateForAdmin(array $filters = [], int $limit = 50, int $offset = 0): array
     {
         $conditions = [];

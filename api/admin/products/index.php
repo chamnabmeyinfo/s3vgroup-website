@@ -23,19 +23,41 @@ switch (Request::method()) {
             'categoryId' => Request::query('categoryId'),
         ];
 
-        $limit = (int) Request::query('limit', 25);
-        $offset = (int) Request::query('offset', 0);
+        // Support loading all products or paginated
+        $loadAll = Request::query('all') === 'true' || Request::query('all') === '1';
+        
+        if ($loadAll) {
+            // Load all products matching filters
+            $products = $repository->all($filters);
+            $totalCount = count($products);
+            
+            JsonResponse::success([
+                'products' => $products,
+                'total' => $totalCount,
+                'count' => $totalCount,
+            ]);
+        } else {
+            // Paginated results
+            $limit = (int) Request::query('limit', 25);
+            $offset = (int) Request::query('offset', 0);
 
-        $products = $repository->paginateForAdmin($filters, $limit, $offset);
+            $products = $repository->paginateForAdmin($filters, $limit, $offset);
+            
+            // Get total count for pagination
+            $allProducts = $repository->all($filters);
+            $totalCount = count($allProducts);
 
-        JsonResponse::success([
-            'products' => $products,
-            'pagination' => [
-                'limit'  => $limit,
-                'offset' => $offset,
-                'count'  => count($products),
-            ],
-        ]);
+            JsonResponse::success([
+                'products' => $products,
+                'pagination' => [
+                    'limit'  => $limit,
+                    'offset' => $offset,
+                    'count'  => count($products),
+                    'total'  => $totalCount,
+                    'hasMore' => ($offset + $limit) < $totalCount,
+                ],
+            ]);
+        }
         break;
 
     case 'POST':

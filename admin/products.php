@@ -9,14 +9,10 @@ require_once __DIR__ . '/../includes/functions.php';
 requireAdmin();
 
 $db = getDB();
-$products = $db->query("
-    SELECT p.*, c.name as category_name 
-    FROM products p 
-    LEFT JOIN categories c ON p.categoryId = c.id 
-    ORDER BY p.updatedAt DESC 
-    LIMIT 25
-")->fetchAll();
 $categoriesList = getAllCategories($db);
+
+// Load all products via API (will be loaded via JavaScript)
+$products = [];
 
 $pageTitle = 'Products';
 include __DIR__ . '/includes/header.php';
@@ -35,7 +31,13 @@ include __DIR__ . '/includes/header.php';
     </div>
 
     <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        <table class="w-full text-left text-sm">
+        <div id="products-loading" class="p-8 text-center text-gray-500">
+            Loading products...
+        </div>
+        <div id="products-error" class="hidden p-8 text-center text-red-600">
+            Failed to load products. Please refresh the page.
+        </div>
+        <table id="products-table" class="w-full text-left text-sm hidden">
             <thead class="bg-gray-50 text-gray-700">
                 <tr>
                     <th class="px-6 py-3 font-medium"></th>
@@ -46,62 +48,8 @@ include __DIR__ . '/includes/header.php';
                     <th class="px-6 py-3 font-medium"></th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200">
-                <?php foreach ($products as $product): ?>
-                    <tr>
-                        <td class="px-6 py-4">
-                            <?php if ($product['heroImage']): ?>
-                                <img src="<?php echo e($product['heroImage']); ?>" alt="<?php echo e($product['name']); ?>" class="h-10 w-10 rounded-lg object-cover">
-                            <?php endif; ?>
-                        </td>
-                        <td class="px-6 py-4 font-semibold"><?php echo e($product['name']); ?></td>
-                        <td class="px-6 py-4 text-gray-600"><?php echo e($product['category_name'] ?? '—'); ?></td>
-                        <td class="px-6 py-4">
-                            <span class="px-3 py-1 rounded-full text-xs font-semibold <?php 
-                                echo $product['status'] === 'PUBLISHED' ? 'bg-green-100 text-green-800' : 
-                                    ($product['status'] === 'DRAFT' ? 'bg-gray-100 text-gray-800' : 'bg-red-100 text-red-800'); 
-                            ?>">
-                                <?php echo e($product['status']); ?>
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 text-gray-600"><?php echo date('M d, Y', strtotime($product['updatedAt'])); ?></td>
-                        <td class="px-6 py-4 text-right">
-                            <?php
-                                $productData = [
-                                    'id'          => $product['id'],
-                                    'name'        => $product['name'],
-                                    'slug'        => $product['slug'],
-                                    'sku'         => $product['sku'],
-                                    'summary'     => $product['summary'],
-                                    'description' => $product['description'],
-                                    'specs'       => $product['specs'] ? json_decode($product['specs'], true) ?? $product['specs'] : null,
-                                    'heroImage'   => $product['heroImage'],
-                                    'price'       => $product['price'],
-                                    'status'      => $product['status'],
-                                    'highlights'  => $product['highlights'] ? json_decode($product['highlights'], true) ?? $product['highlights'] : null,
-                                    'categoryId'  => $product['categoryId'],
-                                ];
-                            ?>
-                            <div class="flex items-center justify-end gap-3">
-                                <button
-                                    type="button"
-                                    class="text-sm font-medium text-[#0b3a63] hover:underline product-edit-btn"
-                                    data-product="<?php echo htmlspecialchars(json_encode($productData), ENT_QUOTES, 'UTF-8'); ?>"
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    type="button"
-                                    class="text-sm font-medium text-red-600 hover:text-red-800 product-delete-btn"
-                                    data-id="<?php echo htmlspecialchars($product['id'], ENT_QUOTES, 'UTF-8'); ?>"
-                                    data-name="<?php echo htmlspecialchars($product['name'], ENT_QUOTES, 'UTF-8'); ?>"
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
+            <tbody id="products-tbody" class="divide-y divide-gray-200">
+                <!-- Products will be loaded here via JavaScript -->
             </tbody>
         </table>
     </div>
@@ -320,7 +268,8 @@ include __DIR__ . '/includes/header.php';
                 throw new Error(result.message || 'Unable to save product.');
             }
 
-            window.location.reload();
+            hideModal();
+            loadAllProducts(); // Reload products instead of page reload
         } catch (error) {
             errorEl.textContent = error.message;
             errorEl.classList.remove('hidden');
@@ -399,40 +348,151 @@ include __DIR__ . '/includes/header.php';
     cancelBtn.addEventListener('click', hideModal);
     form.addEventListener('submit', handleSubmit);
 
-    document.querySelectorAll('.product-edit-btn').forEach((button) => {
-        button.addEventListener('click', () => {
-            const data = JSON.parse(button.dataset.product);
-            showModal(data);
-        });
-    });
+    // Load all products from API
+    async function loadAllProducts() {
+        const loadingEl = document.getElementById('products-loading');
+        const errorEl = document.getElementById('products-error');
+        const tableEl = document.getElementById('products-table');
+        const tbodyEl = document.getElementById('products-tbody');
 
-    // Delete functionality
-    document.querySelectorAll('.product-delete-btn').forEach((button) => {
-        button.addEventListener('click', async () => {
-            const id = button.dataset.id;
-            const name = button.dataset.name;
+        try {
+            loadingEl.classList.remove('hidden');
+            errorEl.classList.add('hidden');
+            tableEl.classList.add('hidden');
 
-            if (!confirm(`Are you sure you want to delete the product "${name}"? This action cannot be undone.`)) {
-                return;
+            const response = await fetch('/api/admin/products/index.php?all=1');
+            const result = await response.json();
+
+            if (result.status === 'success' && result.data.products) {
+                renderProducts(result.data.products);
+                loadingEl.classList.add('hidden');
+                tableEl.classList.remove('hidden');
+            } else {
+                throw new Error(result.message || 'Failed to load products');
             }
+        } catch (error) {
+            console.error('Error loading products:', error);
+            loadingEl.classList.add('hidden');
+            errorEl.classList.remove('hidden');
+        }
+    }
 
-            try {
-                const response = await fetch(`/api/admin/products/item.php?id=${encodeURIComponent(id)}`, {
-                    method: 'DELETE',
-                });
+    // Render products in table
+    function renderProducts(products) {
+        const tbodyEl = document.getElementById('products-tbody');
+        tbodyEl.innerHTML = '';
 
-                const result = await response.json();
+        if (products.length === 0) {
+            tbodyEl.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500">No products found.</td></tr>';
+            return;
+        }
 
-                if (!response.ok || result.status !== 'success') {
-                    throw new Error(result.message || 'Unable to delete product.');
+        products.forEach((product) => {
+            const row = document.createElement('tr');
+            
+            const statusClass = product.status === 'PUBLISHED' 
+                ? 'bg-green-100 text-green-800' 
+                : (product.status === 'DRAFT' ? 'bg-gray-100 text-gray-800' : 'bg-red-100 text-red-800');
+            
+            const updatedDate = product.updatedAt 
+                ? new Date(product.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                : '—';
+
+            row.innerHTML = `
+                <td class="px-6 py-4">
+                    ${product.heroImage ? `<img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.name)}" class="h-10 w-10 rounded-lg object-cover">` : ''}
+                </td>
+                <td class="px-6 py-4 font-semibold">${escapeHtml(product.name)}</td>
+                <td class="px-6 py-4 text-gray-600">${escapeHtml(product.category_name || '—')}</td>
+                <td class="px-6 py-4">
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold ${statusClass}">
+                        ${escapeHtml(product.status)}
+                    </span>
+                </td>
+                <td class="px-6 py-4 text-gray-600">${updatedDate}</td>
+                <td class="px-6 py-4 text-right">
+                    <div class="flex items-center justify-end gap-3">
+                        <button
+                            type="button"
+                            class="text-sm font-medium text-[#0b3a63] hover:underline product-edit-btn"
+                            data-product-id="${escapeHtml(product.id)}"
+                        >
+                            Edit
+                        </button>
+                        <button
+                            type="button"
+                            class="text-sm font-medium text-red-600 hover:text-red-800 product-delete-btn"
+                            data-id="${escapeHtml(product.id)}"
+                            data-name="${escapeHtml(product.name)}"
+                        >
+                            Delete
+                        </button>
+                    </div>
+                </td>
+            `;
+            
+            tbodyEl.appendChild(row);
+        });
+
+        // Attach event listeners to edit buttons
+        document.querySelectorAll('.product-edit-btn').forEach((button) => {
+            button.addEventListener('click', async () => {
+                const productId = button.dataset.productId;
+                try {
+                    const response = await fetch(`/api/admin/products/item.php?id=${encodeURIComponent(productId)}`);
+                    const result = await response.json();
+                    
+                    if (result.status === 'success' && result.data.product) {
+                        showModal(result.data.product);
+                    } else {
+                        alert('Error: ' + (result.message || 'Failed to load product'));
+                    }
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                }
+            });
+        });
+
+        // Attach event listeners to delete buttons
+        document.querySelectorAll('.product-delete-btn').forEach((button) => {
+            button.addEventListener('click', async () => {
+                const id = button.dataset.id;
+                const name = button.dataset.name;
+
+                if (!confirm(`Are you sure you want to delete the product "${name}"? This action cannot be undone.`)) {
+                    return;
                 }
 
-                window.location.reload();
-            } catch (error) {
-                alert('Error: ' + error.message);
-            }
+                try {
+                    const response = await fetch(`/api/admin/products/item.php?id=${encodeURIComponent(id)}`, {
+                        method: 'DELETE',
+                    });
+
+                    const result = await response.json();
+
+                    if (!response.ok || result.status !== 'success') {
+                        throw new Error(result.message || 'Unable to delete product.');
+                    }
+
+                    loadAllProducts(); // Reload products instead of page reload
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                }
+            });
         });
-    });
+    }
+
+    // Helper function to escape HTML
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Load products on page load
+    loadAllProducts();
+
 })();
 </script>
 

@@ -112,6 +112,14 @@ Edit `config/site.php`:
 - Contact information
 - Social media links
 
+### Cache Configuration
+
+- Toggle caching in **Admin → Site Options → Performance** (`enable_caching`)
+- Override globally via `.env`:
+  - `CACHE_MODE=auto|on|off`
+  - `CACHE_TTL=3600` (seconds)
+- When `APP_ENV` is `local`/`development`, caching stays off to keep updates instant.
+
 ## 📦 Admin Panel
 
 Access: `/admin/login.php`

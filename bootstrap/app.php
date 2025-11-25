@@ -17,4 +17,5 @@ if (file_exists(base_path('includes/helpers.php'))) {
 \App\Support\Autoloader::register();
 \App\Support\Env::load(base_path('.env'));
 \App\Support\Env::load(base_path('env.example'));
+\App\Support\CacheControl::apply();
 

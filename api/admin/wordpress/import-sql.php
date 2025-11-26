@@ -83,11 +83,45 @@ try {
     exit;
 }
 
-// Set headers for streaming
-header('Content-Type: text/plain; charset=utf-8');
-header('Cache-Control: no-cache');
-header('X-Accel-Buffering: no');
-header('Connection: keep-alive');
+// Check if we're being included for functions only (not executed directly)
+$functionsOnly = isset($GLOBALS['__WP_IMPORT_FUNCTIONS_ONLY']) || 
+                (php_sapi_name() !== 'cli' && !isset($_SERVER['REQUEST_METHOD']));
+
+// Set headers for streaming (only if not functions-only mode)
+if (!$functionsOnly) {
+    header('Content-Type: text/plain; charset=utf-8');
+    header('Cache-Control: no-cache');
+    header('X-Accel-Buffering: no');
+    header('Connection: keep-alive');
+}
+
+/**
+ * Check if an image URL is from WordPress site (s3vtgroup.com.kh or s3vgroup.com)
+ * 
+ * @param string $url Image URL to check
+ * @return bool True if URL is from WordPress site
+ */
+function isWordPressImageUrl($url) {
+    if (empty($url) || !is_string($url)) {
+        return false;
+    }
+    
+    // Check for WordPress domains
+    $wordPressDomains = [
+        's3vtgroup.com.kh',
+        's3vgroup.com',
+        'www.s3vtgroup.com.kh',
+        'www.s3vgroup.com'
+    ];
+    
+    foreach ($wordPressDomains as $domain) {
+        if (strpos($url, $domain) !== false) {
+            return true;
+        }
+    }
+    
+    return false;
+}
 
 function sendProgress($percent, $message = '') {
     echo json_encode([
@@ -115,6 +149,8 @@ function sendComplete($stats) {
     flush();
 }
 
+// Only execute main import logic if not in functions-only mode
+if (!$functionsOnly) {
 try {
     // Get WordPress connection details
     $wpHost = $_POST['wp_host'] ?? '';
@@ -446,8 +482,7 @@ try {
                     $imageUrl = $image['guid'];
                     
                     // Check if image is from WordPress site (s3vtgroup.com.kh) - ALWAYS download and optimize
-                    $isWordPressImage = strpos($imageUrl, 's3vtgroup.com.kh') !== false || 
-                                       strpos($imageUrl, 's3vgroup.com') !== false;
+                    $isWordPressImage = isWordPressImageUrl($imageUrl);
                     
                     // Force download if: (1) option enabled, OR (2) image is from WordPress site
                     $shouldDownload = $options['download_images'] || $isWordPressImage;
@@ -556,6 +591,7 @@ try {
     sendLog("❌ Fatal error: " . $e->getMessage(), 'error');
     sendComplete(['imported' => 0, 'skipped' => 0, 'errors' => 1, 'categories' => 0]);
 }
+} // End of functions-only check - only execute main code if not included for functions
 
 /**
  * Download and optimize image from URL

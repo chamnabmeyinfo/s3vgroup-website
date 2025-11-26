@@ -21,6 +21,9 @@ switch (Request::method()) {
         $filters = [
             'status'     => Request::query('status'),
             'categoryId' => Request::query('categoryId'),
+            'search'     => Request::query('search'),
+            'sortBy'     => Request::query('sortBy'),
+            'sortOrder'  => Request::query('sortOrder'),
         ];
 
         // Support loading all products or paginated

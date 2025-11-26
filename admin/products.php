@@ -23,7 +23,10 @@ include __DIR__ . '/includes/header.php';
         <div>
             <p class="text-sm uppercase tracking-wide text-gray-500">Catalog</p>
             <h1 class="text-3xl font-semibold text-[#0b3a63]">Products</h1>
-            <p class="text-sm text-gray-600">Manage published systems and drafts</p>
+            <p class="text-sm text-gray-600">
+                Manage published systems and drafts
+                <span id="product-count" class="ml-2 font-medium text-gray-900"></span>
+            </p>
         </div>
         <button type="button" id="new-product-btn" class="admin-btn admin-btn-primary">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -31,6 +34,77 @@ include __DIR__ . '/includes/header.php';
             </svg>
             <span>New Product</span>
         </button>
+    </div>
+
+    <!-- Filters and Sort -->
+    <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-4 md:p-6">
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+            <!-- Search -->
+            <div class="lg:col-span-2">
+                <label for="product-search" class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+                <input 
+                    type="text" 
+                    id="product-search" 
+                    placeholder="Search by name, SKU, description..."
+                    class="admin-form-input w-full"
+                >
+            </div>
+            
+            <!-- Category Filter -->
+            <div>
+                <label for="product-category-filter" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                <select id="product-category-filter" class="admin-form-select w-full">
+                    <option value="">All Categories</option>
+                    <?php foreach ($categoriesList as $category): ?>
+                        <option value="<?php echo e($category['id']); ?>"><?php echo e($category['name']); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            
+            <!-- Status Filter -->
+            <div>
+                <label for="product-status-filter" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <select id="product-status-filter" class="admin-form-select w-full">
+                    <option value="">All Status</option>
+                    <option value="PUBLISHED">Published</option>
+                    <option value="DRAFT">Draft</option>
+                    <option value="ARCHIVED">Archived</option>
+                </select>
+            </div>
+            
+            <!-- Sort -->
+            <div>
+                <label for="product-sort" class="block text-sm font-medium text-gray-700 mb-1">Sort By</label>
+                <select id="product-sort" class="admin-form-select w-full">
+                    <option value="updatedAt">Last Updated</option>
+                    <option value="name">Name (A-Z)</option>
+                    <option value="price">Price</option>
+                    <option value="status">Status</option>
+                    <option value="createdAt">Date Created</option>
+                    <option value="category">Category</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="mt-4 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <label class="flex items-center gap-2 text-sm text-gray-700">
+                    <input type="radio" name="sort-order" value="DESC" checked class="text-blue-600">
+                    <span>Descending</span>
+                </label>
+                <label class="flex items-center gap-2 text-sm text-gray-700">
+                    <input type="radio" name="sort-order" value="ASC" class="text-blue-600">
+                    <span>Ascending</span>
+                </label>
+            </div>
+            <button 
+                type="button" 
+                id="clear-filters-btn"
+                class="text-sm text-gray-600 hover:text-gray-900 underline"
+            >
+                Clear Filters
+            </button>
+        </div>
     </div>
 
     <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
@@ -362,6 +436,61 @@ include __DIR__ . '/includes/header.php';
     cancelBtn.addEventListener('click', hideModal);
     form.addEventListener('submit', handleSubmit);
 
+    // Get current filters
+    function getFilters() {
+        return {
+            search: document.getElementById('product-search').value.trim(),
+            categoryId: document.getElementById('product-category-filter').value,
+            status: document.getElementById('product-status-filter').value,
+            sortBy: document.getElementById('product-sort').value,
+            sortOrder: document.querySelector('input[name="sort-order"]:checked').value
+        };
+    }
+
+    // Build query string from filters
+    function buildQueryString(filters) {
+        const params = new URLSearchParams();
+        if (filters.search) params.append('search', filters.search);
+        if (filters.categoryId) params.append('categoryId', filters.categoryId);
+        if (filters.status) params.append('status', filters.status);
+        if (filters.sortBy) params.append('sortBy', filters.sortBy);
+        if (filters.sortOrder) params.append('sortOrder', filters.sortOrder);
+        params.append('all', '1');
+        return params.toString();
+    }
+
+    // Clear all filters
+    document.getElementById('clear-filters-btn').addEventListener('click', () => {
+        document.getElementById('product-search').value = '';
+        document.getElementById('product-category-filter').value = '';
+        document.getElementById('product-status-filter').value = '';
+        document.getElementById('product-sort').value = 'updatedAt';
+        document.querySelector('input[name="sort-order"][value="DESC"]').checked = true;
+        loadAllProducts();
+    });
+
+    // Add event listeners for filters
+    ['product-search', 'product-category-filter', 'product-status-filter', 'product-sort'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            if (id === 'product-search') {
+                // Debounce search input
+                let searchTimeout;
+                el.addEventListener('input', () => {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => loadAllProducts(), 500);
+                });
+            } else {
+                el.addEventListener('change', loadAllProducts);
+            }
+        }
+    });
+
+    // Sort order change
+    document.querySelectorAll('input[name="sort-order"]').forEach(radio => {
+        radio.addEventListener('change', loadAllProducts);
+    });
+
     // Load all products from API
     async function loadAllProducts() {
         const loadingEl = document.getElementById('products-loading');
@@ -374,13 +503,20 @@ include __DIR__ . '/includes/header.php';
             errorEl.classList.add('hidden');
             tableEl.classList.add('hidden');
 
-            const response = await fetch('/api/admin/products/index.php?all=1');
+            const filters = getFilters();
+            const queryString = buildQueryString(filters);
+            const response = await fetch(`/api/admin/products/index.php?${queryString}`);
             const result = await response.json();
 
             if (result.status === 'success' && result.data.products) {
                 renderProducts(result.data.products);
                 loadingEl.classList.add('hidden');
                 tableEl.classList.remove('hidden');
+                
+                // Update product count
+                const countEl = document.getElementById('product-count');
+                const total = result.data.total || result.data.count || result.data.products.length;
+                countEl.textContent = `(${total} ${total === 1 ? 'product' : 'products'})`;
             } else {
                 throw new Error(result.message || 'Failed to load products');
             }

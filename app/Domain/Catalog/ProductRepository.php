@@ -87,14 +87,36 @@ SQL;
             $params[':categoryId'] = $filters['categoryId'];
         }
 
+        // Search filter
+        if (!empty($filters['search'])) {
+            $conditions[] = '(p.name LIKE :search OR p.sku LIKE :search OR p.summary LIKE :search OR p.description LIKE :search)';
+            $params[':search'] = '%' . $filters['search'] . '%';
+        }
+
         $where = $conditions ? 'WHERE ' . implode(' AND ', $conditions) : '';
+
+        // Sorting
+        $orderBy = 'p.updatedAt DESC';
+        if (!empty($filters['sortBy'])) {
+            $sortField = match($filters['sortBy']) {
+                'name' => 'p.name',
+                'price' => 'p.price',
+                'status' => 'p.status',
+                'createdAt' => 'p.createdAt',
+                'updatedAt' => 'p.updatedAt',
+                'category' => 'c.name',
+                default => 'p.updatedAt'
+            };
+            $sortOrder = (!empty($filters['sortOrder']) && strtoupper($filters['sortOrder']) === 'ASC') ? 'ASC' : 'DESC';
+            $orderBy = $sortField . ' ' . $sortOrder;
+        }
 
         $sql = <<<SQL
 SELECT p.*, c.name AS category_name, c.slug AS category_slug
 FROM products p
 LEFT JOIN categories c ON p.categoryId = c.id
 $where
-ORDER BY p.updatedAt DESC
+ORDER BY $orderBy
 SQL;
 
         $statement = $this->pdo->prepare($sql);
@@ -126,14 +148,36 @@ SQL;
             $params[':categoryId'] = $filters['categoryId'];
         }
 
+        // Search filter
+        if (!empty($filters['search'])) {
+            $conditions[] = '(p.name LIKE :search OR p.sku LIKE :search OR p.summary LIKE :search OR p.description LIKE :search)';
+            $params[':search'] = '%' . $filters['search'] . '%';
+        }
+
         $where = $conditions ? 'WHERE ' . implode(' AND ', $conditions) : '';
+
+        // Sorting
+        $orderBy = 'p.updatedAt DESC';
+        if (!empty($filters['sortBy'])) {
+            $sortField = match($filters['sortBy']) {
+                'name' => 'p.name',
+                'price' => 'p.price',
+                'status' => 'p.status',
+                'createdAt' => 'p.createdAt',
+                'updatedAt' => 'p.updatedAt',
+                'category' => 'c.name',
+                default => 'p.updatedAt'
+            };
+            $sortOrder = (!empty($filters['sortOrder']) && strtoupper($filters['sortOrder']) === 'ASC') ? 'ASC' : 'DESC';
+            $orderBy = $sortField . ' ' . $sortOrder;
+        }
 
         $sql = <<<SQL
 SELECT p.*, c.name AS category_name, c.slug AS category_slug
 FROM products p
 LEFT JOIN categories c ON p.categoryId = c.id
 $where
-ORDER BY p.updatedAt DESC
+ORDER BY $orderBy
 LIMIT :limit OFFSET :offset
 SQL;
 

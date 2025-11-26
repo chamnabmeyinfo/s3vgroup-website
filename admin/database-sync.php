@@ -269,6 +269,35 @@ include __DIR__ . '/includes/header.php';
         </div>
     </div>
 
+    <!-- Comparison Report Card -->
+    <div class="mt-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border-2 border-purple-200 shadow-sm p-6">
+        <div class="flex items-center gap-3 mb-4">
+            <span class="text-3xl">📊</span>
+            <div>
+                <h2 class="text-xl font-semibold text-gray-900">Database Comparison Report</h2>
+                <p class="text-sm text-gray-600">Compare local and cPanel databases to see differences</p>
+            </div>
+        </div>
+
+        <button type="button" id="compare-btn" class="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-md hover:from-purple-700 hover:to-pink-700 transition-all font-semibold text-lg shadow-lg mb-4">
+            📊 Generate Comparison Report
+        </button>
+        
+        <div id="compare-status" class="mb-4 text-sm hidden"></div>
+        
+        <!-- Report Display Area -->
+        <div id="comparison-report" class="hidden mt-4 space-y-4">
+            <!-- Summary -->
+            <div id="report-summary" class="bg-white rounded-lg p-4 border border-purple-100"></div>
+            
+            <!-- Tables Comparison -->
+            <div id="report-tables" class="bg-white rounded-lg p-4 border border-purple-100"></div>
+            
+            <!-- Data Comparison -->
+            <div id="report-data" class="bg-white rounded-lg p-4 border border-purple-100 max-h-96 overflow-y-auto"></div>
+        </div>
+    </div>
+
     <!-- Actions Card -->
     <div class="mt-6 bg-white rounded-lg border border-gray-200 shadow-sm p-6">
         <h2 class="text-xl font-semibold text-gray-900 mb-4">Manual Operations</h2>
@@ -760,6 +789,171 @@ document.addEventListener('DOMContentLoaded', function() {
         } finally {
             syncBtn.disabled = false;
             syncBtn.textContent = '⬆️ Push Local → cPanel Now';
+        }
+    });
+
+    // Compare databases
+    document.getElementById('compare-btn').addEventListener('click', async () => {
+        const compareBtn = document.getElementById('compare-btn');
+        const statusDiv = document.getElementById('compare-status');
+        const reportDiv = document.getElementById('comparison-report');
+        const summaryDiv = document.getElementById('report-summary');
+        const tablesDiv = document.getElementById('report-tables');
+        const dataDiv = document.getElementById('report-data');
+
+        compareBtn.disabled = true;
+        compareBtn.textContent = '📊 Comparing...';
+        statusDiv.classList.remove('hidden');
+        statusDiv.textContent = 'Comparing databases...';
+        statusDiv.className = 'mb-4 text-sm text-blue-600';
+        reportDiv.classList.add('hidden');
+
+        try {
+            const response = await fetch('/api/admin/database/compare.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                const report = result.data;
+                statusDiv.textContent = '✅ Comparison completed!';
+                statusDiv.className = 'mb-4 text-sm text-green-600 font-semibold';
+                reportDiv.classList.remove('hidden');
+
+                // Display Summary
+                const summary = report.summary;
+                summaryDiv.innerHTML = `
+                    <h3 class="text-lg font-semibold text-gray-900 mb-3">📊 Summary</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                        <div class="text-center p-3 bg-blue-50 rounded">
+                            <div class="text-2xl font-bold text-blue-600">${summary.local_tables}</div>
+                            <div class="text-xs text-gray-600">Local Tables</div>
+                        </div>
+                        <div class="text-center p-3 bg-green-50 rounded">
+                            <div class="text-2xl font-bold text-green-600">${summary.cpanel_tables}</div>
+                            <div class="text-xs text-gray-600">cPanel Tables</div>
+                        </div>
+                        <div class="text-center p-3 bg-purple-50 rounded">
+                            <div class="text-2xl font-bold text-purple-600">${summary.common_tables}</div>
+                            <div class="text-xs text-gray-600">Common Tables</div>
+                        </div>
+                        <div class="text-center p-3 bg-yellow-50 rounded">
+                            <div class="text-2xl font-bold text-yellow-600">${summary.total_updated_records}</div>
+                            <div class="text-xs text-gray-600">Updated Records</div>
+                        </div>
+                        <div class="text-center p-3 bg-red-50 rounded">
+                            <div class="text-2xl font-bold text-red-600">${summary.total_new_records_local + summary.total_new_records_cpanel}</div>
+                            <div class="text-xs text-gray-600">New Records</div>
+                        </div>
+                    </div>
+                `;
+
+                // Display Tables Comparison
+                let tablesHtml = '<h3 class="text-lg font-semibold text-gray-900 mb-3">📋 Tables Comparison</h3>';
+                
+                if (report.tables.new_in_local.length > 0) {
+                    tablesHtml += `<div class="mb-3"><span class="font-semibold text-blue-600">New in Local (${report.tables.new_in_local.length}):</span> `;
+                    tablesHtml += report.tables.new_in_local.map(t => `<span class="px-2 py-1 bg-blue-100 rounded text-sm">${t}</span>`).join(' ');
+                    tablesHtml += '</div>';
+                }
+                
+                if (report.tables.new_in_cpanel.length > 0) {
+                    tablesHtml += `<div class="mb-3"><span class="font-semibold text-green-600">New in cPanel (${report.tables.new_in_cpanel.length}):</span> `;
+                    tablesHtml += report.tables.new_in_cpanel.map(t => `<span class="px-2 py-1 bg-green-100 rounded text-sm">${t}</span>`).join(' ');
+                    tablesHtml += '</div>';
+                }
+                
+                if (report.tables.common.length > 0) {
+                    tablesHtml += `<div><span class="font-semibold text-gray-600">Common Tables (${report.tables.common.length}):</span> `;
+                    tablesHtml += report.tables.common.map(t => `<span class="px-2 py-1 bg-gray-100 rounded text-sm">${t}</span>`).join(' ');
+                    tablesHtml += '</div>';
+                }
+                
+                if (report.tables.new_in_local.length === 0 && report.tables.new_in_cpanel.length === 0) {
+                    tablesHtml += '<p class="text-sm text-gray-600">✓ All tables exist in both databases</p>';
+                }
+                
+                tablesDiv.innerHTML = tablesHtml;
+
+                // Display Data Comparison
+                let dataHtml = '<h3 class="text-lg font-semibold text-gray-900 mb-3">📝 Data Comparison</h3>';
+                
+                // New in Local
+                if (report.data.new_in_local.length > 0) {
+                    dataHtml += `<div class="mb-4"><h4 class="font-semibold text-blue-600 mb-2">New in Local (${report.data.new_in_local.length} records):</h4>`;
+                    const groupedByTable = {};
+                    report.data.new_in_local.forEach(item => {
+                        if (!groupedByTable[item.table]) {
+                            groupedByTable[item.table] = [];
+                        }
+                        groupedByTable[item.table].push(item);
+                    });
+                    Object.keys(groupedByTable).forEach(table => {
+                        dataHtml += `<div class="ml-4 mb-2"><span class="font-medium">${table}:</span> ${groupedByTable[table].length} new records</div>`;
+                    });
+                    dataHtml += '</div>';
+                }
+                
+                // New in cPanel
+                if (report.data.new_in_cpanel.length > 0) {
+                    dataHtml += `<div class="mb-4"><h4 class="font-semibold text-green-600 mb-2">New in cPanel (${report.data.new_in_cpanel.length} records):</h4>`;
+                    const groupedByTable = {};
+                    report.data.new_in_cpanel.forEach(item => {
+                        if (!groupedByTable[item.table]) {
+                            groupedByTable[item.table] = [];
+                        }
+                        groupedByTable[item.table].push(item);
+                    });
+                    Object.keys(groupedByTable).forEach(table => {
+                        dataHtml += `<div class="ml-4 mb-2"><span class="font-medium">${table}:</span> ${groupedByTable[table].length} new records</div>`;
+                    });
+                    dataHtml += '</div>';
+                }
+                
+                // Updated Records
+                if (report.data.updated.length > 0) {
+                    dataHtml += `<div class="mb-4"><h4 class="font-semibold text-yellow-600 mb-2">Updated Records (${report.data.updated.length}):</h4>`;
+                    const groupedByTable = {};
+                    report.data.updated.forEach(item => {
+                        if (!groupedByTable[item.table]) {
+                            groupedByTable[item.table] = [];
+                        }
+                        groupedByTable[item.table].push(item);
+                    });
+                    Object.keys(groupedByTable).forEach(table => {
+                        dataHtml += `<div class="ml-4 mb-3">`;
+                        dataHtml += `<div class="font-medium mb-1">${table} (${groupedByTable[table].length} records):</div>`;
+                        groupedByTable[table].slice(0, 5).forEach(item => {
+                            const changeFields = Object.keys(item.changes || {});
+                            dataHtml += `<div class="ml-4 text-xs text-gray-600">ID: ${item.key} - Changed: ${changeFields.join(', ')}</div>`;
+                        });
+                        if (groupedByTable[table].length > 5) {
+                            dataHtml += `<div class="ml-4 text-xs text-gray-500">... and ${groupedByTable[table].length - 5} more</div>`;
+                        }
+                        dataHtml += '</div>';
+                    });
+                    dataHtml += '</div>';
+                }
+                
+                if (report.data.new_in_local.length === 0 && 
+                    report.data.new_in_cpanel.length === 0 && 
+                    report.data.updated.length === 0) {
+                    dataHtml += '<p class="text-sm text-gray-600">✓ Databases are identical - no differences found</p>';
+                }
+                
+                dataDiv.innerHTML = dataHtml;
+
+            } else {
+                throw new Error(result.message || 'Comparison failed');
+            }
+        } catch (error) {
+            statusDiv.textContent = '❌ Comparison failed: ' + error.message;
+            statusDiv.className = 'mb-4 text-sm text-red-600 font-semibold';
+        } finally {
+            compareBtn.disabled = false;
+            compareBtn.textContent = '📊 Generate Comparison Report';
         }
     });
 });

@@ -39,7 +39,7 @@
 <body class="min-h-screen bg-gray-100">
     <div class="flex">
         <!-- Sidebar -->
-        <aside class="hidden md:flex w-64 flex-col border-r border-gray-200 bg-white px-6 py-8">
+        <aside class="hidden md:flex w-64 flex-col border-r border-gray-200 bg-white px-6 py-8 sticky top-0 h-screen overflow-y-auto">
             <div class="mb-8">
                 <p class="text-xs uppercase tracking-wide text-gray-500">Admin</p>
                 <h2 class="text-xl font-semibold text-[#0b3a63]">S3vgroup</h2>

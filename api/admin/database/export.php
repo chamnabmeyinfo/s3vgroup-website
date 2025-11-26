@@ -2,18 +2,27 @@
 
 declare(strict_types=1);
 
+// Start output buffering to prevent any unwanted output
+ob_start();
+ini_set('display_errors', '0');
+error_reporting(E_ALL);
+
 require_once __DIR__ . '/../../../config/database.php';
 
 use App\Http\AdminGuard;
+use App\Http\JsonResponse;
 use App\Support\Id;
 
-AdminGuard::requireAuth();
+try {
+    AdminGuard::requireAuth();
+} catch (\Throwable $e) {
+    ob_end_clean();
+    JsonResponse::error('Authentication required.', 401);
+}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    header('Content-Type: application/json');
-    echo json_encode(['error' => 'Method not allowed']);
-    exit;
+    ob_end_clean();
+    JsonResponse::error('Method not allowed.', 405);
 }
 
 $payload = json_decode(file_get_contents('php://input'), true) ?? [];
@@ -24,11 +33,33 @@ $dropTables = $payload['drop_tables'] ?? false;
 try {
     $db = getDB();
     
-    // Get all tables
-    $tables = $db->query("SHOW TABLES")->fetchAll(PDO::FETCH_COLUMN);
+    // Get all tables - handle different table name formats
+    $tables = [];
+    try {
+        $result = $db->query("SHOW TABLES");
+        if ($result) {
+            // Try FETCH_COLUMN first (most common)
+            $tables = $result->fetchAll(PDO::FETCH_COLUMN);
+            
+            // If that didn't work, try FETCH_NUM and get first column
+            if (empty($tables)) {
+                $result = $db->query("SHOW TABLES");
+                $allRows = $result->fetchAll(PDO::FETCH_NUM);
+                foreach ($allRows as $row) {
+                    if (isset($row[0])) {
+                        $tables[] = $row[0];
+                    }
+                }
+            }
+        }
+    } catch (\PDOException $e) {
+        ob_end_clean();
+        JsonResponse::error('Failed to retrieve database tables: ' . $e->getMessage(), 500);
+    }
     
     if (empty($tables)) {
-        throw new RuntimeException('No tables found in database');
+        ob_end_clean();
+        JsonResponse::error('No tables found in database.', 404);
     }
 
     $output = [];
@@ -69,8 +100,12 @@ try {
                     foreach ($row as $value) {
                         if ($value === null) {
                             $values[] = 'NULL';
+                        } elseif (is_bool($value)) {
+                            $values[] = $value ? '1' : '0';
+                        } elseif (is_int($value) || is_float($value)) {
+                            $values[] = (string) $value;
                         } else {
-                            $values[] = $db->quote($value);
+                            $values[] = $db->quote((string) $value);
                         }
                     }
                     $output[] = "INSERT INTO `{$table}` ({$columnList}) VALUES (" . implode(', ', $values) . ");";
@@ -82,8 +117,11 @@ try {
 
     $sql = implode("\n", $output);
 
+    // Clear output buffer before sending file
+    ob_end_clean();
+
     // Set headers for file download
-    header('Content-Type: application/sql');
+    header('Content-Type: application/sql; charset=utf-8');
     header('Content-Disposition: attachment; filename="database-export-' . date('Y-m-d-His') . '.sql"');
     header('Content-Length: ' . strlen($sql));
     header('Cache-Control: no-cache, must-revalidate');
@@ -93,12 +131,8 @@ try {
     exit;
 
 } catch (\Throwable $e) {
-    http_response_code(500);
-    header('Content-Type: application/json');
-    echo json_encode([
-        'status' => 'error',
-        'message' => 'Export failed: ' . $e->getMessage()
-    ]);
-    exit;
+    ob_end_clean();
+    error_log('Database export error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+    JsonResponse::error('Export failed: ' . $e->getMessage(), 500);
 }
 

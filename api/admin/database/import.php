@@ -116,8 +116,12 @@ try {
                             foreach ($row as $value) {
                                 if ($value === null) {
                                     $values[] = 'NULL';
+                                } elseif (is_bool($value)) {
+                                    $values[] = $value ? '1' : '0';
+                                } elseif (is_int($value) || is_float($value)) {
+                                    $values[] = (string) $value;
                                 } else {
-                                    $values[] = $backupDb->quote($value);
+                                    $values[] = $backupDb->quote((string) $value);
                                 }
                             }
                             $backupOutput[] = "INSERT INTO `{$table}` ({$columnList}) VALUES (" . implode(', ', $values) . ");";

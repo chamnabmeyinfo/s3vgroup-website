@@ -11,6 +11,7 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} !^/admin/
+    RewriteCond %{REQUEST_URI} !^/api/
     RewriteCond %{REQUEST_URI} !\.(jpg|jpeg|png|gif|webp|svg|ico|css|js|woff|woff2|ttf|otf|pdf|zip)$ [NC]
     RewriteRule ^(.*)$ index.php [L,QSA]
     

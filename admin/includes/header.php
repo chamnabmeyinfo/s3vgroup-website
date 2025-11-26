@@ -126,10 +126,6 @@
                 <p class="text-xs uppercase tracking-wide text-gray-500 mb-1">Admin</p>
                 <h2 class="text-xl font-bold text-[#0b3a63]">S3vgroup</h2>
             </div>
-            <div class="mb-8">
-                <p class="text-xs uppercase tracking-wide text-gray-500">Admin</p>
-                <h2 class="text-xl font-semibold text-[#0b3a63]">S3vgroup</h2>
-            </div>
             <nav class="flex-1 px-4 py-4 overflow-y-auto">
                 <div class="space-y-1">
                 <!-- Dashboard -->
@@ -210,11 +206,36 @@
 
                 <div class="border-t border-gray-200 my-3"></div>
 
+                <!-- Analytics & Insights -->
+                <p class="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Analytics</p>
+                <a href="/admin/analytics.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors <?php echo basename($_SERVER['PHP_SELF']) === 'analytics.php' ? 'bg-[#0b3a63] text-white' : 'text-gray-700 hover:bg-gray-100'; ?>">
+                    <span class="text-lg">📊</span>
+                    <span>Analytics</span>
+                </a>
+                <a href="/admin/reviews.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors <?php echo basename($_SERVER['PHP_SELF']) === 'reviews.php' ? 'bg-[#0b3a63] text-white' : 'text-gray-700 hover:bg-gray-100'; ?>">
+                    <span class="text-lg">⭐</span>
+                    <span>Reviews</span>
+                </a>
+                <a href="/admin/faqs.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors <?php echo basename($_SERVER['PHP_SELF']) === 'faqs.php' ? 'bg-[#0b3a63] text-white' : 'text-gray-700 hover:bg-gray-100'; ?>">
+                    <span class="text-lg">❓</span>
+                    <span>FAQs</span>
+                </a>
+
+                <div class="border-t border-gray-200 my-3"></div>
+
                 <!-- Settings -->
                 <p class="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Settings</p>
                 <a href="/admin/options.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors <?php echo basename($_SERVER['PHP_SELF']) === 'options.php' ? 'bg-[#0b3a63] text-white' : 'text-gray-700 hover:bg-gray-100'; ?>">
                     <span class="text-lg">⚙️</span>
                     <span>Site Options</span>
+                </a>
+                <a href="/admin/seo-tools.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors <?php echo basename($_SERVER['PHP_SELF']) === 'seo-tools.php' ? 'bg-[#0b3a63] text-white' : 'text-gray-700 hover:bg-gray-100'; ?>">
+                    <span class="text-lg">🔍</span>
+                    <span>SEO Tools</span>
+                </a>
+                <a href="/admin/optional-features.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors <?php echo basename($_SERVER['PHP_SELF']) === 'optional-features.php' ? 'bg-[#0b3a63] text-white' : 'text-gray-700 hover:bg-gray-100'; ?>">
+                    <span class="text-lg">✨</span>
+                    <span>Optional Features</span>
                 </a>
                 <a href="/admin/database-sync.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors <?php echo basename($_SERVER['PHP_SELF']) === 'database-sync.php' ? 'bg-[#0b3a63] text-white' : 'text-gray-700 hover:bg-gray-100'; ?>">
                     <span class="text-lg">🗄️</span>
@@ -307,10 +328,32 @@
                     <span>Quote Requests</span>
                 </a>
                 <div class="border-t border-gray-200 my-3"></div>
+                <p class="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Analytics</p>
+                <a href="/admin/analytics.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors <?php echo basename($_SERVER['PHP_SELF']) === 'analytics.php' ? 'bg-[#0b3a63] text-white' : 'text-gray-700 hover:bg-gray-100'; ?>">
+                    <span class="text-lg">📊</span>
+                    <span>Analytics</span>
+                </a>
+                <a href="/admin/reviews.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors <?php echo basename($_SERVER['PHP_SELF']) === 'reviews.php' ? 'bg-[#0b3a63] text-white' : 'text-gray-700 hover:bg-gray-100'; ?>">
+                    <span class="text-lg">⭐</span>
+                    <span>Reviews</span>
+                </a>
+                <a href="/admin/faqs.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors <?php echo basename($_SERVER['PHP_SELF']) === 'faqs.php' ? 'bg-[#0b3a63] text-white' : 'text-gray-700 hover:bg-gray-100'; ?>">
+                    <span class="text-lg">❓</span>
+                    <span>FAQs</span>
+                </a>
+                <div class="border-t border-gray-200 my-3"></div>
                 <p class="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Settings</p>
                 <a href="/admin/options.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors <?php echo basename($_SERVER['PHP_SELF']) === 'options.php' ? 'bg-[#0b3a63] text-white' : 'text-gray-700 hover:bg-gray-100'; ?>">
                     <span class="text-lg">⚙️</span>
                     <span>Site Options</span>
+                </a>
+                <a href="/admin/seo-tools.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors <?php echo basename($_SERVER['PHP_SELF']) === 'seo-tools.php' ? 'bg-[#0b3a63] text-white' : 'text-gray-700 hover:bg-gray-100'; ?>">
+                    <span class="text-lg">🔍</span>
+                    <span>SEO Tools</span>
+                </a>
+                <a href="/admin/optional-features.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors <?php echo basename($_SERVER['PHP_SELF']) === 'optional-features.php' ? 'bg-[#0b3a63] text-white' : 'text-gray-700 hover:bg-gray-100'; ?>">
+                    <span class="text-lg">✨</span>
+                    <span>Optional Features</span>
                 </a>
                 <a href="/admin/database-sync.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors <?php echo basename($_SERVER['PHP_SELF']) === 'database-sync.php' ? 'bg-[#0b3a63] text-white' : 'text-gray-700 hover:bg-gray-100'; ?>">
                     <span class="text-lg">🗄️</span>

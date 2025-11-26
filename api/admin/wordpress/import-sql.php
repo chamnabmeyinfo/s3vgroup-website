@@ -5,6 +5,22 @@
  * Imports products directly from WordPress/WooCommerce database
  */
 
+// CRITICAL: Start output buffering IMMEDIATELY - before ANYTHING else
+while (ob_get_level() > 0) {
+    @ob_end_clean();
+}
+@ob_start();
+
+// Suppress any errors/warnings that might output HTML
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
+// Skip CacheControl for API endpoints
+if (!defined('DISABLE_CACHE_CONTROL')) {
+    define('DISABLE_CACHE_CONTROL', true);
+}
+
 require_once __DIR__ . '/../../../bootstrap/app.php';
 require_once __DIR__ . '/../../../config/database.php';
 
@@ -13,23 +29,30 @@ use App\Support\Id;
 
 // Check admin authentication
 if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_start();
+    @session_start();
 }
 
 if (empty($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
+    // Clear any output before sending JSON error
+    while (ob_get_level() > 0) {
+        @ob_end_clean();
+    }
+    header('Content-Type: application/json; charset=utf-8');
+    header('Cache-Control: no-cache, no-store, must-revalidate');
+    header('Pragma: no-cache');
+    header('Expires: 0');
     http_response_code(401);
-    header('Content-Type: application/json');
     echo json_encode([
         'type' => 'error',
         'message' => 'Unauthorized. Please log in to continue.',
         'level' => 'error'
-    ]);
+    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     exit;
 }
 
 // Clear any output buffers for streaming
-while (ob_get_level()) {
-    ob_end_clean();
+while (ob_get_level() > 0) {
+    @ob_end_clean();
 }
 
 // Check if feature is enabled

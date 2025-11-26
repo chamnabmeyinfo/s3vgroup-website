@@ -94,6 +94,18 @@ $availableFeatures = [
         'category' => 'E-commerce',
         'icon' => '📋',
     ],
+    'woocommerce_csv_import' => [
+        'name' => 'WooCommerce CSV Import',
+        'description' => 'Import products from WooCommerce CSV export',
+        'category' => 'Integration',
+        'icon' => '🛒',
+    ],
+    'wordpress_sql_import' => [
+        'name' => 'WordPress SQL Import',
+        'description' => 'Import products directly from WordPress/WooCommerce database',
+        'category' => 'Integration',
+        'icon' => '🗄️',
+    ],
 ];
 
 // Get enabled features from database
@@ -166,6 +178,15 @@ include __DIR__ . '/includes/header.php';
                         </form>
                         <?php if ($isEnabled): ?>
                             <div class="mt-2 text-xs text-green-600 font-medium">✓ Currently Enabled</div>
+                            <?php if ($feature['key'] === 'woocommerce_csv_import'): ?>
+                                <a href="/admin/woocommerce-import.php" class="block mt-2 text-center text-sm text-[#0b3a63] hover:underline font-medium">
+                                    → Go to Import Page
+                                </a>
+                            <?php elseif ($feature['key'] === 'wordpress_sql_import'): ?>
+                                <a href="/admin/wordpress-sql-import.php" class="block mt-2 text-center text-sm text-[#0b3a63] hover:underline font-medium">
+                                    → Go to Import Page
+                                </a>
+                            <?php endif; ?>
                         <?php endif; ?>
                     </div>
                 <?php endforeach; ?>

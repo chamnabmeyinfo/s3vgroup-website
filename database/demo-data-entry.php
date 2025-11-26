@@ -93,7 +93,6 @@ $db->exec("
 echo "  ✓ Cleaned duplicate reviews\n";
 
 // Clean old test data
-$db->exec("DELETE FROM analytics_events WHERE event_name LIKE '%test%' OR event_name LIKE '%Test%'");
 $db->exec("DELETE FROM search_logs WHERE search_query LIKE '%test%' OR search_query LIKE '%Test%'");
 echo "  ✓ Cleaned test data\n";
 
@@ -440,54 +439,10 @@ foreach ($productIds as $product) {
 echo "  ✓ Added $reviewCount product reviews\n\n";
 
 // ============================================
-// STEP 8: DEMO ANALYTICS EVENTS
+// STEP 8: DEMO SEARCH LOGS
 // ============================================
 
-echo "📊 Step 8: Adding demo analytics events...\n";
-
-$events = [
-    ['page_view', 'Homepage Visit', '/'],
-    ['page_view', 'Products Page', '/products.php'],
-    ['page_view', 'About Page', '/about.php'],
-    ['page_view', 'Contact Page', '/contact.php'],
-];
-
-// Add product view events
-foreach ($productIds as $product) {
-    $events[] = ['product_view', 'Product View: ' . $product['name'], '/product.php?slug=' . urlencode($product['name']), $product['id']];
-}
-
-// Generate events for last 14 days
-$eventCount = 0;
-for ($day = 0; $day < 14; $day++) {
-    $eventsPerDay = rand(30, 60);
-    
-    for ($i = 0; $i < $eventsPerDay; $i++) {
-        $event = $events[array_rand($events)];
-        $id = Id::prefixed('event');
-        $sessionId = 'session_' . uniqid();
-        
-        $stmt = $db->prepare("
-            INSERT INTO analytics_events (id, event_type, event_name, user_ip, user_agent, page_url, product_id, session_id, createdAt)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, DATE_SUB(NOW(), INTERVAL ? DAY) + INTERVAL ? SECOND)
-        ");
-        
-        $stmt->execute([
-            $id, $event[0], $event[1], '192.168.1.' . rand(1, 255),
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-            $event[2] ?? null, $event[3] ?? null, $sessionId, $day, rand(0, 86400)
-        ]);
-        $eventCount++;
-    }
-}
-
-echo "  ✓ Added $eventCount analytics events\n\n";
-
-// ============================================
-// STEP 9: DEMO SEARCH LOGS
-// ============================================
-
-echo "🔍 Step 9: Adding demo search logs...\n";
+echo "🔍 Step 8: Adding demo search logs...\n";
 
 $searchQueries = [
     'forklift', 'electric forklift', 'diesel forklift', 'pallet racking', 'warehouse equipment',
@@ -531,7 +486,6 @@ $stats = [
     'Sliders' => $db->query("SELECT COUNT(*) FROM sliders WHERE status = 'PUBLISHED'")->fetchColumn(),
     'Reviews' => $db->query("SELECT COUNT(*) FROM product_reviews WHERE status = 'APPROVED'")->fetchColumn(),
     'FAQs' => $db->query("SELECT COUNT(*) FROM faqs WHERE status = 'PUBLISHED'")->fetchColumn(),
-    'Analytics Events' => $db->query("SELECT COUNT(*) FROM analytics_events")->fetchColumn(),
     'Search Logs' => $db->query("SELECT COUNT(*) FROM search_logs")->fetchColumn(),
 ];
 

@@ -23,13 +23,14 @@ return new class ('20241202_innovation_features') extends Migration {
     public function down(PDO $pdo): void
     {
         $tables = [
-            'analytics_events',
             'product_reviews',
             'faqs',
             'search_logs',
             'performance_metrics',
             'optional_features'
         ];
+        
+        // Note: analytics_events table is kept for potential future use
         
         foreach ($tables as $table) {
             $pdo->exec("DROP TABLE IF EXISTS {$table}");

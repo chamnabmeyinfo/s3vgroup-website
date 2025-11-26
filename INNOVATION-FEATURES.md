@@ -2,21 +2,11 @@
 
 This document outlines all the new innovative features added to the S3V Group website.
 
-## 📊 Analytics Dashboard
+## 📊 Analytics
 
-**Location:** `/admin/analytics.php`
+**Note:** Built-in analytics has been removed. Use external tools like Google Analytics instead.
 
-### Features:
-- **Real-time Metrics**: Track page views, product views, quote requests, and conversion rates
-- **Top Products**: See which products are viewed most frequently
-- **Popular Pages**: Identify your most visited pages
-- **Conversion Tracking**: Monitor quote request conversion rates
-- **Daily/Weekly/Monthly Stats**: Compare performance over time
-
-### How It Works:
-- Automatically tracks page views and product interactions
-- Uses the `analytics_events` table to store all events
-- Provides visual insights with charts and statistics
+The `analytics_events` table structure is preserved in the database for potential future use, but the admin interface has been removed.
 
 ---
 
@@ -148,38 +138,18 @@ This document outlines all the new innovative features added to the S3V Group we
 
 ---
 
-## 📈 Analytics Tracking API
+## 📊 Analytics
 
-**Endpoint:** `/api/analytics/track.php`
+**Note:** Built-in analytics has been removed. Use external tools like Google Analytics instead.
 
-### Usage:
-```javascript
-fetch('/api/analytics/track.php', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-        event_type: 'page_view',
-        event_name: 'Product Page View',
-        page_url: '/product.php?slug=forklift',
-        product_id: 'product_123',
-        session_id: 'session_abc'
-    })
-});
-```
-
-### Event Types:
-- `page_view` - Page visits
-- `product_view` - Product page views
-- `quote_request` - Quote submissions
-- `search` - Search queries
-- `click` - Button/link clicks
+To add Google Analytics:
+1. Go to **Admin → Site Options → SEO & Analytics**
+2. Enter your Google Analytics ID
+3. The tracking code will be automatically added to all pages
 
 ---
 
 ## 🗄️ Database Tables Created
-
-### analytics_events
-Tracks all website events and user interactions.
 
 ### product_reviews
 Stores customer reviews and ratings.
@@ -201,14 +171,14 @@ Manages optional feature toggles.
 ## 🎯 Implementation Status
 
 ✅ **Completed Features:**
-- Analytics Dashboard
 - Product Reviews System
 - FAQ Management
 - SEO Tools (Sitemap, Meta, Robots.txt)
 - Optional Features Manager
-- Analytics Tracking API
 - Database Migrations
 - Admin Navigation Updates
+
+**Note:** Built-in Analytics has been removed. Use external tools like Google Analytics instead.
 
 ⏳ **Future Enhancements:**
 - Advanced Search & Filters
@@ -220,12 +190,6 @@ Manages optional feature toggles.
 ---
 
 ## 📝 Usage Instructions
-
-### Setting Up Analytics:
-1. Visit `/admin/analytics.php`
-2. View real-time statistics
-3. Track which products are popular
-4. Monitor conversion rates
 
 ### Managing Reviews:
 1. Go to `/admin/reviews.php`
@@ -264,36 +228,21 @@ php database/run-migration.php
 ```
 
 ### API Endpoints:
-- `POST /api/analytics/track.php` - Track events
 - `POST /api/admin/seo/save-meta.php` - Save SEO settings
 - `POST /api/admin/seo/save-robots.php` - Save robots.txt
 
-### Frontend Integration:
-Add analytics tracking to your pages:
-```html
-<script>
-// Track page view
-fetch('/api/analytics/track.php', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-        event_type: 'page_view',
-        event_name: 'Page View',
-        page_url: window.location.pathname
-    })
-});
-</script>
-```
+### Analytics Integration:
+Use Google Analytics or similar external tools. Configure via **Admin → Site Options → SEO & Analytics**.
 
 ---
 
 ## 🎉 Benefits
 
-1. **Better Insights**: Understand your audience and their behavior
-2. **Improved SEO**: Better search engine rankings
-3. **Customer Trust**: Reviews and FAQs build credibility
-4. **Flexibility**: Enable only the features you need
-5. **Scalability**: Easy to add more features in the future
+1. **Improved SEO**: Better search engine rankings
+2. **Customer Trust**: Reviews and FAQs build credibility
+3. **Flexibility**: Enable only the features you need
+4. **Scalability**: Easy to add more features in the future
+5. **External Analytics**: Use professional tools like Google Analytics
 
 ---
 

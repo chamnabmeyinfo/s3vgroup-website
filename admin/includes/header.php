@@ -206,12 +206,8 @@
 
                 <div class="border-t border-gray-200 my-3"></div>
 
-                <!-- Analytics & Insights -->
-                <p class="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Analytics</p>
-                <a href="/admin/analytics.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors <?php echo basename($_SERVER['PHP_SELF']) === 'analytics.php' ? 'bg-[#0b3a63] text-white' : 'text-gray-700 hover:bg-gray-100'; ?>">
-                    <span class="text-lg">📊</span>
-                    <span>Analytics</span>
-                </a>
+                <!-- Customer Feedback -->
+                <p class="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Feedback</p>
                 <a href="/admin/reviews.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors <?php echo basename($_SERVER['PHP_SELF']) === 'reviews.php' ? 'bg-[#0b3a63] text-white' : 'text-gray-700 hover:bg-gray-100'; ?>">
                     <span class="text-lg">⭐</span>
                     <span>Reviews</span>
@@ -328,11 +324,7 @@
                     <span>Quote Requests</span>
                 </a>
                 <div class="border-t border-gray-200 my-3"></div>
-                <p class="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Analytics</p>
-                <a href="/admin/analytics.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors <?php echo basename($_SERVER['PHP_SELF']) === 'analytics.php' ? 'bg-[#0b3a63] text-white' : 'text-gray-700 hover:bg-gray-100'; ?>">
-                    <span class="text-lg">📊</span>
-                    <span>Analytics</span>
-                </a>
+                <p class="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">Feedback</p>
                 <a href="/admin/reviews.php" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors <?php echo basename($_SERVER['PHP_SELF']) === 'reviews.php' ? 'bg-[#0b3a63] text-white' : 'text-gray-700 hover:bg-gray-100'; ?>">
                     <span class="text-lg">⭐</span>
                     <span>Reviews</span>

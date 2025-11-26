@@ -52,7 +52,13 @@ try {
     $createBackup = $payload['create_backup'] ?? true;
     $syncMode = $payload['sync_mode'] ?? 'full'; // 'full' or 'structure_only'
 
+    // Initialize operation log
+    $operationLog = [];
+    $operationLog[] = ['step' => 1, 'status' => 'info', 'message' => 'Starting push operation from local to cPanel...'];
+    $operationLog[] = ['step' => 1, 'status' => 'info', 'message' => 'Mode: ' . ($syncMode === 'full' ? 'Full Push (structure + data)' : 'Structure Only')];
+
     // Step 1: Export from local database
+    $operationLog[] = ['step' => 2, 'status' => 'info', 'message' => 'Fetching table list from local database...'];
     $tables = [];
     try {
         $result = $localDb->query("SHOW TABLES");
@@ -78,7 +84,51 @@ try {
     
     if (empty($tables)) {
         ob_end_clean();
-        JsonResponse::error('No tables found in local database.', 404);
+        $operationLog[] = ['step' => 2, 'status' => 'error', 'message' => '✗ No tables found in local database'];
+        JsonResponse::error('No tables found in local database.', 404, ['log' => $operationLog]);
+    }
+    
+    $operationLog[] = ['step' => 2, 'status' => 'success', 'message' => '✓ Found ' . count($tables) . ' tables in local database'];
+    
+    // Get production site URL for URL replacement
+    $productionUrl = $service->get('db_sync_production_url', '');
+    if (empty($productionUrl)) {
+        // Try to get from site_url option
+        $productionUrl = $service->get('site_url', '');
+    }
+    if (empty($productionUrl)) {
+        // Try to get from site config
+        try {
+            require_once __DIR__ . '/../../../config/site.php';
+            $productionUrl = $siteConfig['url'] ?? '';
+        } catch (\Throwable $e) {
+            // Ignore
+        }
+    }
+    
+    // If still empty, try to construct from cPanel config
+    if (empty($productionUrl)) {
+        $protocol = 'https'; // Default to https for production
+        $productionUrl = $protocol . '://' . ($_SERVER['HTTP_HOST'] ?? 's3vgroup.com');
+    }
+    
+    // Remove trailing slash
+    $productionUrl = rtrim($productionUrl, '/');
+    
+    // Local URLs to replace
+    $localUrls = [
+        'http://localhost:8080',
+        'http://localhost:8000',
+        'http://127.0.0.1:8080',
+        'http://127.0.0.1:8000',
+        'https://localhost:8080',
+        'https://localhost:8000',
+    ];
+    
+    $urlReplacements = 0;
+    $operationLog[] = ['step' => 3, 'status' => 'info', 'message' => 'Exporting data from local database...'];
+    if (!empty($productionUrl)) {
+        $operationLog[] = ['step' => 3, 'status' => 'info', 'message' => 'Will replace localhost URLs with: ' . $productionUrl];
     }
 
     $output = [];
@@ -91,7 +141,10 @@ try {
     $output[] = "SET time_zone = \"+00:00\";";
     $output[] = "";
 
+    $tableCount = 0;
+    $rowCount = 0;
     foreach ($tables as $table) {
+        $tableCount++;
         try {
             // Always include structure
             $output[] = "DROP TABLE IF EXISTS `{$table}`;";
@@ -107,8 +160,9 @@ try {
             if ($syncMode === 'full') {
                 $rowsResult = $localDb->query("SELECT * FROM `{$table}`");
                 $rows = $rowsResult ? $rowsResult->fetchAll(PDO::FETCH_ASSOC) : [];
-                
+            
                 if (!empty($rows)) {
+                    $rowCount += count($rows);
                     $output[] = "-- Dumping data for table `{$table}`";
                     $output[] = "";
                     
@@ -117,7 +171,7 @@ try {
                     
                     foreach ($rows as $row) {
                         $values = [];
-                        foreach ($row as $value) {
+                        foreach ($row as $column => $value) {
                             if ($value === null) {
                                 $values[] = 'NULL';
                             } elseif (is_bool($value)) {
@@ -125,7 +179,40 @@ try {
                             } elseif (is_int($value) || is_float($value)) {
                                 $values[] = (string) $value;
                             } else {
-                                $values[] = $localDb->quote((string) $value);
+                                $stringValue = (string) $value;
+                                
+                                // Replace localhost URLs with production URL
+                                if (!empty($productionUrl) && !empty($stringValue)) {
+                                    $originalValue = $stringValue;
+                                    foreach ($localUrls as $localUrl) {
+                                        if (strpos($stringValue, $localUrl) !== false) {
+                                            $stringValue = str_replace($localUrl, $productionUrl, $stringValue);
+                                            $urlReplacements++;
+                                        }
+                                    }
+                                    
+                                    // Also handle JSON fields that might contain URLs
+                                    if (in_array(strtolower($column), ['specs', 'highlights', 'images', 'value']) || 
+                                        strpos($stringValue, '{') === 0 || strpos($stringValue, '[') === 0) {
+                                        // Try to decode JSON and replace URLs recursively
+                                        $jsonData = json_decode($stringValue, true);
+                                        if (json_last_error() === JSON_ERROR_NONE && is_array($jsonData)) {
+                                            $jsonString = json_encode($jsonData);
+                                            foreach ($localUrls as $localUrl) {
+                                                if (strpos($jsonString, $localUrl) !== false) {
+                                                    $jsonString = str_replace($localUrl, $productionUrl, $jsonString);
+                                                    $urlReplacements++;
+                                                }
+                                            }
+                                            $jsonData = json_decode($jsonString, true);
+                                            if (json_last_error() === JSON_ERROR_NONE) {
+                                                $stringValue = json_encode($jsonData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                $values[] = $localDb->quote($stringValue);
                             }
                         }
                         $output[] = "INSERT INTO `{$table}` ({$columnList}) VALUES (" . implode(', ', $values) . ");";
@@ -135,15 +222,23 @@ try {
             }
         } catch (\PDOException $e) {
             error_log("Error processing table {$table}: " . $e->getMessage());
+            $operationLog[] = ['step' => 3, 'status' => 'warning', 'message' => '⚠ Error processing table: ' . $table];
             // Continue with next table
         }
     }
+    
+    $exportMessage = '✓ Exported ' . $tableCount . ' tables' . ($syncMode === 'full' ? ' with ' . number_format($rowCount) . ' rows' : ' (structure only)');
+    if ($urlReplacements > 0) {
+        $exportMessage .= ' (replaced ' . $urlReplacements . ' localhost URLs with production URL)';
+    }
+    $operationLog[] = ['step' => 3, 'status' => 'success', 'message' => $exportMessage];
 
     $sql = implode("\n", $output);
 
     // Step 2: Create backup if requested
     $backupMessage = '';
     if ($createBackup) {
+        $operationLog[] = ['step' => 4, 'status' => 'info', 'message' => 'Creating backup of cPanel database...'];
         try {
             $cpanelDb = new PDO(
                 "mysql:host={$cpanelConfig['host']};port={$cpanelConfig['port']};dbname={$cpanelConfig['database']};charset=utf8mb4",
@@ -230,14 +325,21 @@ try {
 
                 file_put_contents($backupFile, implode("\n", $backupOutput));
                 $backupMessage = "Backup created: " . basename($backupFile);
+                $operationLog[] = ['step' => 4, 'status' => 'success', 'message' => '✓ Backup created: ' . basename($backupFile) . ' (' . count($backupTables) . ' tables)'];
+            } else {
+                $operationLog[] = ['step' => 4, 'status' => 'info', 'message' => 'No cPanel tables to backup'];
             }
         } catch (\Throwable $e) {
             error_log("Backup creation failed: " . $e->getMessage());
             $backupMessage = "Warning: Backup creation failed, but sync will continue.";
+            $operationLog[] = ['step' => 4, 'status' => 'warning', 'message' => '⚠ Backup creation failed, but continuing...'];
         }
+    } else {
+        $operationLog[] = ['step' => 4, 'status' => 'info', 'message' => 'Skipping backup (disabled)'];
     }
 
     // Step 3: Import to cPanel
+    $operationLog[] = ['step' => 5, 'status' => 'info', 'message' => 'Connecting to cPanel database...'];
     try {
         $cpanelDb = new PDO(
             "mysql:host={$cpanelConfig['host']};port={$cpanelConfig['port']};dbname={$cpanelConfig['database']};charset=utf8mb4",
@@ -249,6 +351,7 @@ try {
                 PDO::ATTR_TIMEOUT => 30, // 30 second timeout
             ]
         );
+        $operationLog[] = ['step' => 5, 'status' => 'success', 'message' => '✓ Connected to cPanel database successfully'];
     } catch (\PDOException $e) {
         ob_end_clean();
         
@@ -282,13 +385,16 @@ try {
             $userMessage .= $errorMessage;
         }
         
+        $operationLog[] = ['step' => 5, 'status' => 'error', 'message' => '✗ Connection failed: ' . $e->getMessage()];
         JsonResponse::error($userMessage, 500, [
             'error_code' => $errorCode,
             'suggestions' => $suggestions,
+            'log' => $operationLog,
         ]);
     }
 
     // Parse and execute SQL
+    $operationLog[] = ['step' => 6, 'status' => 'info', 'message' => 'Parsing SQL statements...'];
     $statements = [];
     $current = '';
     $inString = false;
@@ -337,10 +443,14 @@ try {
     if (!empty(trim($current))) {
         $statements[] = trim($current);
     }
+    
+    $operationLog[] = ['step' => 6, 'status' => 'success', 'message' => '✓ Parsed ' . count($statements) . ' SQL statements'];
+    $operationLog[] = ['step' => 7, 'status' => 'info', 'message' => 'Executing SQL statements on cPanel database...'];
 
     // Execute statements
     $executed = 0;
     $errors = [];
+    $totalStatements = count($statements);
 
     foreach ($statements as $statement) {
         $statement = trim($statement);
@@ -351,14 +461,31 @@ try {
         try {
             $cpanelDb->exec($statement);
             $executed++;
+            
+            // Log progress every 10 statements
+            if (($executed % 10 === 0) || $executed === $totalStatements) {
+                $operationLog[] = ['step' => 7, 'status' => 'info', 'message' => 'Progress: ' . $executed . '/' . $totalStatements . ' statements executed'];
+            }
         } catch (\PDOException $e) {
             $errors[] = $e->getMessage();
         }
     }
+    
+    if (!empty($errors)) {
+        $operationLog[] = ['step' => 7, 'status' => 'warning', 'message' => '⚠ ' . count($errors) . ' errors occurred during execution'];
+    } else {
+        $operationLog[] = ['step' => 7, 'status' => 'success', 'message' => '✓ All statements executed successfully'];
+    }
+
+    // Save last push timestamp
+    $operationLog[] = ['step' => 8, 'status' => 'info', 'message' => 'Saving operation timestamp...'];
+    $repository->set('db_sync_last_push', date('Y-m-d H:i:s'));
+    $operationLog[] = ['step' => 8, 'status' => 'success', 'message' => '✓ Timestamp saved'];
+    $operationLog[] = ['step' => 9, 'status' => 'success', 'message' => '✅ Push operation completed successfully!'];
 
     ob_end_clean();
 
-    $message = "Sync completed successfully! Executed {$executed} statements.";
+    $message = "Push completed successfully! Executed {$executed} statements.";
     if (!empty($errors)) {
         $message .= " " . count($errors) . " errors occurred (check logs for details).";
         error_log("Database sync errors: " . implode("\n", $errors));
@@ -373,11 +500,13 @@ try {
         'errors' => count($errors),
         'sync_mode' => $syncMode,
         'message' => $message,
+        'log' => $operationLog,
     ]);
 
 } catch (\Throwable $e) {
     ob_end_clean();
     error_log('Database sync error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
-    JsonResponse::error('Sync failed: ' . $e->getMessage(), 500);
+    $operationLog[] = ['step' => 0, 'status' => 'error', 'message' => '✗ Fatal error: ' . $e->getMessage()];
+    JsonResponse::error('Sync failed: ' . $e->getMessage(), 500, ['log' => $operationLog]);
 }
 

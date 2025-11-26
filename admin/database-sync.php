@@ -87,6 +87,14 @@ include __DIR__ . '/includes/header.php';
                     <p class="text-xs text-gray-500 mt-1">Default: 3306 (MySQL/MariaDB)</p>
                 </div>
 
+                <div class="border-t border-gray-200 pt-4 mt-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Production Site URL</label>
+                    <input type="url" name="production_url" value="<?php echo htmlspecialchars($service->get('db_sync_production_url', '')); ?>" 
+                           placeholder="https://s3vgroup.com" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
+                    <p class="text-xs text-gray-500 mt-1">Used to replace localhost URLs when pushing to cPanel</p>
+                </div>
+
                 <div class="flex gap-3">
                     <button type="submit" class="flex-1 px-4 py-2 bg-[#0b3a63] text-white rounded-md hover:bg-[#1a5a8a] transition-colors font-semibold">
                         Save Configuration
@@ -125,13 +133,93 @@ include __DIR__ . '/includes/header.php';
         </div>
     </div>
 
-    <!-- Auto Sync Card -->
+    <!-- Sync Status Card -->
+    <div class="mt-6 bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Sync Status</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <span class="text-xs font-medium text-gray-500">Last Pull from cPanel:</span>
+                <p id="last-pull-time" class="text-sm text-gray-900">
+                    <?php 
+                    $lastPull = $service->get('db_sync_last_pull', '');
+                    echo !empty($lastPull) ? $lastPull : 'Never';
+                    ?>
+                </p>
+            </div>
+            <div>
+                <span class="text-xs font-medium text-gray-500">Last Push to cPanel:</span>
+                <p id="last-push-time" class="text-sm text-gray-900">
+                    <?php 
+                    $lastPush = $service->get('db_sync_last_push', '');
+                    echo !empty($lastPush) ? $lastPush : 'Never';
+                    ?>
+                </p>
+            </div>
+        </div>
+        <div id="sync-status-warning" class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md hidden">
+            <p class="text-xs text-yellow-800">
+                <strong>⚠️ Warning:</strong> You haven't pulled from cPanel recently. 
+                Make sure to pull latest data from production before pushing changes.
+            </p>
+        </div>
+    </div>
+
+    <!-- Pull from cPanel Card -->
+    <div class="mt-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border-2 border-green-200 shadow-sm p-6">
+        <div class="flex items-center gap-3 mb-4">
+            <span class="text-3xl">⬇️</span>
+            <div>
+                <h2 class="text-xl font-semibold text-gray-900">Step 1: Pull from cPanel</h2>
+                <p class="text-sm text-gray-600">Get latest data from production server to your local database</p>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg p-4 mb-4 border border-green-100">
+            <div class="space-y-3">
+                <label class="flex items-center">
+                    <input type="radio" name="pull-mode" value="full" checked class="mr-2">
+                    <div>
+                        <span class="text-sm font-medium text-gray-900">Full Pull</span>
+                        <p class="text-xs text-gray-500">Pull structure + all data (recommended)</p>
+                    </div>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="pull-mode" value="structure_only" class="mr-2">
+                    <div>
+                        <span class="text-sm font-medium text-gray-900">Structure Only</span>
+                        <p class="text-xs text-gray-500">Pull only table structure (no data)</p>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4 mb-4">
+            <label class="flex items-center">
+                <input type="checkbox" id="pull-backup" checked class="mr-2">
+                <span class="text-sm text-gray-700">Create backup of local database before pull</span>
+            </label>
+        </div>
+
+        <button type="button" id="pull-btn" class="w-full px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-md hover:from-green-700 hover:to-emerald-700 transition-all font-semibold text-lg shadow-lg">
+            ⬇️ Pull cPanel → Local Now
+        </button>
+        <div id="pull-status" class="mt-3 text-sm hidden"></div>
+        
+        <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+            <p class="text-xs text-blue-800">
+                <strong>ℹ️ Info:</strong> This will overwrite your local database with data from cPanel production. 
+                Your local changes will be lost unless you have a backup.
+            </p>
+        </div>
+    </div>
+
+    <!-- Push to cPanel Card -->
     <div class="mt-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-2 border-blue-200 shadow-sm p-6">
         <div class="flex items-center gap-3 mb-4">
-            <span class="text-3xl">🚀</span>
+            <span class="text-3xl">⬆️</span>
             <div>
-                <h2 class="text-xl font-semibold text-gray-900">Auto Sync to cPanel</h2>
-                <p class="text-sm text-gray-600">One-click sync: Push all local database changes to cPanel production</p>
+                <h2 class="text-xl font-semibold text-gray-900">Step 2: Push to cPanel</h2>
+                <p class="text-sm text-gray-600">Push your local database changes to cPanel production</p>
             </div>
         </div>
         
@@ -162,7 +250,7 @@ include __DIR__ . '/includes/header.php';
         </div>
 
         <button type="button" id="auto-sync-btn" class="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-md hover:from-blue-700 hover:to-indigo-700 transition-all font-semibold text-lg shadow-lg">
-            🔄 Sync Local → cPanel Now
+            ⬆️ Push Local → cPanel Now
         </button>
         <div id="auto-sync-status" class="mt-3 text-sm hidden"></div>
         
@@ -170,6 +258,13 @@ include __DIR__ . '/includes/header.php';
             <p class="text-xs text-yellow-800">
                 <strong>⚠️ Warning:</strong> This will overwrite the cPanel database with your local database. 
                 Make sure you have a backup and that your local database is up-to-date.
+            </p>
+        </div>
+        
+        <div class="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
+            <p class="text-xs text-blue-800">
+                <strong>ℹ️ Auto URL Replacement:</strong> All localhost URLs (localhost:8080, localhost:8000, etc.) 
+                will be automatically replaced with your production site URL when pushing to cPanel.
             </p>
         </div>
     </div>
@@ -249,6 +344,7 @@ document.addEventListener('DOMContentLoaded', function() {
             db_sync_cpanel_username: formData.get('cpanel_username'),
             db_sync_cpanel_password: formData.get('cpanel_password'),
             db_sync_cpanel_port: formData.get('cpanel_port') || '3306',
+            db_sync_production_url: formData.get('production_url') || '',
         };
 
         try {
@@ -431,21 +527,147 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Auto Sync to cPanel
+    // Pull from cPanel
+    document.getElementById('pull-btn').addEventListener('click', async () => {
+        const pullBtn = document.getElementById('pull-btn');
+        const statusDiv = document.getElementById('pull-status');
+        const logDiv = document.getElementById('operation-log');
+        const logContent = document.getElementById('log-content');
+
+        // Confirm before pulling
+        const confirmed = confirm(
+            '⚠️ WARNING: This will overwrite your local database with data from cPanel!\n\n' +
+            'This action cannot be undone. Make sure:\n' +
+            '1. You have a backup of your local database\n' +
+            '2. You want to proceed with the pull\n\n' +
+            'Continue with pull?'
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        pullBtn.disabled = true;
+        pullBtn.textContent = '⬇️ Pulling...';
+        statusDiv.classList.remove('hidden');
+        statusDiv.textContent = 'Starting pull from cPanel...';
+        statusDiv.className = 'mt-3 text-sm text-blue-600';
+        logDiv.classList.remove('hidden');
+        logContent.textContent = 'Starting pull from cPanel to local...\n';
+
+        const pullMode = document.querySelector('input[name="pull-mode"]:checked').value;
+        const createBackup = document.getElementById('pull-backup').checked;
+
+        try {
+            const response = await fetch('/api/admin/database/pull.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    pull_mode: pullMode,
+                    create_backup: createBackup,
+                }),
+            });
+
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                statusDiv.textContent = '✅ ' + result.data.message;
+                statusDiv.className = 'mt-3 text-sm text-green-600 font-semibold';
+                
+                // Display detailed operation log
+                if (result.data.log && Array.isArray(result.data.log)) {
+                    result.data.log.forEach(logEntry => {
+                        const icon = logEntry.status === 'success' ? '✓' : 
+                                    logEntry.status === 'error' ? '✗' : 
+                                    logEntry.status === 'warning' ? '⚠' : 'ℹ';
+                        const color = logEntry.status === 'success' ? 'text-green-600' : 
+                                     logEntry.status === 'error' ? 'text-red-600' : 
+                                     logEntry.status === 'warning' ? 'text-yellow-600' : 'text-blue-600';
+                        logContent.textContent += `${icon} [Step ${logEntry.step}] ${logEntry.message}\n`;
+                    });
+                } else {
+                    logContent.textContent += '✅ Pull completed successfully!\n';
+                    logContent.textContent += `   - Executed: ${result.data.executed} statements\n`;
+                    logContent.textContent += `   - Mode: ${result.data.pull_mode === 'full' ? 'Full Pull' : 'Structure Only'}\n`;
+                    if (result.data.errors > 0) {
+                        logContent.textContent += `   - Errors: ${result.data.errors}\n`;
+                    }
+                }
+                
+                // Update last pull time
+                const now = new Date();
+                const formattedTime = now.getFullYear() + '-' + 
+                    String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                    String(now.getDate()).padStart(2, '0') + ' ' + 
+                    String(now.getHours()).padStart(2, '0') + ':' + 
+                    String(now.getMinutes()).padStart(2, '0') + ':' + 
+                    String(now.getSeconds()).padStart(2, '0');
+                document.getElementById('last-pull-time').textContent = formattedTime;
+                document.getElementById('sync-status-warning').classList.add('hidden');
+            } else {
+                // Display error log if available
+                if (result.context && result.context.log && Array.isArray(result.context.log)) {
+                    result.context.log.forEach(logEntry => {
+                        const icon = logEntry.status === 'success' ? '✓' : 
+                                    logEntry.status === 'error' ? '✗' : 
+                                    logEntry.status === 'warning' ? '⚠' : 'ℹ';
+                        const color = logEntry.status === 'success' ? 'text-green-600' : 
+                                     logEntry.status === 'error' ? 'text-red-600' : 
+                                     logEntry.status === 'warning' ? 'text-yellow-600' : 'text-blue-600';
+                        logContent.textContent += `${icon} [Step ${logEntry.step}] ${logEntry.message}\n`;
+                    });
+                }
+                
+                let errorMsg = result.message || 'Pull failed';
+                if (result.context && result.context.suggestions) {
+                    errorMsg += '\n\n💡 Suggestions:\n' + result.context.suggestions.map(s => '   • ' + s).join('\n');
+                }
+                throw new Error(errorMsg);
+            }
+        } catch (error) {
+            statusDiv.textContent = '❌ Pull failed: ' + error.message;
+            statusDiv.className = 'mt-3 text-sm text-red-600 font-semibold whitespace-pre-line';
+            logContent.textContent += '❌ Pull failed: ' + error.message + '\n';
+        } finally {
+            pullBtn.disabled = false;
+            pullBtn.textContent = '⬇️ Pull cPanel → Local Now';
+        }
+    });
+
+    // Push to cPanel
     document.getElementById('auto-sync-btn').addEventListener('click', async () => {
         const syncBtn = document.getElementById('auto-sync-btn');
         const statusDiv = document.getElementById('auto-sync-status');
         const logDiv = document.getElementById('operation-log');
         const logContent = document.getElementById('log-content');
 
+        // Check if pull was done recently
+        const lastPullTime = document.getElementById('last-pull-time').textContent;
+        const warningDiv = document.getElementById('sync-status-warning');
+        
+        if (lastPullTime === 'Never' || lastPullTime.includes('Never')) {
+            const proceed = confirm(
+                '⚠️ WARNING: You haven\'t pulled from cPanel yet!\n\n' +
+                'Best practice: Pull latest data from cPanel first to avoid overwriting client updates.\n\n' +
+                'Do you want to:\n' +
+                '1. Cancel and pull first (recommended)\n' +
+                '2. Proceed with push anyway (not recommended)\n\n' +
+                'Proceed with push?'
+            );
+            
+            if (!proceed) {
+                return;
+            }
+        }
+
         // Confirm before syncing
         const confirmed = confirm(
             '⚠️ WARNING: This will overwrite your cPanel database with your local database!\n\n' +
             'This action cannot be undone. Make sure:\n' +
-            '1. Your local database is up-to-date\n' +
+            '1. You have pulled latest data from cPanel\n' +
             '2. You have a backup of cPanel database\n' +
-            '3. You want to proceed with the sync\n\n' +
-            'Continue with sync?'
+            '3. You want to proceed with the push\n\n' +
+            'Continue with push?'
         );
 
         if (!confirmed) {
@@ -478,16 +700,53 @@ document.addEventListener('DOMContentLoaded', function() {
             if (result.status === 'success') {
                 statusDiv.textContent = '✅ ' + result.data.message;
                 statusDiv.className = 'mt-3 text-sm text-green-600 font-semibold';
-                logContent.textContent += '✅ Sync completed successfully!\n';
-                logContent.textContent += `   - Executed: ${result.data.executed} statements\n`;
-                logContent.textContent += `   - Mode: ${result.data.sync_mode === 'full' ? 'Full Sync' : 'Structure Only'}\n`;
-                if (result.data.errors > 0) {
-                    logContent.textContent += `   - Errors: ${result.data.errors}\n`;
+                
+                // Display detailed operation log
+                if (result.data.log && Array.isArray(result.data.log)) {
+                    result.data.log.forEach(logEntry => {
+                        const icon = logEntry.status === 'success' ? '✓' : 
+                                    logEntry.status === 'error' ? '✗' : 
+                                    logEntry.status === 'warning' ? '⚠' : 'ℹ';
+                        const color = logEntry.status === 'success' ? 'text-green-600' : 
+                                     logEntry.status === 'error' ? 'text-red-600' : 
+                                     logEntry.status === 'warning' ? 'text-yellow-600' : 'text-blue-600';
+                        logContent.textContent += `${icon} [Step ${logEntry.step}] ${logEntry.message}\n`;
+                    });
+                } else {
+                    logContent.textContent += '✅ Push completed successfully!\n';
+                    logContent.textContent += `   - Executed: ${result.data.executed} statements\n`;
+                    logContent.textContent += `   - Mode: ${result.data.sync_mode === 'full' ? 'Full Push' : 'Structure Only'}\n`;
+                    if (result.data.errors > 0) {
+                        logContent.textContent += `   - Errors: ${result.data.errors}\n`;
+                    }
+                    if (result.data.message) {
+                        logContent.textContent += '   - ' + result.data.message + '\n';
+                    }
                 }
-                if (result.data.message) {
-                    logContent.textContent += '   - ' + result.data.message + '\n';
-                }
+                
+                // Update last push time
+                const now = new Date();
+                const formattedTime = now.getFullYear() + '-' + 
+                    String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                    String(now.getDate()).padStart(2, '0') + ' ' + 
+                    String(now.getHours()).padStart(2, '0') + ':' + 
+                    String(now.getMinutes()).padStart(2, '0') + ':' + 
+                    String(now.getSeconds()).padStart(2, '0');
+                document.getElementById('last-push-time').textContent = formattedTime;
             } else {
+                // Display error log if available
+                if (result.context && result.context.log && Array.isArray(result.context.log)) {
+                    result.context.log.forEach(logEntry => {
+                        const icon = logEntry.status === 'success' ? '✓' : 
+                                    logEntry.status === 'error' ? '✗' : 
+                                    logEntry.status === 'warning' ? '⚠' : 'ℹ';
+                        const color = logEntry.status === 'success' ? 'text-green-600' : 
+                                     logEntry.status === 'error' ? 'text-red-600' : 
+                                     logEntry.status === 'warning' ? 'text-yellow-600' : 'text-blue-600';
+                        logContent.textContent += `${icon} [Step ${logEntry.step}] ${logEntry.message}\n`;
+                    });
+                }
+                
                 let errorMsg = result.message || 'Sync failed';
                 if (result.context && result.context.suggestions) {
                     errorMsg += '\n\n💡 Suggestions:\n' + result.context.suggestions.map(s => '   • ' + s).join('\n');
@@ -500,7 +759,7 @@ document.addEventListener('DOMContentLoaded', function() {
             logContent.textContent += '❌ Sync failed: ' + error.message + '\n';
         } finally {
             syncBtn.disabled = false;
-            syncBtn.textContent = '🔄 Sync Local → cPanel Now';
+            syncBtn.textContent = '⬆️ Push Local → cPanel Now';
         }
     });
 });

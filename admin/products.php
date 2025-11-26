@@ -421,6 +421,49 @@ include __DIR__ . '/includes/header.php';
         return JSON.stringify(value, null, 2);
     }
 
+    // Helper function to check if URL is external
+    function isExternalUrl(url) {
+        if (!url) return false;
+        // Check if URL starts with http:// or https:// and is not from same origin
+        if (url.startsWith('http://') || url.startsWith('https://')) {
+            try {
+                const urlObj = new URL(url);
+                const currentOrigin = window.location.origin;
+                return urlObj.origin !== currentOrigin;
+            } catch (e) {
+                // If URL parsing fails, assume it's external if it starts with http
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Update image preview based on status and URL
+    function updateImagePreview() {
+        const preview = document.getElementById('product-hero-image-preview');
+        const imageUrl = form.heroImage.value.trim();
+        const status = form.status.value;
+        
+        if (!imageUrl) {
+            preview.innerHTML = '';
+            return;
+        }
+        
+        // For DRAFT products, don't show external images
+        if (status === 'DRAFT' && isExternalUrl(imageUrl)) {
+            preview.innerHTML = `
+                <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <p class="text-sm text-yellow-800">
+                        <strong>⚠️ External images are disabled for draft products.</strong><br>
+                        Please upload a local image or publish the product to view external images.
+                    </p>
+                </div>
+            `;
+        } else {
+            preview.innerHTML = `<img src="${escapeHtml(imageUrl)}" alt="Preview" class="h-32 w-auto rounded border border-gray-300 object-contain">`;
+        }
+    }
+
     function showModal(data) {
         mode = data ? 'edit' : 'create';
         title.textContent = mode === 'create' ? 'New Product' : 'Edit Product';
@@ -440,6 +483,9 @@ include __DIR__ . '/includes/header.php';
         form.description.value = data?.description || '';
         form.specs.value = formatJsonField(data?.specs);
         form.highlights.value = formatJsonField(data?.highlights);
+
+        // Update image preview based on status
+        updateImagePreview();
 
         modal.classList.remove('hidden');
         modal.classList.add('flex');
@@ -589,6 +635,11 @@ include __DIR__ . '/includes/header.php';
             alert('Upload error: ' + error.message);
         }
     });
+
+    // Add event listeners for status and image URL changes
+    form.status.addEventListener('change', updateImagePreview);
+    form.heroImage.addEventListener('input', updateImagePreview);
+    form.heroImage.addEventListener('change', updateImagePreview);
 
     openBtn.addEventListener('click', () => showModal(null));
     closeBtn.addEventListener('click', hideModal);
@@ -915,9 +966,20 @@ include __DIR__ . '/includes/header.php';
 
             const price = product.price ? '$' + parseFloat(product.price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '—';
             
+            // For DRAFT products, don't load external images
+            let imageHtml = '<span class="text-gray-400">—</span>';
+            if (product.heroImage) {
+                if (product.status === 'DRAFT' && isExternalUrl(product.heroImage)) {
+                    // Show placeholder for draft products with external images
+                    imageHtml = '<div class="h-10 w-10 md:h-12 md:w-12 rounded-lg bg-gray-200 flex items-center justify-center text-gray-400 text-xs" title="External images disabled for draft products">Draft</div>';
+                } else {
+                    imageHtml = `<img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.name)}" class="h-10 w-10 md:h-12 md:w-12 rounded-lg object-cover" ${product.status === 'DRAFT' && isExternalUrl(product.heroImage) ? 'style="display:none;"' : ''}>`;
+                }
+            }
+            
             row.innerHTML = `
                 <td class="px-4 md:px-6 py-4" data-label="Image">
-                    ${product.heroImage ? `<img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.name)}" class="h-10 w-10 md:h-12 md:w-12 rounded-lg object-cover">` : '<span class="text-gray-400">—</span>'}
+                    ${imageHtml}
                 </td>
                 <td class="px-4 md:px-6 py-4 font-semibold text-gray-900" data-label="Name">${escapeHtml(product.name)}</td>
                 <td class="px-4 md:px-6 py-4 text-gray-600" data-label="Category">${escapeHtml(product.category_name || '—')}</td>

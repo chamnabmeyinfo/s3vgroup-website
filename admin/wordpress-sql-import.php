@@ -211,6 +211,17 @@ include __DIR__ . '/includes/header.php';
                     <span>Test Connection</span>
                 </button>
                 <button 
+                    type="button" 
+                    id="update-images-btn"
+                    class="admin-btn admin-btn-secondary"
+                    title="Scan and update existing products with WordPress image URLs"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <span>Update Existing Images</span>
+                </button>
+                <button 
                     type="submit" 
                     id="import-btn"
                     class="admin-btn admin-btn-primary"
@@ -511,6 +522,115 @@ document.getElementById('load-config-btn').addEventListener('click', async funct
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
             </svg>
             <span>Load Saved</span>
+        `;
+    }
+});
+
+// Update existing images
+document.getElementById('update-images-btn').addEventListener('click', async function() {
+    const statusDiv = document.getElementById('connection-status');
+    const updateBtn = this;
+    
+    if (!confirm('This will scan all existing products and download/optimize images from WordPress sites (s3vtgroup.com.kh). Continue?')) {
+        return;
+    }
+    
+    updateBtn.disabled = true;
+    updateBtn.innerHTML = '<span class="admin-loading-spinner"></span> Updating...';
+    statusDiv.classList.remove('hidden');
+    statusDiv.innerHTML = '<div class="text-blue-600">🔄 Updating images...</div>';
+    
+    const progressSection = document.getElementById('progress-section');
+    const progressBar = document.getElementById('progress-bar');
+    const progressText = document.getElementById('progress-text');
+    const progressLog = document.getElementById('progress-log');
+    
+    progressSection.classList.remove('hidden');
+    progressBar.style.width = '0%';
+    progressText.textContent = '0%';
+    progressLog.innerHTML = '<div class="text-gray-500">Starting image update...</div>';
+    
+    try {
+        const response = await fetch('/api/admin/wordpress/update-images.php', {
+            method: 'POST',
+            credentials: 'same-origin'
+        });
+        
+        if (!response.ok) {
+            throw new Error('Update failed');
+        }
+        
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || '';
+            
+            for (const line of lines) {
+                if (!line.trim()) continue;
+                
+                try {
+                    const data = JSON.parse(line);
+                    
+                    if (data.type === 'progress') {
+                        progressBar.style.width = data.percent + '%';
+                        progressText.textContent = data.percent + '%';
+                    }
+                    
+                    if (data.type === 'log') {
+                        const logEntry = document.createElement('div');
+                        logEntry.className = data.level === 'error' ? 'text-red-600' : 
+                                            data.level === 'success' ? 'text-green-600' : 'text-gray-700';
+                        logEntry.textContent = data.message;
+                        progressLog.appendChild(logEntry);
+                        progressLog.scrollTop = progressLog.scrollHeight;
+                    }
+                    
+                    if (data.type === 'complete') {
+                        progressBar.style.width = '100%';
+                        progressText.textContent = '100%';
+                        
+                        statusDiv.innerHTML = `
+                            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                <div class="flex items-center gap-2 text-green-800 mb-2">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span class="font-semibold">Update Complete!</span>
+                                </div>
+                                <div class="text-sm text-green-700 space-y-1">
+                                    <div>✅ Updated: ${data.stats.updated} products</div>
+                                    <div>⚠️ Skipped: ${data.stats.skipped} products</div>
+                                    <div>❌ Errors: ${data.stats.errors} products</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                } catch (e) {
+                    console.error('Parse error:', e, line);
+                }
+            }
+        }
+    } catch (error) {
+        statusDiv.innerHTML = `
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                <div class="text-red-800 font-semibold">Update Error</div>
+                <div class="text-sm text-red-700 mt-2">${error.message}</div>
+            </div>
+        `;
+    } finally {
+        updateBtn.disabled = false;
+        updateBtn.innerHTML = `
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <span>Update Existing Images</span>
         `;
     }
 });

@@ -19,9 +19,15 @@ if (!$slug) {
 }
 
 $repository = new ProductRepository(getDB());
-$product = $repository->findBySlug((string) $slug);
+// Only return published products for public API
+$product = $repository->findBySlug((string) $slug, true);
 
 if (!$product) {
+    JsonResponse::error('Product not found.', 404);
+}
+
+// Double-check status (extra safety)
+if (($product['status'] ?? '') !== 'PUBLISHED') {
     JsonResponse::error('Product not found.', 404);
 }
 

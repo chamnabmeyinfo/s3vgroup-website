@@ -397,13 +397,18 @@ SQL;
         return (int) ($result['total'] ?? 0);
     }
 
-    public function findBySlug(string $slug): ?array
+    public function findBySlug(string $slug, bool $publishedOnly = false): ?array
     {
+        $whereClause = 'p.slug = :slug';
+        if ($publishedOnly) {
+            $whereClause .= " AND p.status = 'PUBLISHED'";
+        }
+        
         $sql = <<<SQL
 SELECT p.*, c.name AS category_name, c.slug AS category_slug
 FROM products p
 LEFT JOIN categories c ON p.categoryId = c.id
-WHERE p.slug = :slug
+WHERE $whereClause
 LIMIT 1
 SQL;
 

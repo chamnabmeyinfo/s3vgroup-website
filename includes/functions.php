@@ -61,12 +61,13 @@ function getAllProducts($db, $categorySlug = null, $limit = 50, $offset = 0) {
 }
 
 /**
- * Get product by slug
+ * Get product by slug (only published products)
  */
 function getProductBySlug($db, $slug) {
     try {
-        $product = (new ProductRepository($db))->findBySlug($slug);
-        return $product && ($product['status'] ?? 'DRAFT') === 'PUBLISHED' ? $product : null;
+        // Only return published products for public pages
+        $product = (new ProductRepository($db))->findBySlug($slug, true);
+        return $product;
     } catch (\PDOException $e) {
         error_log("Error fetching product: " . $e->getMessage());
         return null;

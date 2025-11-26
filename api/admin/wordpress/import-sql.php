@@ -445,16 +445,44 @@ try {
                 if ($image && !empty($image['guid'])) {
                     $imageUrl = $image['guid'];
                     
-                    if ($options['download_images'] && filter_var($imageUrl, FILTER_VALIDATE_URL)) {
-                        sendLog("📥 Downloading image for: {$wpProduct['post_title']}...", 'info');
+                    // Check if image is from WordPress site (s3vtgroup.com.kh) - ALWAYS download and optimize
+                    $isWordPressImage = strpos($imageUrl, 's3vtgroup.com.kh') !== false || 
+                                       strpos($imageUrl, 's3vgroup.com') !== false;
+                    
+                    // Force download if: (1) option enabled, OR (2) image is from WordPress site
+                    $shouldDownload = $options['download_images'] || $isWordPressImage;
+                    
+                    if ($shouldDownload && filter_var($imageUrl, FILTER_VALIDATE_URL)) {
+                        if ($isWordPressImage) {
+                            sendLog("📥 Downloading WordPress image for: {$wpProduct['post_title']} (will optimize)...", 'info');
+                        } else {
+                            sendLog("📥 Downloading image for: {$wpProduct['post_title']}...", 'info');
+                        }
                         $imagePath = downloadImage($imageUrl, $newProductId, $wpProduct['post_title']);
                         if ($imagePath) {
                             $heroImage = $imagePath;
                         } else {
-                            $heroImage = $imageUrl;
-                            sendLog("⚠️  Could not download image for: {$wpProduct['post_title']} (using remote URL)", 'info');
+                            // If download failed but it's a WordPress image, log warning
+                            if ($isWordPressImage) {
+                                sendLog("⚠️  Failed to download WordPress image for: {$wpProduct['post_title']}. Retrying...", 'warning');
+                                // Retry once
+                                $imagePath = downloadImage($imageUrl, $newProductId, $wpProduct['post_title']);
+                                if ($imagePath) {
+                                    $heroImage = $imagePath;
+                                } else {
+                                    sendLog("❌ Could not download WordPress image. Product will be saved without image.", 'error');
+                                    $heroImage = ''; // Don't use remote URL for WordPress images
+                                }
+                            } else {
+                                $heroImage = $imageUrl;
+                                sendLog("⚠️  Could not download image for: {$wpProduct['post_title']} (using remote URL)", 'info');
+                            }
                         }
                     } else {
+                        // If it's a WordPress image but download failed validation, log it
+                        if ($isWordPressImage) {
+                            sendLog("⚠️  WordPress image URL validation failed: {$imageUrl}", 'warning');
+                        }
                         $heroImage = $imageUrl;
                     }
                 }
@@ -550,31 +578,54 @@ function downloadImage($url, $productId, $productName = '') {
         }
         
         // Download image with progress tracking
-        $filename = basename(parse_url($url, PHP_URL_PATH));
+        // Handle URL-encoded filenames (e.g., %E1%9E%87%E1%9E%89...)
+        $parsedUrl = parse_url($url);
+        $path = $parsedUrl['path'] ?? '';
+        $filename = basename($path);
+        
+        // Decode URL-encoded filename (handles Khmer and special characters)
+        $decodedFilename = urldecode($filename);
+        
+        // Sanitize filename for filesystem (remove invalid characters)
+        $sanitizedFilename = preg_replace('/[^a-zA-Z0-9._-]/', '_', $decodedFilename);
+        
+        // If filename is too long or empty, generate one
+        if (empty($sanitizedFilename) || strlen($sanitizedFilename) > 200) {
+            $extension = pathinfo($decodedFilename, PATHINFO_EXTENSION) ?: 'jpg';
+            $sanitizedFilename = 'image_' . time() . '_' . substr(md5($url), 0, 8) . '.' . $extension;
+        }
+        
         if (function_exists('sendLog')) {
-            sendLog("   ⬇️  Downloading: {$filename} (0%)", 'info');
+            $displayName = mb_strlen($decodedFilename) > 50 ? mb_substr($decodedFilename, 0, 50) . '...' : $decodedFilename;
+            sendLog("   ⬇️  Downloading: {$displayName} (0%)", 'info');
         }
         
         // Use cURL for progress tracking
         $progress = ['lastPercent' => 0];
+        $displayName = mb_strlen($decodedFilename) > 50 ? mb_substr($decodedFilename, 0, 50) . '...' : $decodedFilename;
+        
+        // Initialize cURL with proper encoding handling
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_ENCODING, ''); // Accept any encoding (gzip, deflate, etc.)
+        curl_setopt($ch, CURLOPT_TIMEOUT, 60); // 60 second timeout for large images
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10); // 10 second connection timeout
         curl_setopt($ch, CURLOPT_NOPROGRESS, false);
-        curl_setopt($ch, CURLOPT_PROGRESSFUNCTION, function($resource, $download_size, $downloaded, $upload_size, $uploaded) use ($filename, &$progress) {
+        curl_setopt($ch, CURLOPT_PROGRESSFUNCTION, function($resource, $download_size, $downloaded, $upload_size, $uploaded) use ($displayName, &$progress) {
             if ($download_size > 0 && function_exists('sendLog')) {
                 $percent = round(($downloaded / $download_size) * 100);
                 // Only log at 10% intervals to avoid spam
                 if ($percent >= $progress['lastPercent'] + 10 || $percent >= 100) {
-                    sendLog("   ⬇️  Downloading: {$filename} ({$percent}%)", 'info');
+                    sendLog("   ⬇️  Downloading: {$displayName} ({$percent}%)", 'info');
                     $progress['lastPercent'] = $percent;
                 }
             } elseif ($download_size == 0 && $downloaded > 0 && function_exists('sendLog')) {
                 // Size unknown, show downloaded amount
                 $downloadedKB = round($downloaded / 1024, 2);
-                sendLog("   ⬇️  Downloading: {$filename} ({$downloadedKB}KB)", 'info');
+                sendLog("   ⬇️  Downloading: {$displayName} ({$downloadedKB}KB)", 'info');
             }
             return 0;
         });

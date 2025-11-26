@@ -42,18 +42,33 @@ final class SiteOptionRepository
 
     public function set(string $key, $value, ?string $type = null): void
     {
+        $existing = $this->findByKey($key);
+        
         if ($type === null) {
-            $existing = $this->findByKey($key);
             $type = $existing['type'] ?? 'text';
         }
 
         $normalized = $this->normalizeValue($value, $type);
 
-        $statement = $this->pdo->prepare('UPDATE site_options SET value = :value, updatedAt = NOW() WHERE key_name = :key');
-        $statement->execute([
-            ':key' => $key,
-            ':value' => $normalized,
-        ]);
+        if ($existing) {
+            // Update existing option
+            $statement = $this->pdo->prepare('UPDATE site_options SET value = :value, updatedAt = NOW() WHERE key_name = :key');
+            $statement->execute([
+                ':key' => $key,
+                ':value' => $normalized,
+            ]);
+        } else {
+            // Create new option
+            $this->create([
+                'key_name' => $key,
+                'value' => $value,
+                'type' => $type,
+                'group_name' => 'advanced',
+                'label' => ucwords(str_replace('_', ' ', $key)),
+                'description' => '',
+                'priority' => 0,
+            ]);
+        }
     }
 
     public function findByKey(string $key): ?array

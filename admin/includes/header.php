@@ -129,6 +129,10 @@
                     <span class="text-lg">⚙️</span>
                     <span>Site Options</span>
                 </a>
+                <a href="/admin/database-sync.php" class="rounded-lg px-4 py-2 hover:bg-gray-100 flex items-center gap-2 <?php echo basename($_SERVER['PHP_SELF']) === 'database-sync.php' ? 'bg-gray-100 text-[#0b3a63]' : ''; ?>">
+                    <span class="text-lg">🗄️</span>
+                    <span>Database Sync</span>
+                </a>
             </nav>
             <form action="/admin/logout.php" method="POST" class="mt-auto">
                 <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg">

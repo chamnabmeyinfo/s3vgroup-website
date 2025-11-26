@@ -25,38 +25,47 @@ include __DIR__ . '/includes/header.php';
             <h1 class="text-3xl font-semibold text-[#0b3a63]">Products</h1>
             <p class="text-sm text-gray-600">Manage published systems and drafts</p>
         </div>
-        <button type="button" id="new-product-btn" class="inline-flex items-center rounded-full bg-[#0b3a63] px-5 py-2 text-sm font-semibold text-white hover:bg-[#1a5a8a]">
-            + New product
+        <button type="button" id="new-product-btn" class="admin-btn admin-btn-primary">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            <span>New Product</span>
         </button>
     </div>
 
-    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
         <div id="products-loading" class="p-8 text-center text-gray-500">
-            Loading products...
+            <div class="admin-loading">Loading products...</div>
         </div>
         <div id="products-error" class="hidden p-8 text-center text-red-600">
-            Failed to load products. Please refresh the page.
+            <div class="admin-empty">
+                <div class="admin-empty-icon">⚠️</div>
+                <p class="text-lg font-medium">Failed to load products</p>
+                <p class="text-sm mt-2">Please refresh the page</p>
+            </div>
         </div>
-        <table id="products-table" class="w-full text-left text-sm hidden">
-            <thead class="bg-gray-50 text-gray-700">
-                <tr>
-                    <th class="px-6 py-3 font-medium"></th>
-                    <th class="px-6 py-3 font-medium">Name</th>
-                    <th class="px-6 py-3 font-medium">Category</th>
-                    <th class="px-6 py-3 font-medium">Status</th>
-                    <th class="px-6 py-3 font-medium">Updated</th>
-                    <th class="px-6 py-3 font-medium"></th>
-                </tr>
-            </thead>
-            <tbody id="products-tbody" class="divide-y divide-gray-200">
-                <!-- Products will be loaded here via JavaScript -->
-            </tbody>
-        </table>
+        <div class="overflow-x-auto">
+            <table id="products-table" class="admin-table w-full text-left text-sm hidden">
+                <thead class="bg-gray-50 text-gray-700">
+                    <tr>
+                        <th class="px-4 md:px-6 py-3 font-medium">Image</th>
+                        <th class="px-4 md:px-6 py-3 font-medium">Name</th>
+                        <th class="px-4 md:px-6 py-3 font-medium">Category</th>
+                        <th class="px-4 md:px-6 py-3 font-medium">Status</th>
+                        <th class="px-4 md:px-6 py-3 font-medium">Updated</th>
+                        <th class="px-4 md:px-6 py-3 font-medium">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="products-tbody" class="divide-y divide-gray-200">
+                    <!-- Products will be loaded here via JavaScript -->
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
-<div id="product-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 px-4">
-    <div class="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-lg bg-white p-6 shadow-xl">
+<div id="product-modal" class="admin-modal hidden">
+    <div class="admin-modal-content">
         <div class="flex items-center justify-between border-b border-gray-200 pb-4">
             <div>
                 <h2 id="product-modal-title" class="text-xl font-semibold text-[#0b3a63]">New Product</h2>
@@ -67,21 +76,21 @@ include __DIR__ . '/includes/header.php';
 
         <form id="product-form" class="mt-4 space-y-4">
             <input type="hidden" name="id">
-            <div class="grid gap-4 md:grid-cols-2">
+            <div class="admin-form-group grid gap-4 md:grid-cols-2">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Name</label>
-                    <input type="text" name="name" class="mt-1 w-full rounded border border-gray-300 px-3 py-2" required>
+                    <label class="admin-form-label">Name</label>
+                    <input type="text" name="name" class="admin-form-input" required>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Slug</label>
-                    <input type="text" name="slug" class="mt-1 w-full rounded border border-gray-300 px-3 py-2">
+                    <label class="admin-form-label">Slug</label>
+                    <input type="text" name="slug" class="admin-form-input">
                 </div>
             </div>
 
-            <div class="grid gap-4 md:grid-cols-3">
+            <div class="admin-form-group grid gap-4 md:grid-cols-3">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Category</label>
-                    <select name="categoryId" class="mt-1 w-full rounded border border-gray-300 px-3 py-2" required>
+                    <label class="admin-form-label">Category</label>
+                    <select name="categoryId" class="admin-form-select" required>
                         <option value="">Select category</option>
                         <?php foreach ($categoriesList as $category): ?>
                             <option value="<?php echo e($category['id']); ?>"><?php echo e($category['name']); ?></option>
@@ -89,61 +98,66 @@ include __DIR__ . '/includes/header.php';
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Status</label>
-                    <select name="status" class="mt-1 w-full rounded border border-gray-300 px-3 py-2">
+                    <label class="admin-form-label">Status</label>
+                    <select name="status" class="admin-form-select">
                         <option value="DRAFT">Draft</option>
                         <option value="PUBLISHED">Published</option>
                         <option value="ARCHIVED">Archived</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Price (optional)</label>
-                    <input type="number" step="0.01" name="price" class="mt-1 w-full rounded border border-gray-300 px-3 py-2">
+                    <label class="admin-form-label">Price (optional)</label>
+                    <input type="number" step="0.01" name="price" class="admin-form-input">
                 </div>
             </div>
 
-            <div class="grid gap-4 md:grid-cols-2">
+            <div class="admin-form-group grid gap-4 md:grid-cols-2">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">SKU</label>
-                    <input type="text" name="sku" class="mt-1 w-full rounded border border-gray-300 px-3 py-2">
+                    <label class="admin-form-label">SKU</label>
+                    <input type="text" name="sku" class="admin-form-input">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Hero Image</label>
-                    <div class="flex items-center gap-3">
-                        <input type="url" name="heroImage" id="product-hero-image-input" placeholder="https://example.com/image.jpg or upload" class="flex-1 mt-1 rounded border border-gray-300 px-3 py-2">
+                    <label class="admin-form-label">Hero Image</label>
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+                        <input type="url" name="heroImage" id="product-hero-image-input" placeholder="https://example.com/image.jpg or upload" class="admin-form-input flex-1">
                         <input type="file" accept="image/*" class="hidden" id="product-hero-image-file" data-target="product-hero-image-input">
-                        <button type="button" onclick="document.getElementById('product-hero-image-file').click()" class="mt-1 px-4 py-2 bg-gray-100 border border-gray-300 rounded text-sm font-medium text-gray-700 hover:bg-gray-200 transition-colors">Upload</button>
+                        <button type="button" onclick="document.getElementById('product-hero-image-file').click()" class="admin-btn admin-btn-secondary whitespace-nowrap">Upload</button>
                     </div>
                     <div id="product-hero-image-preview" class="mt-2"></div>
                     <p class="text-xs text-gray-500 mt-1">Recommended: 1200x800px or larger</p>
                 </div>
             </div>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Summary</label>
-                <textarea name="summary" rows= "2" class="mt-1 w-full rounded border border-gray-300 px-3 py-2"></textarea>
+            <div class="admin-form-group">
+                <label class="admin-form-label">Summary</label>
+                <textarea name="summary" rows="2" class="admin-form-textarea"></textarea>
             </div>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Description</label>
-                <textarea name="description" rows="4" class="mt-1 w-full rounded border border-gray-300 px-3 py-2"></textarea>
+            <div class="admin-form-group">
+                <label class="admin-form-label">Description</label>
+                <textarea name="description" rows="4" class="admin-form-textarea"></textarea>
             </div>
 
-            <div class="grid gap-4 md:grid-cols-2">
+            <div class="admin-form-group grid gap-4 md:grid-cols-2">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Specs (JSON)</label>
-                    <textarea name="specs" rows="4" class="mt-1 w-full rounded border border-gray-300 px-3 py-2" placeholder='{"capacity":"2500kg"}'></textarea>
+                    <label class="admin-form-label">Specs (JSON)</label>
+                    <textarea name="specs" rows="4" class="admin-form-textarea font-mono text-sm" placeholder='{"capacity":"2500kg"}'></textarea>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Highlights (JSON array)</label>
-                    <textarea name="highlights" rows="4" class="mt-1 w-full rounded border border-gray-300 px-3 py-2" placeholder='["Heavy duty design","Fast charging"]'></textarea>
+                    <label class="admin-form-label">Highlights (JSON array)</label>
+                    <textarea name="highlights" rows="4" class="admin-form-textarea font-mono text-sm" placeholder='["Heavy duty design","Fast charging"]'></textarea>
                 </div>
             </div>
 
             <p id="product-form-error" class="text-sm text-red-600 hidden"></p>
-            <div class="flex items-center justify-end gap-3 pt-2">
-                <button type="button" class="rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50" id="product-cancel-btn">Cancel</button>
-                <button type="submit" class="rounded bg-[#0b3a63] px-5 py-2 text-sm font-semibold text-white hover:bg-[#1a5a8a]" id="product-submit-btn">Save Product</button>
+
+            <div class="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-4 border-t border-gray-200 mt-6">
+                <button type="button" id="product-form-cancel" class="admin-btn admin-btn-secondary">
+                    Cancel
+                </button>
+                <button type="submit" id="product-submit-btn" class="admin-btn admin-btn-primary">
+                    Save Product
+                </button>
             </div>
         </form>
     </div>
@@ -154,7 +168,7 @@ include __DIR__ . '/includes/header.php';
     const modal = document.getElementById('product-modal');
     const openBtn = document.getElementById('new-product-btn');
     const closeBtn = document.getElementById('product-modal-close');
-    const cancelBtn = document.getElementById('product-cancel-btn');
+    const cancelBtn = document.getElementById('product-form-cancel');
     const form = document.getElementById('product-form');
     const idInput = form.querySelector('input[name="id"]');
     const errorEl = document.getElementById('product-form-error');
@@ -391,37 +405,37 @@ include __DIR__ . '/includes/header.php';
             const row = document.createElement('tr');
             
             const statusClass = product.status === 'PUBLISHED' 
-                ? 'bg-green-100 text-green-800' 
-                : (product.status === 'DRAFT' ? 'bg-gray-100 text-gray-800' : 'bg-red-100 text-red-800');
+                ? 'admin-badge-success' 
+                : (product.status === 'DRAFT' ? 'admin-badge-warning' : 'admin-badge-danger');
             
             const updatedDate = product.updatedAt 
                 ? new Date(product.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
                 : '—';
 
             row.innerHTML = `
-                <td class="px-6 py-4">
-                    ${product.heroImage ? `<img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.name)}" class="h-10 w-10 rounded-lg object-cover">` : ''}
+                <td class="px-4 md:px-6 py-4" data-label="Image">
+                    ${product.heroImage ? `<img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.name)}" class="h-10 w-10 md:h-12 md:w-12 rounded-lg object-cover">` : '<span class="text-gray-400">—</span>'}
                 </td>
-                <td class="px-6 py-4 font-semibold">${escapeHtml(product.name)}</td>
-                <td class="px-6 py-4 text-gray-600">${escapeHtml(product.category_name || '—')}</td>
-                <td class="px-6 py-4">
-                    <span class="px-3 py-1 rounded-full text-xs font-semibold ${statusClass}">
+                <td class="px-4 md:px-6 py-4 font-semibold text-gray-900" data-label="Name">${escapeHtml(product.name)}</td>
+                <td class="px-4 md:px-6 py-4 text-gray-600" data-label="Category">${escapeHtml(product.category_name || '—')}</td>
+                <td class="px-4 md:px-6 py-4" data-label="Status">
+                    <span class="admin-badge ${statusClass}">
                         ${escapeHtml(product.status)}
                     </span>
                 </td>
-                <td class="px-6 py-4 text-gray-600">${updatedDate}</td>
-                <td class="px-6 py-4 text-right">
-                    <div class="flex items-center justify-end gap-3">
+                <td class="px-4 md:px-6 py-4 text-gray-600" data-label="Updated">${updatedDate}</td>
+                <td class="px-4 md:px-6 py-4" data-label="Actions">
+                    <div class="flex items-center gap-2 md:gap-3 flex-wrap">
                         <button
                             type="button"
-                            class="text-sm font-medium text-[#0b3a63] hover:underline product-edit-btn"
+                            class="admin-btn admin-btn-primary text-xs md:text-sm product-edit-btn"
                             data-product-id="${escapeHtml(product.id)}"
                         >
                             Edit
                         </button>
                         <button
                             type="button"
-                            class="text-sm font-medium text-red-600 hover:text-red-800 product-delete-btn"
+                            class="admin-btn admin-btn-danger text-xs md:text-sm product-delete-btn"
                             data-id="${escapeHtml(product.id)}"
                             data-name="${escapeHtml(product.name)}"
                         >

@@ -16,14 +16,23 @@ final class HomepageSectionRepository
 
     public function all(?string $pageId = null): array
     {
-        if ($pageId) {
-            $statement = $this->pdo->prepare('SELECT * FROM homepage_sections WHERE page_id = :page_id ORDER BY order_index ASC, createdAt ASC');
-            $statement->execute([':page_id' => $pageId]);
-        } else {
-            $statement = $this->pdo->query('SELECT * FROM homepage_sections WHERE page_id IS NULL ORDER BY order_index ASC, createdAt ASC');
+        try {
+            if ($pageId) {
+                $statement = $this->pdo->prepare('SELECT * FROM homepage_sections WHERE page_id = :page_id ORDER BY order_index ASC, createdAt ASC');
+                $statement->execute([':page_id' => $pageId]);
+            } else {
+                $statement = $this->pdo->query('SELECT * FROM homepage_sections WHERE page_id IS NULL ORDER BY order_index ASC, createdAt ASC');
+            }
+            $results = $statement->fetchAll(PDO::FETCH_ASSOC);
+            return array_map([$this, 'transform'], $results);
+        } catch (\PDOException $e) {
+            // If table doesn't exist, return empty array
+            if (strpos($e->getMessage(), "doesn't exist") !== false) {
+                error_log('homepage_sections table does not exist. Please run migrations or create the table.');
+                return [];
+            }
+            throw $e;
         }
-        $results = $statement->fetchAll(PDO::FETCH_ASSOC);
-        return array_map([$this, 'transform'], $results);
     }
 
     public function active(?string $pageId = null): array

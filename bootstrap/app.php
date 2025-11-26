@@ -17,5 +17,9 @@ if (file_exists(base_path('includes/helpers.php'))) {
 \App\Support\Autoloader::register();
 \App\Support\Env::load(base_path('.env'));
 \App\Support\Env::load(base_path('env.example'));
-\App\Support\CacheControl::apply();
+
+// Skip CacheControl for API endpoints to prevent header conflicts
+if (!defined('DISABLE_CACHE_CONTROL') && !str_starts_with($_SERVER['REQUEST_URI'] ?? '', '/api/')) {
+    \App\Support\CacheControl::apply();
+}
 

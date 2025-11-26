@@ -5,7 +5,10 @@
 
 declare(strict_types=1);
 
-// Start output buffering IMMEDIATELY - before anything else
+// CRITICAL: Start output buffering IMMEDIATELY - before ANYTHING else
+while (ob_get_level() > 0) {
+    @ob_end_clean();
+}
 @ob_start();
 
 // Suppress any errors/warnings that might output HTML
@@ -22,8 +25,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     while (ob_get_level() > 0) {
         @ob_end_clean();
     }
-    header('Content-Type: application/json');
-    header('Cache-Control: no-cache');
+    header('Content-Type: application/json; charset=utf-8');
+    header('Cache-Control: no-cache, no-store, must-revalidate');
+    header('Pragma: no-cache');
+    header('Expires: 0');
     http_response_code(405);
     echo json_encode([
         'status' => 'error', 
@@ -33,28 +38,41 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         'usage' => 'This API endpoint is called from the admin panel, not directly from browser.',
         'endpoint_url' => '/api/admin/wordpress/test-connection.php',
         'admin_page' => '/admin/wordpress-sql-import.php'
-    ]);
+    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     exit;
 }
 
 // Load required files - same pattern as load-config.php and save-config.php
 try {
+    // Temporarily disable CacheControl to prevent header conflicts
+    if (!defined('DISABLE_CACHE_CONTROL')) {
+        define('DISABLE_CACHE_CONTROL', true);
+    }
+    
     require_once __DIR__ . '/../../../bootstrap/app.php';
     require_once __DIR__ . '/../../../config/database.php';
+    
+    // Clear any output from bootstrap
+    while (ob_get_level() > 0) {
+        @ob_end_clean();
+    }
+    @ob_start();
 } catch (Throwable $e) {
     while (ob_get_level() > 0) {
         @ob_end_clean();
     }
+    header('Content-Type: application/json; charset=utf-8');
+    header('Cache-Control: no-cache, no-store, must-revalidate');
+    header('Pragma: no-cache');
+    header('Expires: 0');
     http_response_code(500);
-    header('Content-Type: application/json');
-    header('Cache-Control: no-cache');
     echo json_encode([
         'status' => 'error',
         'message' => 'Configuration error',
         'error' => $e->getMessage(),
         'file' => $e->getFile(),
         'line' => $e->getLine()
-    ]);
+    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     exit;
 }
 
@@ -71,30 +89,12 @@ if (empty($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true
     while (ob_get_level() > 0) {
         @ob_end_clean();
     }
+    header('Content-Type: application/json; charset=utf-8');
+    header('Cache-Control: no-cache, no-store, must-revalidate');
+    header('Pragma: no-cache');
+    header('Expires: 0');
     http_response_code(401);
-    header('Content-Type: application/json');
-    echo json_encode(['status' => 'error', 'message' => 'Unauthorized']);
-    exit;
-}
-
-// Handle GET requests immediately (before database connection)
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    // Clear any output before sending JSON error
-    while (ob_get_level() > 0) {
-        @ob_end_clean();
-    }
-    http_response_code(405);
-    header('Content-Type: application/json');
-    header('Cache-Control: no-cache');
-    echo json_encode([
-        'status' => 'error', 
-        'message' => 'Method not allowed',
-        'info' => 'This endpoint requires a POST request. Use the WordPress SQL Import page to test the connection.',
-        'required_method' => 'POST',
-        'usage' => 'This API endpoint is called from the admin panel, not directly from browser.',
-        'endpoint_url' => '/api/admin/wordpress/test-connection.php',
-        'admin_page' => '/admin/wordpress-sql-import.php'
-    ]);
+    echo json_encode(['status' => 'error', 'message' => 'Unauthorized'], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     exit;
 }
 

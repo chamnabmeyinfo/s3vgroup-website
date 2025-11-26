@@ -214,7 +214,47 @@ try {
     }
     
     $operationLog[] = ['step' => 4, 'status' => 'success', 'message' => '✓ Found ' . count($cpanelTables) . ' tables in cPanel database'];
-    $operationLog[] = ['step' => 5, 'status' => 'info', 'message' => 'Exporting data from cPanel...'];
+    
+    // Step 4.5: Drop ALL local tables first to ensure complete overwrite
+    $operationLog[] = ['step' => 5, 'status' => 'info', 'message' => 'Dropping all local tables for complete overwrite...'];
+    $localTables = [];
+    try {
+        $localResult = $localDb->query("SHOW TABLES");
+        if ($localResult) {
+            $localTables = $localResult->fetchAll(PDO::FETCH_COLUMN);
+            if (empty($localTables)) {
+                $localResult = $localDb->query("SHOW TABLES");
+                $allRows = $localResult->fetchAll(PDO::FETCH_NUM);
+                foreach ($allRows as $row) {
+                    if (isset($row[0])) {
+                        $localTables[] = $row[0];
+                    }
+                }
+            }
+        }
+    } catch (\PDOException $e) {
+        error_log("Failed to fetch local tables: " . $e->getMessage());
+    }
+    
+    if (!empty($localTables)) {
+        // Disable foreign key checks temporarily
+        $localDb->exec("SET FOREIGN_KEY_CHECKS = 0");
+        $droppedCount = 0;
+        foreach ($localTables as $localTable) {
+            try {
+                $localDb->exec("DROP TABLE IF EXISTS `{$localTable}`");
+                $droppedCount++;
+            } catch (\PDOException $e) {
+                error_log("Error dropping local table {$localTable}: " . $e->getMessage());
+            }
+        }
+        $localDb->exec("SET FOREIGN_KEY_CHECKS = 1");
+        $operationLog[] = ['step' => 5, 'status' => 'success', 'message' => '✓ Dropped ' . $droppedCount . ' local tables (complete overwrite ensured)'];
+    } else {
+        $operationLog[] = ['step' => 5, 'status' => 'info', 'message' => 'No local tables to drop'];
+    }
+    
+    $operationLog[] = ['step' => 6, 'status' => 'info', 'message' => 'Exporting data from cPanel...'];
 
     $output = [];
     $output[] = "-- Database Pull from cPanel";
@@ -279,10 +319,10 @@ try {
         }
     }
     
-    $operationLog[] = ['step' => 5, 'status' => 'success', 'message' => '✓ Exported ' . $tableCount . ' tables' . ($pullMode === 'full' ? ' with ' . number_format($rowCount) . ' rows' : ' (structure only)')];
+    $operationLog[] = ['step' => 6, 'status' => 'success', 'message' => '✓ Exported ' . $tableCount . ' tables' . ($pullMode === 'full' ? ' with ' . number_format($rowCount) . ' rows' : ' (structure only)')];
 
     $sql = implode("\n", $output);
-    $operationLog[] = ['step' => 6, 'status' => 'info', 'message' => 'Parsing SQL statements...'];
+    $operationLog[] = ['step' => 7, 'status' => 'info', 'message' => 'Parsing SQL statements...'];
 
     // Step 4: Import to local database
     // Parse and execute SQL
@@ -335,8 +375,8 @@ try {
         $statements[] = trim($current);
     }
     
-    $operationLog[] = ['step' => 6, 'status' => 'success', 'message' => '✓ Parsed ' . count($statements) . ' SQL statements'];
-    $operationLog[] = ['step' => 7, 'status' => 'info', 'message' => 'Executing SQL statements on local database...'];
+    $operationLog[] = ['step' => 7, 'status' => 'success', 'message' => '✓ Parsed ' . count($statements) . ' SQL statements'];
+    $operationLog[] = ['step' => 8, 'status' => 'info', 'message' => 'Executing SQL statements on local database (full overwrite)...'];
 
     // Execute statements
     $executed = 0;
@@ -355,7 +395,7 @@ try {
             
             // Log progress every 10 statements
             if (($executed % 10 === 0) || $executed === $totalStatements) {
-                $operationLog[] = ['step' => 7, 'status' => 'info', 'message' => 'Progress: ' . $executed . '/' . $totalStatements . ' statements executed'];
+                $operationLog[] = ['step' => 8, 'status' => 'info', 'message' => 'Progress: ' . $executed . '/' . $totalStatements . ' statements executed'];
             }
         } catch (\PDOException $e) {
             $errors[] = $e->getMessage();
@@ -363,16 +403,16 @@ try {
     }
     
     if (!empty($errors)) {
-        $operationLog[] = ['step' => 7, 'status' => 'warning', 'message' => '⚠ ' . count($errors) . ' errors occurred during execution'];
+        $operationLog[] = ['step' => 8, 'status' => 'warning', 'message' => '⚠ ' . count($errors) . ' errors occurred during execution'];
     } else {
-        $operationLog[] = ['step' => 7, 'status' => 'success', 'message' => '✓ All statements executed successfully'];
+        $operationLog[] = ['step' => 8, 'status' => 'success', 'message' => '✓ All statements executed successfully - Local database fully overwritten'];
     }
 
     // Save last pull timestamp
-    $operationLog[] = ['step' => 8, 'status' => 'info', 'message' => 'Saving operation timestamp...'];
+    $operationLog[] = ['step' => 9, 'status' => 'info', 'message' => 'Saving operation timestamp...'];
     $repository->set('db_sync_last_pull', date('Y-m-d H:i:s'));
-    $operationLog[] = ['step' => 8, 'status' => 'success', 'message' => '✓ Timestamp saved'];
-    $operationLog[] = ['step' => 9, 'status' => 'success', 'message' => '✅ Pull operation completed successfully!'];
+    $operationLog[] = ['step' => 9, 'status' => 'success', 'message' => '✓ Timestamp saved'];
+    $operationLog[] = ['step' => 10, 'status' => 'success', 'message' => '✅ Pull operation completed! Local database fully overwritten with cPanel data.'];
 
     ob_end_clean();
 

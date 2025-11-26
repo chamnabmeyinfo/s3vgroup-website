@@ -207,8 +207,8 @@ include __DIR__ . '/includes/header.php';
         
         <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
             <p class="text-xs text-blue-800">
-                <strong>ℹ️ Info:</strong> This will overwrite your local database with data from cPanel production. 
-                Your local changes will be lost unless you have a backup.
+                <strong>ℹ️ Full Overwrite:</strong> This will <strong>completely overwrite</strong> your local database with data from cPanel production. 
+                All local tables will be dropped and recreated. Your local changes will be lost unless you have a backup.
             </p>
         </div>
     </div>

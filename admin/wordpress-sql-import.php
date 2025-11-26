@@ -112,7 +112,8 @@ include __DIR__ . '/includes/header.php';
                     >
                     <p class="mt-1 text-xs text-gray-500">
                         Use <code>localhost</code> if WordPress is on the same server.<br>
-                        For remote: Use server IP or hostname (e.g., <code>mysql.s3vtgroup.com.kh</code> or <code>65.60.42.226</code>)
+                        For remote: Use server IP (e.g., <code>65.60.42.226</code>) or hostname.<br>
+                        <strong>Note:</strong> Use MySQL port 3306 (default), not cPanel port 2082.
                     </p>
                 </div>
 

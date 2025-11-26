@@ -93,6 +93,59 @@ SQL;
             $params[':search'] = '%' . $filters['search'] . '%';
         }
 
+        // Price range filters
+        if (!empty($filters['priceMin'])) {
+            $conditions[] = 'p.price >= :priceMin';
+            $params[':priceMin'] = (float) $filters['priceMin'];
+        }
+        if (!empty($filters['priceMax'])) {
+            $conditions[] = 'p.price <= :priceMax';
+            $params[':priceMax'] = (float) $filters['priceMax'];
+        }
+
+        // Date range filters
+        if (!empty($filters['createdFrom'])) {
+            $conditions[] = 'DATE(p.createdAt) >= :createdFrom';
+            $params[':createdFrom'] = $filters['createdFrom'];
+        }
+        if (!empty($filters['createdTo'])) {
+            $conditions[] = 'DATE(p.createdAt) <= :createdTo';
+            $params[':createdTo'] = $filters['createdTo'];
+        }
+        if (!empty($filters['updatedFrom'])) {
+            $conditions[] = 'DATE(p.updatedAt) >= :updatedFrom';
+            $params[':updatedFrom'] = $filters['updatedFrom'];
+        }
+        if (!empty($filters['updatedTo'])) {
+            $conditions[] = 'DATE(p.updatedAt) <= :updatedTo';
+            $params[':updatedTo'] = $filters['updatedTo'];
+        }
+
+        // Advanced filters
+        if (isset($filters['hasImage']) && $filters['hasImage'] !== '') {
+            if ($filters['hasImage'] === '1' || $filters['hasImage'] === 'true') {
+                $conditions[] = 'p.heroImage IS NOT NULL AND p.heroImage != ""';
+            } else {
+                $conditions[] = '(p.heroImage IS NULL OR p.heroImage = "")';
+            }
+        }
+
+        if (isset($filters['hasSku']) && $filters['hasSku'] !== '') {
+            if ($filters['hasSku'] === '1' || $filters['hasSku'] === 'true') {
+                $conditions[] = 'p.sku IS NOT NULL AND p.sku != ""';
+            } else {
+                $conditions[] = '(p.sku IS NULL OR p.sku = "")';
+            }
+        }
+
+        if (isset($filters['hasPrice']) && $filters['hasPrice'] !== '') {
+            if ($filters['hasPrice'] === '1' || $filters['hasPrice'] === 'true') {
+                $conditions[] = 'p.price IS NOT NULL AND p.price > 0';
+            } else {
+                $conditions[] = '(p.price IS NULL OR p.price = 0)';
+            }
+        }
+
         $where = $conditions ? 'WHERE ' . implode(' AND ', $conditions) : '';
 
         // Sorting
@@ -122,7 +175,11 @@ SQL;
         $statement = $this->pdo->prepare($sql);
 
         foreach ($params as $key => $value) {
-            $statement->bindValue($key, $value, PDO::PARAM_STR);
+            if (strpos($key, 'price') !== false) {
+                $statement->bindValue($key, $value, PDO::PARAM_STR);
+            } else {
+                $statement->bindValue($key, $value, PDO::PARAM_STR);
+            }
         }
 
         $statement->execute();
@@ -152,6 +209,59 @@ SQL;
         if (!empty($filters['search'])) {
             $conditions[] = '(p.name LIKE :search OR p.sku LIKE :search OR p.summary LIKE :search OR p.description LIKE :search)';
             $params[':search'] = '%' . $filters['search'] . '%';
+        }
+
+        // Price range filters
+        if (!empty($filters['priceMin'])) {
+            $conditions[] = 'p.price >= :priceMin';
+            $params[':priceMin'] = (float) $filters['priceMin'];
+        }
+        if (!empty($filters['priceMax'])) {
+            $conditions[] = 'p.price <= :priceMax';
+            $params[':priceMax'] = (float) $filters['priceMax'];
+        }
+
+        // Date range filters
+        if (!empty($filters['createdFrom'])) {
+            $conditions[] = 'DATE(p.createdAt) >= :createdFrom';
+            $params[':createdFrom'] = $filters['createdFrom'];
+        }
+        if (!empty($filters['createdTo'])) {
+            $conditions[] = 'DATE(p.createdAt) <= :createdTo';
+            $params[':createdTo'] = $filters['createdTo'];
+        }
+        if (!empty($filters['updatedFrom'])) {
+            $conditions[] = 'DATE(p.updatedAt) >= :updatedFrom';
+            $params[':updatedFrom'] = $filters['updatedFrom'];
+        }
+        if (!empty($filters['updatedTo'])) {
+            $conditions[] = 'DATE(p.updatedAt) <= :updatedTo';
+            $params[':updatedTo'] = $filters['updatedTo'];
+        }
+
+        // Advanced filters
+        if (isset($filters['hasImage']) && $filters['hasImage'] !== '') {
+            if ($filters['hasImage'] === '1' || $filters['hasImage'] === 'true') {
+                $conditions[] = 'p.heroImage IS NOT NULL AND p.heroImage != ""';
+            } else {
+                $conditions[] = '(p.heroImage IS NULL OR p.heroImage = "")';
+            }
+        }
+
+        if (isset($filters['hasSku']) && $filters['hasSku'] !== '') {
+            if ($filters['hasSku'] === '1' || $filters['hasSku'] === 'true') {
+                $conditions[] = 'p.sku IS NOT NULL AND p.sku != ""';
+            } else {
+                $conditions[] = '(p.sku IS NULL OR p.sku = "")';
+            }
+        }
+
+        if (isset($filters['hasPrice']) && $filters['hasPrice'] !== '') {
+            if ($filters['hasPrice'] === '1' || $filters['hasPrice'] === 'true') {
+                $conditions[] = 'p.price IS NOT NULL AND p.price > 0';
+            } else {
+                $conditions[] = '(p.price IS NULL OR p.price = 0)';
+            }
         }
 
         $where = $conditions ? 'WHERE ' . implode(' AND ', $conditions) : '';
@@ -191,6 +301,100 @@ SQL;
         $statement->execute();
 
         return array_map([$this, 'transform'], $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+    /**
+     * Get total count of products matching filters (for pagination)
+     */
+    public function count(array $filters = []): int
+    {
+        $conditions = [];
+        $params = [];
+
+        if (!empty($filters['status'])) {
+            $conditions[] = 'p.status = :status';
+            $params[':status'] = $filters['status'];
+        }
+
+        if (!empty($filters['categoryId'])) {
+            $conditions[] = 'p.categoryId = :categoryId';
+            $params[':categoryId'] = $filters['categoryId'];
+        }
+
+        if (!empty($filters['search'])) {
+            $conditions[] = '(p.name LIKE :search OR p.sku LIKE :search OR p.summary LIKE :search OR p.description LIKE :search)';
+            $params[':search'] = '%' . $filters['search'] . '%';
+        }
+
+        if (!empty($filters['priceMin'])) {
+            $conditions[] = 'p.price >= :priceMin';
+            $params[':priceMin'] = (float) $filters['priceMin'];
+        }
+        if (!empty($filters['priceMax'])) {
+            $conditions[] = 'p.price <= :priceMax';
+            $params[':priceMax'] = (float) $filters['priceMax'];
+        }
+
+        if (!empty($filters['createdFrom'])) {
+            $conditions[] = 'DATE(p.createdAt) >= :createdFrom';
+            $params[':createdFrom'] = $filters['createdFrom'];
+        }
+        if (!empty($filters['createdTo'])) {
+            $conditions[] = 'DATE(p.createdAt) <= :createdTo';
+            $params[':createdTo'] = $filters['createdTo'];
+        }
+        if (!empty($filters['updatedFrom'])) {
+            $conditions[] = 'DATE(p.updatedAt) >= :updatedFrom';
+            $params[':updatedFrom'] = $filters['updatedFrom'];
+        }
+        if (!empty($filters['updatedTo'])) {
+            $conditions[] = 'DATE(p.updatedAt) <= :updatedTo';
+            $params[':updatedTo'] = $filters['updatedTo'];
+        }
+
+        if (isset($filters['hasImage']) && $filters['hasImage'] !== '') {
+            if ($filters['hasImage'] === '1' || $filters['hasImage'] === 'true') {
+                $conditions[] = 'p.heroImage IS NOT NULL AND p.heroImage != ""';
+            } else {
+                $conditions[] = '(p.heroImage IS NULL OR p.heroImage = "")';
+            }
+        }
+
+        if (isset($filters['hasSku']) && $filters['hasSku'] !== '') {
+            if ($filters['hasSku'] === '1' || $filters['hasSku'] === 'true') {
+                $conditions[] = 'p.sku IS NOT NULL AND p.sku != ""';
+            } else {
+                $conditions[] = '(p.sku IS NULL OR p.sku = "")';
+            }
+        }
+
+        if (isset($filters['hasPrice']) && $filters['hasPrice'] !== '') {
+            if ($filters['hasPrice'] === '1' || $filters['hasPrice'] === 'true') {
+                $conditions[] = 'p.price IS NOT NULL AND p.price > 0';
+            } else {
+                $conditions[] = '(p.price IS NULL OR p.price = 0)';
+            }
+        }
+
+        $where = $conditions ? 'WHERE ' . implode(' AND ', $conditions) : '';
+
+        $sql = <<<SQL
+SELECT COUNT(*) as total
+FROM products p
+LEFT JOIN categories c ON p.categoryId = c.id
+$where
+SQL;
+
+        $statement = $this->pdo->prepare($sql);
+
+        foreach ($params as $key => $value) {
+            $statement->bindValue($key, $value, PDO::PARAM_STR);
+        }
+
+        $statement->execute();
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+
+        return (int) ($result['total'] ?? 0);
     }
 
     public function findBySlug(string $slug): ?array

@@ -24,13 +24,22 @@ switch (Request::method()) {
             'search'     => Request::query('search'),
             'sortBy'     => Request::query('sortBy'),
             'sortOrder'  => Request::query('sortOrder'),
+            'priceMin'   => Request::query('priceMin'),
+            'priceMax'   => Request::query('priceMax'),
+            'createdFrom' => Request::query('createdFrom'),
+            'createdTo'   => Request::query('createdTo'),
+            'updatedFrom' => Request::query('updatedFrom'),
+            'updatedTo'   => Request::query('updatedTo'),
+            'hasImage'    => Request::query('hasImage'),
+            'hasSku'      => Request::query('hasSku'),
+            'hasPrice'    => Request::query('hasPrice'),
         ];
 
         // Support loading all products or paginated
         $loadAll = Request::query('all') === 'true' || Request::query('all') === '1';
         
         if ($loadAll) {
-            // Load all products matching filters
+            // Load all products matching filters (use with caution for large datasets)
             $products = $repository->all($filters);
             $totalCount = count($products);
             
@@ -40,24 +49,28 @@ switch (Request::method()) {
                 'count' => $totalCount,
             ]);
         } else {
-            // Paginated results
+            // Paginated results (default and recommended)
             $limit = (int) Request::query('limit', 25);
             $offset = (int) Request::query('offset', 0);
 
             $products = $repository->paginateForAdmin($filters, $limit, $offset);
             
-            // Get total count for pagination
-            $allProducts = $repository->all($filters);
-            $totalCount = count($allProducts);
+            // Get total count efficiently using count method
+            $totalCount = $repository->count($filters);
+            $currentPage = floor($offset / $limit) + 1;
+            $totalPages = ceil($totalCount / $limit);
 
             JsonResponse::success([
                 'products' => $products,
                 'pagination' => [
-                    'limit'  => $limit,
-                    'offset' => $offset,
-                    'count'  => count($products),
-                    'total'  => $totalCount,
-                    'hasMore' => ($offset + $limit) < $totalCount,
+                    'limit'      => $limit,
+                    'offset'     => $offset,
+                    'count'      => count($products),
+                    'total'      => $totalCount,
+                    'currentPage' => $currentPage,
+                    'totalPages'  => $totalPages,
+                    'hasMore'    => ($offset + $limit) < $totalCount,
+                    'hasPrevious' => $offset > 0,
                 ],
             ]);
         }

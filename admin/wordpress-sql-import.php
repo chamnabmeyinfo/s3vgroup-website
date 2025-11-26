@@ -1,18 +1,44 @@
 <?php
-session_start();
-require_once __DIR__ . '/../bootstrap/app.php';
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../config/site.php';
-require_once __DIR__ . '/../includes/functions.php';
+// Suppress errors during bootstrap to prevent HTML output
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
+try {
+    require_once __DIR__ . '/../bootstrap/app.php';
+    require_once __DIR__ . '/../config/database.php';
+    require_once __DIR__ . '/../config/site.php';
+    require_once __DIR__ . '/../includes/functions.php';
+} catch (Throwable $e) {
+    error_log('Bootstrap error in wordpress-sql-import.php: ' . $e->getMessage());
+    die('Configuration error. Please check server logs.');
+}
+
+startAdminSession();
 
 requireAdmin();
 
-$db = getDB();
+// Try to get database connection with error handling
+try {
+    $db = getDB();
+} catch (PDOException $e) {
+    error_log('Database connection failed in wordpress-sql-import.php: ' . $e->getMessage());
+    die('Database connection failed. Please check your database configuration in config/database.php or config/database.local.php');
+} catch (Exception $e) {
+    error_log('Database error in wordpress-sql-import.php: ' . $e->getMessage());
+    die('Database error: ' . htmlspecialchars($e->getMessage()));
+}
 
 // Check if feature is enabled
-$featureEnabled = $db->prepare("SELECT enabled FROM optional_features WHERE feature_key = 'wordpress_sql_import'");
-$featureEnabled->execute();
-$isEnabled = $featureEnabled->fetchColumn() == 1;
+try {
+    $featureEnabled = $db->prepare("SELECT enabled FROM optional_features WHERE feature_key = 'wordpress_sql_import'");
+    $featureEnabled->execute();
+    $isEnabled = $featureEnabled->fetchColumn() == 1;
+} catch (PDOException $e) {
+    error_log('Error checking feature status: ' . $e->getMessage());
+    // If table doesn't exist, assume feature is disabled
+    $isEnabled = false;
+}
 
 if (!$isEnabled) {
     header('Location: /admin/optional-features.php?message=feature_disabled');
@@ -82,9 +108,12 @@ include __DIR__ . '/includes/header.php';
                         value="localhost"
                         required
                         class="admin-input"
-                        placeholder="localhost or IP address"
+                        placeholder="localhost or IP address (e.g., 65.60.42.226)"
                     >
-                    <p class="mt-1 text-xs text-gray-500">Use <code>localhost</code> if WordPress is on the same server</p>
+                    <p class="mt-1 text-xs text-gray-500">
+                        Use <code>localhost</code> if WordPress is on the same server.<br>
+                        For remote: Use server IP or hostname (e.g., <code>mysql.s3vtgroup.com.kh</code> or <code>65.60.42.226</code>)
+                    </p>
                 </div>
 
                 <div>
@@ -142,7 +171,10 @@ include __DIR__ . '/includes/header.php';
                         class="admin-input"
                         placeholder="wp_"
                     >
-                    <p class="mt-1 text-xs text-gray-500">Usually "wp_" but can be different (e.g., "wpg1_")</p>
+                    <p class="mt-1 text-xs text-gray-500">
+                        Usually <code>wp_</code> but can be different (e.g., <code>wpg1_</code>).<br>
+                        Check <code>$table_prefix</code> in WordPress <code>wp-config.php</code> file
+                    </p>
                 </div>
             </div>
 

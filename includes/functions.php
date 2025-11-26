@@ -9,6 +9,22 @@ use App\Domain\Quotes\QuoteRequestRepository;
 use App\Domain\Quotes\QuoteService;
 
 /**
+ * Configure and start session with proper HTTPS settings
+ */
+function startAdminSession() {
+    // Configure session for HTTPS
+    if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+        ini_set('session.cookie_secure', '1');
+    }
+    ini_set('session.cookie_httponly', '1');
+    ini_set('session.cookie_samesite', 'Lax');
+    
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start();
+    }
+}
+
+/**
  * Get featured categories
  */
 function getFeaturedCategories($db, $limit = 6) {

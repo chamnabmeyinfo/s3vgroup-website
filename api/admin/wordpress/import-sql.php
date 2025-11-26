@@ -117,10 +117,17 @@ try {
     sendProgress(5);
     
     // Connect to WordPress database
-    $dsn = "mysql:host={$wpHost};dbname={$wpDatabase};charset=utf8mb4";
+    // Handle port in host (e.g., "host:3306" or "host,3306")
+    $hostParts = explode(':', $wpHost);
+    $dbHost = $hostParts[0];
+    $dbPort = isset($hostParts[1]) ? (int)$hostParts[1] : 3306;
+    
+    // Build DSN with optional port
+    $dsn = "mysql:host={$dbHost};port={$dbPort};dbname={$wpDatabase};charset=utf8mb4";
     $wpDb = new PDO($dsn, $wpUsername, $wpPassword, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_TIMEOUT => 30, // 30 second timeout for imports
     ]);
     
     sendLog('✅ Connected to WordPress database', 'success');

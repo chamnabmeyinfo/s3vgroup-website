@@ -5,8 +5,23 @@
 
 declare(strict_types=1);
 
+// Start output buffering IMMEDIATELY - before anything else
+@ob_start();
+
+// Suppress any errors/warnings that might output HTML
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
+// Set timeout to prevent hanging
+set_time_limit(30);
+ini_set('max_execution_time', 30);
+
 // Handle GET requests FIRST - before any database connection or session
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    while (ob_get_level() > 0) {
+        @ob_end_clean();
+    }
     header('Content-Type: application/json');
     header('Cache-Control: no-cache');
     http_response_code(405);
@@ -22,18 +37,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// Start output buffering immediately - MUST be first
-@ob_start();
-
-// Suppress any errors/warnings that might output HTML
-error_reporting(E_ALL);
-ini_set('display_errors', 0);
-ini_set('log_errors', 1);
-
-// Set timeout to prevent hanging
-set_time_limit(30);
-ini_set('max_execution_time', 30);
-
 // Load required files - same pattern as load-config.php and save-config.php
 try {
     require_once __DIR__ . '/../../../bootstrap/app.php';
@@ -44,6 +47,7 @@ try {
     }
     http_response_code(500);
     header('Content-Type: application/json');
+    header('Cache-Control: no-cache');
     echo json_encode([
         'status' => 'error',
         'message' => 'Configuration error',

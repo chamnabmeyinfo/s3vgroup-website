@@ -93,7 +93,6 @@ $db->exec("
 echo "  ✓ Cleaned duplicate reviews\n";
 
 // Clean old test data
-$db->exec("DELETE FROM search_logs WHERE search_query LIKE '%test%' OR search_query LIKE '%Test%'");
 echo "  ✓ Cleaned test data\n";
 
 echo "\n";
@@ -438,38 +437,6 @@ foreach ($productIds as $product) {
 
 echo "  ✓ Added $reviewCount product reviews\n\n";
 
-// ============================================
-// STEP 8: DEMO SEARCH LOGS
-// ============================================
-
-echo "🔍 Step 8: Adding demo search logs...\n";
-
-$searchQueries = [
-    'forklift', 'electric forklift', 'diesel forklift', 'pallet racking', 'warehouse equipment',
-    'material handling', 'conveyor belt', 'pallet jack', 'storage solutions', 'industrial equipment',
-    'forklift parts', 'weighing scale', 'narrow aisle', 'LPG forklift', 'safety equipment'
-];
-
-$searchCount = 0;
-for ($day = 0; $day < 14; $day++) {
-    $queriesPerDay = rand(15, 30);
-    
-    for ($i = 0; $i < $queriesPerDay; $i++) {
-        $query = $searchQueries[array_rand($searchQueries)];
-        $id = Id::prefixed('search');
-        $resultsCount = rand(5, 25);
-        
-        $stmt = $db->prepare("
-            INSERT INTO search_logs (id, search_query, results_count, user_ip, createdAt)
-            VALUES (?, ?, ?, ?, DATE_SUB(NOW(), INTERVAL ? DAY) + INTERVAL ? SECOND)
-        ");
-        
-        $stmt->execute([$id, $query, $resultsCount, '192.168.1.' . rand(1, 255), $day, rand(0, 86400)]);
-        $searchCount++;
-    }
-}
-
-echo "  ✓ Added $searchCount search logs\n\n";
 
 // ============================================
 // SUMMARY
@@ -486,7 +453,6 @@ $stats = [
     'Sliders' => $db->query("SELECT COUNT(*) FROM sliders WHERE status = 'PUBLISHED'")->fetchColumn(),
     'Reviews' => $db->query("SELECT COUNT(*) FROM product_reviews WHERE status = 'APPROVED'")->fetchColumn(),
     'FAQs' => $db->query("SELECT COUNT(*) FROM faqs WHERE status = 'PUBLISHED'")->fetchColumn(),
-    'Search Logs' => $db->query("SELECT COUNT(*) FROM search_logs")->fetchColumn(),
 ];
 
 echo "📊 Demo Database Summary:\n";

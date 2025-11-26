@@ -26,7 +26,6 @@
 
 ### Database Structure
 - ✅ `analytics_events` table - **Kept** (structure preserved for potential future use)
-- ✅ `search_logs` table - **Kept** (useful for search analytics)
 - ✅ `performance_metrics` table - **Kept** (for performance monitoring)
 
 **Reason:** Database tables are kept in case you want to use them later or integrate with other tools. No data is lost.

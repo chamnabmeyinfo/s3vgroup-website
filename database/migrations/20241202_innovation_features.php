@@ -25,12 +25,12 @@ return new class ('20241202_innovation_features') extends Migration {
         $tables = [
             'product_reviews',
             'faqs',
-            'search_logs',
             'performance_metrics',
             'optional_features'
         ];
         
         // Note: analytics_events table is kept for potential future use
+        // Note: search_logs table has been removed
         
         foreach ($tables as $table) {
             $pdo->exec("DROP TABLE IF EXISTS {$table}");
@@ -101,20 +101,6 @@ CREATE TABLE IF NOT EXISTS faqs (
     INDEX idx_category (category),
     INDEX idx_status (status),
     INDEX idx_priority (priority)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-SQL,
-            <<<'SQL'
-CREATE TABLE IF NOT EXISTS search_logs (
-    id VARCHAR(255) PRIMARY KEY,
-    search_query VARCHAR(500) NOT NULL,
-    results_count INT DEFAULT 0,
-    user_ip VARCHAR(45),
-    filters JSON,
-    clicked_result_id VARCHAR(255),
-    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_search_query (search_query(255)),
-    INDEX idx_created_at (createdAt),
-    INDEX idx_results_count (results_count)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 SQL,
             <<<'SQL'

@@ -157,9 +157,6 @@ Stores customer reviews and ratings.
 ### faqs
 Stores frequently asked questions.
 
-### search_logs
-Logs search queries and results.
-
 ### performance_metrics
 Tracks website performance data.
 

@@ -10,7 +10,7 @@
 5. **Sliders** - Removed duplicates by title
 6. **FAQs** - Removed duplicates by question
 7. **Product Reviews** - Removed duplicates by product_id and customer_email
-8. **Test Data** - Cleaned all test analytics events and search logs
+8. **Test Data** - Cleaned all test analytics events
 
 ### Data Quality:
 - ✅ No duplicate entries
@@ -98,13 +98,7 @@ All reviews are **APPROVED**:
 - ✅ Realistic session tracking
 - ✅ Varied timestamps and user IPs
 
-### 8. Search Logs (315 queries)
-- ✅ Search queries from last 14 days
-- ✅ Common searches (forklift, pallet racking, etc.)
-- ✅ Realistic result counts
-- ✅ Varied user patterns
-
-### 9. FAQs (10 FAQs)
+### 8. FAQs (10 FAQs)
 All FAQs are **PUBLISHED**:
 - ✅ Categorized (Products, Services, Warranty, Sales, etc.)
 - ✅ Properly prioritized
@@ -125,7 +119,6 @@ Sliders:             3
 Reviews:             52 (23 new)
 FAQs:                10
 Analytics Events:    1,138 (631 new)
-Search Logs:         542 (315 new)
 ========================================
 ```
 

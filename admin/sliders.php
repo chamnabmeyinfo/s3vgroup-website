@@ -283,6 +283,13 @@ include __DIR__ . '/includes/header.php';
                 body: formData,
             });
 
+            // Check if response is OK and content type is JSON
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                const text = await response.text();
+                throw new Error(`Server returned invalid response. Status: ${response.status}`);
+            }
+
             const result = await response.json();
 
             if (result.status === 'success') {
@@ -294,10 +301,19 @@ include __DIR__ . '/includes/header.php';
                     console.log(`Image optimized: Reduced by ${result.data.sizeReduction}%`);
                 }
             } else {
-                alert('Upload failed: ' + result.message);
+                const errorMsg = result.message || 'Upload failed. Please try again.';
+                alert('Upload failed: ' + errorMsg);
+                if (preview) {
+                    preview.innerHTML = '';
+                }
             }
         } catch (error) {
-            alert('Upload error: ' + error.message);
+            console.error('Upload error:', error);
+            const errorMsg = error.message || 'An unexpected error occurred. Please try again.';
+            alert('Upload error: ' + errorMsg);
+            if (preview) {
+                preview.innerHTML = '';
+            }
         }
     });
 

@@ -2,6 +2,13 @@
 
 declare(strict_types=1);
 
+// Start output buffering to prevent any unwanted output (PHP errors, warnings, etc.)
+ob_start();
+
+// Suppress error display but log errors
+ini_set('display_errors', '0');
+error_reporting(E_ALL);
+
 require_once __DIR__ . '/../../config/database.php';
 
 use App\Http\AdminGuard;
@@ -9,13 +16,20 @@ use App\Http\JsonResponse;
 use App\Support\Id;
 use App\Support\ImageOptimizer;
 
-AdminGuard::requireAuth();
+try {
+    AdminGuard::requireAuth();
+} catch (\Throwable $e) {
+    ob_end_clean();
+    JsonResponse::error('Authentication required.', 401);
+}
 
 // Only allow POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    ob_end_clean();
     JsonResponse::error('Method not allowed.', 405);
 }
 
+try {
 // Create uploads directory if it doesn't exist
 $uploadDir = base_path('uploads');
 if (!is_dir($uploadDir)) {
@@ -38,6 +52,7 @@ if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
         UPLOAD_ERR_EXTENSION => 'File upload blocked by server extension.',
         default => 'Upload error occurred. Please try again.',
     };
+    ob_end_clean();
     JsonResponse::error($errorMessage, 400);
 }
 
@@ -46,16 +61,22 @@ $file = $_FILES['file'];
 // Validate file type
 $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
 $finfo = finfo_open(FILEINFO_MIME_TYPE);
+if ($finfo === false) {
+    ob_end_clean();
+    JsonResponse::error('Server error: Unable to validate file type.', 500);
+}
 $mimeType = finfo_file($finfo, $file['tmp_name']);
 finfo_close($finfo);
 
 if (!in_array($mimeType, $allowedTypes, true)) {
+    ob_end_clean();
     JsonResponse::error('Invalid file type. Only images (JPEG, PNG, GIF, WebP, SVG) are allowed.', 400);
 }
 
 // Validate file size (max 50MB) - we will optimize after upload
 $maxSize = 50 * 1024 * 1024; // 50MB
 if ($file['size'] > $maxSize) {
+    ob_end_clean();
     JsonResponse::error('File is too large. Maximum size is 50MB. The image will be automatically optimized after upload.', 400);
 }
 
@@ -78,6 +99,7 @@ $destination = $uploadDir . '/' . $filename;
 
 // Move uploaded file
 if (!move_uploaded_file($file['tmp_name'], $destination)) {
+    ob_end_clean();
     JsonResponse::error('Failed to save uploaded file.', 500);
 }
 
@@ -127,11 +149,11 @@ if (in_array($mimeType, ['image/jpeg', 'image/png', 'image/webp'], true)) {
         $sizeReduction = $originalSize > 0 ? round((($originalSize - $finalSize) / $originalSize) * 100, 1) : 0;
         $optimized = $finalSize < $originalSize;
         
-    } catch (Exception $e) {
+    } catch (\Throwable $e) {
         // If optimization fails, log but don't fail the upload
         error_log("Image optimization failed: " . $e->getMessage());
         $finalSize = $file['size'];
-        $finalDimensions = $originalDimensions;
+        $finalDimensions = $originalDimensions ?? null;
         $optimized = false;
         $sizeReduction = 0;
     }
@@ -150,7 +172,13 @@ if (in_array($mimeType, ['image/jpeg', 'image/png', 'image/webp'], true)) {
 }
 
 // Generate full URL with domain (works on both localhost and live)
-require_once __DIR__ . '/../../config/site.php';
+$siteConfig = [];
+try {
+    require_once __DIR__ . '/../../config/site.php';
+} catch (\Throwable $e) {
+    // If config file fails, log but continue with auto-detection
+    error_log("Site config load failed: " . $e->getMessage());
+}
 
 // Auto-detect protocol and host
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || 
@@ -159,7 +187,9 @@ $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
 $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 
 // Get site URL from config or auto-detect
-$siteUrl = $siteConfig['url'] ?? ($protocol . '://' . $host);
+$siteUrl = (isset($siteConfig) && is_array($siteConfig) && isset($siteConfig['url'])) 
+    ? $siteConfig['url'] 
+    : ($protocol . '://' . $host);
 
 // Remove trailing slash from site URL
 $siteUrl = rtrim($siteUrl, '/');
@@ -167,20 +197,6 @@ $siteUrl = rtrim($siteUrl, '/');
 // Ensure relative path is set (in case optimization didn't run)
 if (!isset($relativePath)) {
     $relativePath = '/uploads/site/' . $filename;
-}
-
-// Check if we need to add base path (for localhost subdirectories)
-// For live server, siteUrl already includes the full domain
-// For localhost, we might need to add subdirectory path
-if (strpos($siteUrl, 'localhost') !== false || strpos($siteUrl, '127.0.0.1') !== false) {
-    // For localhost, check if we're in a subdirectory
-    $scriptDir = dirname($_SERVER['SCRIPT_NAME'] ?? '/');
-    $scriptDir = str_replace('\\', '/', $scriptDir);
-    $scriptDir = rtrim($scriptDir, '/');
-    
-    if ($scriptDir !== '/' && $scriptDir !== '.' && $scriptDir !== '' && $scriptDir !== '\\') {
-        $relativePath = $scriptDir . $relativePath;
-    }
 }
 
 // Build full URL
@@ -215,5 +231,30 @@ if (isset($optimized) && $optimized) {
     $responseData['message'] = 'Large image uploaded. Optimization recommended.';
 }
 
+// Clear any output buffer before sending JSON response
+ob_end_clean();
 JsonResponse::success($responseData);
+
+} catch (\Throwable $e) {
+    // Log the error for debugging with full stack trace
+    $errorDetails = sprintf(
+        'Upload error: %s in %s:%d. Stack trace: %s',
+        $e->getMessage(),
+        $e->getFile(),
+        $e->getLine(),
+        $e->getTraceAsString()
+    );
+    error_log($errorDetails);
+    
+    // Clean output buffer and return JSON error
+    ob_end_clean();
+    
+    // Return detailed error message to help debug (can be made generic in production)
+    $errorMessage = 'Upload error: ' . $e->getMessage();
+    if (defined('APP_DEBUG') && APP_DEBUG) {
+        $errorMessage .= ' (File: ' . basename($e->getFile()) . ', Line: ' . $e->getLine() . ')';
+    }
+    
+    JsonResponse::error($errorMessage, 500);
+}
 

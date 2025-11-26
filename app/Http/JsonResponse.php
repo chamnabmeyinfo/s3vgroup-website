@@ -25,8 +25,13 @@ final class JsonResponse
 
     private static function send(array $payload, int $status): void
     {
+        // Clear any output buffers to ensure clean JSON response
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+        
         http_response_code($status);
-        header('Content-Type: application/json');
+        header('Content-Type: application/json; charset=utf-8');
         echo json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         exit;
     }

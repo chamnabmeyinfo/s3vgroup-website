@@ -973,7 +973,8 @@ include __DIR__ . '/includes/header.php';
                     // Show placeholder for draft products with external images
                     imageHtml = '<div class="h-10 w-10 md:h-12 md:w-12 rounded-lg bg-gray-200 flex items-center justify-center text-gray-400 text-xs" title="External images disabled for draft products">Draft</div>';
                 } else {
-                    imageHtml = `<img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.name)}" class="h-10 w-10 md:h-12 md:w-12 rounded-lg object-cover" ${product.status === 'DRAFT' && isExternalUrl(product.heroImage) ? 'style="display:none;"' : ''}>`;
+                    // Show image for published products or local images
+                    imageHtml = `<img src="${escapeHtml(product.heroImage)}" alt="${escapeHtml(product.name)}" class="h-10 w-10 md:h-12 md:w-12 rounded-lg object-cover">`;
                 }
             }
             

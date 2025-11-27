@@ -8,6 +8,11 @@ use App\Domain\Catalog\ProductRepository;
 use App\Domain\Quotes\QuoteRequestRepository;
 use App\Domain\Quotes\QuoteService;
 
+// Load translation helpers
+if (file_exists(__DIR__ . '/translation.php')) {
+    require_once __DIR__ . '/translation.php';
+}
+
 /**
  * Configure and start session with proper HTTPS settings
  */

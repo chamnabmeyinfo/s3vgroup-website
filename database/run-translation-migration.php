@@ -57,8 +57,7 @@ SQL);
 INSERT IGNORE INTO languages (id, name, native_name, code, flag, is_default, is_active, sort_order) VALUES
 ('en', 'English', 'English', 'en', '🇺🇸', TRUE, TRUE, 1),
 ('km', 'Khmer', 'ភាសាខ្មែរ', 'km', '🇰🇭', FALSE, TRUE, 2),
-('zh', 'Chinese', '中文', 'zh', '🇨🇳', FALSE, TRUE, 3),
-('th', 'Thai', 'ไทย', 'th', '🇹🇭', FALSE, TRUE, 4)
+('zh', 'Chinese', '中文', 'zh', '🇨🇳', FALSE, TRUE, 3)
 SQL);
 
     echo "✅ Translation tables created successfully!\n";

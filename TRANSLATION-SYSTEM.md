@@ -202,12 +202,11 @@ Auto-translate missing translations.
 
 ## Default Languages
 
-The system comes with 4 default languages:
+The system comes with 3 default languages:
 
 1. **English (en)** 🇺🇸 - Default
 2. **Khmer (km)** 🇰🇭 - ភាសាខ្មែរ
 3. **Chinese (zh)** 🇨🇳 - 中文
-4. **Thai (th)** 🇹🇭 - ไทย
 
 ## Usage Examples
 

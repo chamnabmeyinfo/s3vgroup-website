@@ -100,6 +100,11 @@ $headerBackground = option('header_background', '#ffffff');
     
     <?php require_once __DIR__ . '/helpers.php'; ?>
     
+    <!-- Load translation helpers if available -->
+    <?php if (file_exists(__DIR__ . '/translation.php')): ?>
+        <?php require_once __DIR__ . '/translation.php'; ?>
+    <?php endif; ?>
+    
     <!-- Design System - Dynamic CSS -->
     <?php require_once __DIR__ . '/design-system.php'; ?>
     

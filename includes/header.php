@@ -150,6 +150,11 @@ $headerBackground = option('header_background', '#ffffff');
                             </svg>
                         </div>
                     <?php endif; ?>
+                    
+                    <!-- Language Switcher -->
+                    <?php if (file_exists(__DIR__ . '/translation.php')): ?>
+                        <?php include __DIR__ . '/language-switcher.php'; ?>
+                    <?php endif; ?>
                     <a href="<?php echo base_url('products.php'); ?>" class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors" style="color: var(--text-color); --hover-color: <?php echo e($primaryColor); ?>;">
                         Products
                     </a>
@@ -206,6 +211,13 @@ $headerBackground = option('header_background', '#ffffff');
                     <a href="<?php echo base_url('contact.php'); ?>" class="px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
                         Contact Us
                     </a>
+                    
+                    <!-- Language Switcher (Mobile) -->
+                    <?php if (file_exists(__DIR__ . '/translation.php')): ?>
+                        <div class="px-4 py-3 border-t border-gray-200 mt-2">
+                            <?php include __DIR__ . '/language-switcher.php'; ?>
+                        </div>
+                    <?php endif; ?>
                 </nav>
             </div>
         </div>

@@ -14,7 +14,7 @@ $currentLang = getCurrentLanguage();
     <button 
         type="button" 
         id="language-switcher-btn" 
-        class="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
+        class="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors w-full md:w-auto"
         aria-label="Change language"
     >
         <?php
@@ -35,7 +35,7 @@ $currentLang = getCurrentLanguage();
 
     <div 
         id="language-switcher-dropdown" 
-        class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
+        class="hidden absolute right-0 md:right-0 left-0 md:left-auto mt-2 w-full md:w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
     >
         <?php foreach ($languages as $lang): ?>
             <button

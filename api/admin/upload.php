@@ -16,6 +16,46 @@ use App\Http\JsonResponse;
 use App\Support\Id;
 use App\Support\ImageOptimizer;
 
+if (!function_exists('ae_store_uploaded_file')) {
+    /**
+     * Persist an uploaded file using a secure stream copy fallback.
+     *
+     * @throws \RuntimeException when the upload cannot be saved.
+     */
+    function ae_store_uploaded_file(array $file, string $destination): void
+    {
+        if (empty($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
+            throw new \RuntimeException('Invalid upload payload.');
+        }
+
+        $input = fopen($file['tmp_name'], 'rb');
+        if ($input === false) {
+            throw new \RuntimeException('Unable to read uploaded file.');
+        }
+
+        $output = fopen($destination, 'wb');
+        if ($output === false) {
+            fclose($input);
+            throw new \RuntimeException('Unable to write uploaded file.');
+        }
+
+        $bytes = stream_copy_to_stream($input, $output);
+        fclose($input);
+        fclose($output);
+
+        // Ensure PHP flushes buffers and fresh stats are used.
+        clearstatcache(true, $destination);
+
+        if ($bytes === false || $bytes === 0 || !file_exists($destination) || filesize($destination) === 0) {
+            @unlink($destination);
+            throw new \RuntimeException('Uploaded file could not be written to disk.');
+        }
+
+        // Remove the temporary upload to free disk space.
+        @unlink($file['tmp_name']);
+    }
+}
+
 try {
     AdminGuard::requireAuth();
 } catch (\Throwable $e) {
@@ -97,8 +137,11 @@ $extension = match ($mimeType) {
 $filename = Id::prefixed('img') . '.' . $extension;
 $destination = $uploadDir . '/' . $filename;
 
-// Move uploaded file
-if (!move_uploaded_file($file['tmp_name'], $destination)) {
+// Persist uploaded file with a safe stream copy (handles random move failures on Windows)
+try {
+    ae_store_uploaded_file($file, $destination);
+} catch (\Throwable $e) {
+    error_log('Upload storage failure: ' . $e->getMessage());
     ob_end_clean();
     JsonResponse::error('Failed to save uploaded file.', 500);
 }
@@ -106,7 +149,7 @@ if (!move_uploaded_file($file['tmp_name'], $destination)) {
 // AUTOMATIC IMAGE OPTIMIZATION - Always runs on upload
 // This prevents users from uploading large images that slow down the website
 if (in_array($mimeType, ['image/jpeg', 'image/png', 'image/webp'], true)) {
-    $originalSize = $file['size'];
+    $originalSize = file_exists($destination) ? filesize($destination) : ($file['size'] ?? 0);
     $originalDimensions = @getimagesize($destination);
     
     // Use smart optimization: maintain aspect ratio, target 300KB max file size
@@ -158,17 +201,44 @@ if (in_array($mimeType, ['image/jpeg', 'image/png', 'image/webp'], true)) {
         $sizeReduction = 0;
     }
     
+    
     // Update file size after optimization
     $file['size'] = $finalSize;
     
+    // DEBUG: Check if file actually exists
+    if (!file_exists($destination)) {
+        error_log("ERROR: File does not exist after optimization: " . $destination);
+        error_log("Original file size: " . $originalSize);
+        error_log("Final size: " . $finalSize);
+    } else {
+        $actualSize = filesize($destination);
+        error_log("SUCCESS: File exists at: " . $destination . " with size: " . $actualSize);
+    }
+    
     // Update relative path if filename changed (e.g., WebP conversion)
-$relativePath = '/ae-content/uploads/site/' . $filename;
+    $relativePath = '/ae-content/uploads/site/' . $filename;
 } else {
     // SVG/GIF - no optimization needed
     $optimized = false;
     $sizeReduction = 0;
     $finalSize = $file['size'];
     $finalDimensions = null;
+    // Ensure relative path is set for non-optimized images
+    $relativePath = '/ae-content/uploads/site/' . $filename;
+}
+
+// Verify file actually exists before proceeding
+if (!file_exists($destination)) {
+    error_log("CRITICAL: Uploaded file does not exist at: " . $destination);
+    ob_end_clean();
+    JsonResponse::error('File upload failed: file was not saved correctly.', 500);
+}
+
+// Verify file is readable
+if (!is_readable($destination)) {
+    error_log("CRITICAL: Uploaded file is not readable at: " . $destination);
+    ob_end_clean();
+    JsonResponse::error('File upload failed: file permissions error.', 500);
 }
 
 // Generate full URL with domain (works on both localhost and live)
@@ -194,17 +264,18 @@ $siteUrl = (isset($siteConfig) && is_array($siteConfig) && isset($siteConfig['ur
 // Remove trailing slash from site URL
 $siteUrl = rtrim($siteUrl, '/');
 
-// Ensure relative path is set (in case optimization didn't run)
-if (!isset($relativePath)) {
-$relativePath = '/ae-content/uploads/site/' . $filename;
+// Ensure relative path is set (should always be set by now, but safety check)
+if (!isset($relativePath) || empty($relativePath)) {
+    $relativePath = '/ae-content/uploads/site/' . $filename;
 }
 
-// Build full URL
+// Build full URL - ALWAYS use relativePath, never construct from filename
 $url = $siteUrl . $relativePath;
 
 // Prepare response with optimization info
 $responseData = [
     'url' => $url,
+    'relativePath' => $relativePath, // Add relative path for database storage
     'filename' => $filename,
     'size' => $file['size'],
     'type' => $mimeType,

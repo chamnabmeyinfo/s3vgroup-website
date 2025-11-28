@@ -148,14 +148,13 @@ if (file_exists(__DIR__ . '/ae-includes/header.php')) {
             <p class="text-gray-600 text-lg sm:text-xl mb-4">No products found in this category.</p>
             <a href="/products.php" 
                class="inline-block px-6 py-3 text-white rounded-lg font-medium transition-all hover:scale-105 transform shadow-md hover:shadow-lg"
-               style="background-color: <?php echo e($primaryColor); ?>;">
                 View All Products
             </a>
         </div>
     <?php endif; ?>
 </div>
 
-<link rel="stylesheet" href="/includes/css/products.css?v=<?php echo time(); ?>">
+<link rel="stylesheet" href="ae-includes/css/products.css?v=<?php echo time(); ?>">
 <style>
 /* Line clamp utility for text truncation */
 .line-clamp-2 {

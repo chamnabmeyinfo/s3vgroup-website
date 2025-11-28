@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo isset($pageTitle) ? $pageTitle . ' - ' : ''; ?>Ant Elite Admin</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <?php
+        $tailwindCssFile = __DIR__ . '/../../ae-includes/css/tailwind.css';
+        $tailwindVersion = file_exists($tailwindCssFile) ? filemtime($tailwindCssFile) : time();
+    ?>
+    <link rel="stylesheet" href="/ae-includes/css/tailwind.css?v=<?php echo $tailwindVersion; ?>">
     <link rel="stylesheet" href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/includes/admin-styles.css">
     <style>
         /* macOS-inspired Modern Design */

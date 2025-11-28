@@ -633,6 +633,7 @@ include __DIR__ . '/includes/header.php';
     // Hero image upload with automatic optimization
     document.getElementById('product-hero-image-file')?.addEventListener('change', async (e) => {
         const file = e.target.files[0];
+        console.log('Upload triggered, file:', file);
         if (!file) return;
 
         // Client-side validation: Check file size before upload
@@ -675,9 +676,36 @@ include __DIR__ . '/includes/header.php';
             });
 
             const result = await response.json();
+            console.log('Upload response:', result);
+            console.log('Response data:', result.data);
+            console.log('Relative path:', result.data?.relativePath);
+            console.log('Full URL:', result.data?.url);
 
             if (result.status === 'success') {
-                input.value = result.data.url;
+                // ALWAYS use relative path for database storage (never store full URLs)
+                let pathToStore = result.data.relativePath;
+                
+                // Fallback: if relativePath is missing, extract it from URL
+                if (!pathToStore && result.data.url) {
+                    try {
+                        const urlObj = new URL(result.data.url);
+                        pathToStore = urlObj.pathname; // Extract just the path
+                    } catch (e) {
+                        // If URL parsing fails, try to extract path manually
+                        const match = result.data.url.match(/\/ae-content\/uploads\/[^?#]+/);
+                        pathToStore = match ? match[0] : result.data.url;
+                    }
+                }
+                
+                // Ensure it's a relative path (starts with /)
+                if (pathToStore && !pathToStore.startsWith('/')) {
+                    pathToStore = '/' + pathToStore;
+                }
+                
+                console.log('Path to store in database:', pathToStore);
+                input.value = pathToStore;
+                
+                // Show preview using the full URL
                 preview.innerHTML = `<img src="${result.data.url}" alt="Preview" class="h-32 w-auto rounded border border-gray-300 object-contain">`;
                 
                 // Show optimization results if available

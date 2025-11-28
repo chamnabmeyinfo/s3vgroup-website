@@ -21,6 +21,9 @@ Thumbs.db
 .idea/
 *.sublime-project
 *.sublime-workspace
+node_modules/
+package-lock.json
+npm-debug.log
 
 # Logs
 *.log

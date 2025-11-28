@@ -20,7 +20,11 @@ $pageTitle = 'API Files Check';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $pageTitle; ?> - <?php echo $siteConfig['name']; ?></title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <?php
+        $tailwindCssFile = __DIR__ . '/../ae-includes/css/tailwind.css';
+        $tailwindVersion = file_exists($tailwindCssFile) ? filemtime($tailwindCssFile) : time();
+    ?>
+    <link rel="stylesheet" href="/ae-includes/css/tailwind.css?v=<?php echo $tailwindVersion; ?>">
 </head>
 <body class="min-h-screen bg-gray-100 p-8">
     <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8">

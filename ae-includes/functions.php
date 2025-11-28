@@ -117,17 +117,57 @@ function fullImageUrl(?string $url): string {
     if (empty($url)) {
         return '';
     }
+
+    // Handle comma-separated image lists (take the first one)
+    if (str_contains($url, ',')) {
+        $parts = explode(',', $url);
+        $url = trim($parts[0]);
+    }
+
+    // Remove duplicated prefixes like "/ae-content/uploads/http://..."
+    $url = preg_replace('#ae-content/uploads/(https?://)#i', '$1', $url, 1);
     
-    // If already a full URL (starts with http:// or https://), return as is
-    if (preg_match('/^https?:\/\//', $url)) {
+    // Detect if URL contains a nested full URL (malformed data - e.g., "/path/http://domain.com/image.jpg")
+    // Extract the innermost URL if this is the case
+    if (preg_match('/https?:\/\/[^\s<>"\']+/', $url, $matches)) {
+        $url = $matches[0]; // Use the first full URL found
+    }
+    
+    $isAbsolute = preg_match('/^https?:\/\//', $url) === 1;
+    $containsLocalUploads = str_contains($url, '/uploads/')
+        || str_contains($url, 'wp-content/uploads')
+        || str_contains($url, 'ae-content/uploads');
+    
+    // For absolute URLs that point to remote assets (e.g., Unsplash), return as-is
+    if ($isAbsolute && !$containsLocalUploads) {
         return $url;
     }
     
+    // If the URL is absolute but references our uploads directory, normalize to the path portion
+    if ($isAbsolute) {
+        $parsed = parse_url($url);
+        if ($parsed && isset($parsed['path'])) {
+            $url = $parsed['path'];
+        } else {
+            // Fallback: try to extract path manually if parse_url fails
+            if (preg_match('#(/uploads/[^?#]+|/ae-content/uploads/[^?#]+|/wp-content/uploads/[^?#]+)#', $url, $matches)) {
+                $url = $matches[1];
+            } else {
+                // If we can't parse it, return as-is (might be malformed)
+                return $url;
+            }
+        }
+    }
+    
     // Fix old WordPress paths to Ant Elite paths
-    $url = str_replace('/wp-content/uploads/', '/ae-content/uploads/', $url);
-    $url = str_replace('/uploads/', '/ae-content/uploads/', $url);
+    // 1. Fix wp-content -> ae-content
     $url = str_replace('wp-content/uploads/', 'ae-content/uploads/', $url);
-    $url = str_replace('uploads/', 'ae-content/uploads/', $url);
+    
+    // 2. Fix naked uploads/ -> ae-content/uploads/ (if not already fixed)
+    // This prevents double replacement if the path is already ae-content/uploads/
+    if (!str_contains($url, 'ae-content/uploads/')) {
+        $url = str_replace('uploads/', 'ae-content/uploads/', $url);
+    }
     
     // Ensure path starts with /
     if (!str_starts_with($url, '/')) {

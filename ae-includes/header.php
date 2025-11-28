@@ -55,16 +55,16 @@ $faviconUrl = $favicon ? fullImageUrl($favicon) : '';
     <link rel="dns-prefetch" href="https://images.unsplash.com">
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
     
-    <!-- Tailwind CSS CDN - TODO: Replace with local optimized build (see PERFORMANCE-RECOMMENDATIONS.md) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Professional Frontend CSS - Using version numbers for proper caching -->
+    <!-- Tailwind CSS - locally compiled for production -->
     <?php
     // Use AssetVersion for proper cache busting (better than time())
     $assetVersion = class_exists('App\Support\AssetVersion') ? \App\Support\AssetVersion::get() : date('Ymd');
     
     // CSS files are in ae-includes/css/ (confirmed to exist)
     ?>
+    <link rel="stylesheet" href="<?php echo asset('ae-includes/css/tailwind.css'); ?>?v=<?php echo $assetVersion; ?>">
+    
+    <!-- Professional Frontend CSS - Using version numbers for proper caching -->
     <link rel="stylesheet" href="<?php echo asset('ae-includes/css/frontend.css'); ?>?v=<?php echo $assetVersion; ?>">
     <link rel="stylesheet" href="<?php echo asset('ae-includes/css/pages.css'); ?>?v=<?php echo $assetVersion; ?>">
     <link rel="stylesheet" href="<?php echo asset('ae-includes/css/mobile-app.css'); ?>?v=<?php echo $assetVersion; ?>">

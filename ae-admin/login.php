@@ -44,7 +44,11 @@ if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login - <?php echo $siteConfig['name']; ?></title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <?php
+        $tailwindCssFile = __DIR__ . '/../ae-includes/css/tailwind.css';
+        $tailwindVersion = file_exists($tailwindCssFile) ? filemtime($tailwindCssFile) : time();
+    ?>
+    <link rel="stylesheet" href="/ae-includes/css/tailwind.css?v=<?php echo $tailwindVersion; ?>">
 </head>
 <body class="min-h-screen bg-gray-100 flex items-center justify-center">
     <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">

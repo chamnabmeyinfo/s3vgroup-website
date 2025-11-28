@@ -1,0 +1,29 @@
+{
+  "name": "s3vgroup",
+  "version": "1.0.0",
+  "description": "A complete PHP website for S3V Group, a leading supplier of warehouse and factory equipment in Cambodia.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev:css": "tailwindcss -i ./resources/css/tailwind.css -o ./ae-includes/css/tailwind.css --watch",
+    "build:css": "tailwindcss -i ./resources/css/tailwind.css -o ./ae-includes/css/tailwind.css --minify",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://chamnabmeyinfo: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@github.com/chamnabmeyinfo/s3vgroup-website.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/chamnabmeyinfo/s3vgroup-website/issues"
+  },
+  "homepage": "https://github.com/chamnabmeyinfo/s3vgroup-website#readme",
+  "devDependencies": {
+    "tailwindcss": "^3.4.15"
+  }
+}

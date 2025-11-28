@@ -75,12 +75,19 @@ $faviconUrl = $favicon ? fullImageUrl($favicon) : '';
     <link rel="stylesheet" href="<?php echo asset('ae-includes/css/categories.css'); ?>?v=<?php echo $assetVersion; ?>">
     <link rel="stylesheet" href="<?php echo asset('ae-includes/css/modern-animations.css'); ?>?v=<?php echo $assetVersion; ?>">
     <link rel="stylesheet" href="<?php echo asset('ae-includes/css/modern-frontend.css'); ?>?v=<?php echo $assetVersion; ?>">
+    <link rel="stylesheet" href="<?php echo asset('ae-includes/css/mobile-app-responsive.css'); ?>?v=<?php echo $assetVersion; ?>">
     <script src="<?php echo asset('ae-includes/js/category-images.js'); ?>?v=<?php echo $assetVersion; ?>" defer></script>
+    <script src="<?php echo asset('ae-includes/js/mobile-app.js'); ?>?v=<?php echo $assetVersion; ?>" defer></script>
     <?php
     ?>
     
-    <!-- Mobile Viewport - Optimized for Responsive Design -->
+    <!-- Mobile Viewport - Optimized for Responsive Design & App-like Experience -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="<?php echo e(option('site_name', 'S3V Group')); ?>">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0b3a63">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">

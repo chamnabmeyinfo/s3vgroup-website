@@ -686,12 +686,14 @@
         -webkit-backdrop-filter: blur(20px) saturate(180%);
         border-top: 1px solid var(--app-border);
         z-index: var(--app-z-fixed);
-        display: flex;
+        display: flex !important;
         align-items: flex-start;
         justify-content: space-around;
         padding-top: var(--app-spacing-sm);
         padding-bottom: var(--safe-area-inset-bottom);
         box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        visibility: visible !important;
+        opacity: 1 !important;
     }
     
     .app-bottom-nav-item {

@@ -21,6 +21,15 @@ function isActive($path, $currentPath) {
     return false;
 }
 
+// Check which pages exist
+$rootDir = dirname(dirname(__DIR__));
+$pagesExist = [
+    'about' => file_exists($rootDir . '/about.php'),
+    'testimonials' => file_exists($rootDir . '/testimonials.php'),
+    'quote' => file_exists($rootDir . '/quote.php'),
+    'contact' => file_exists($rootDir . '/contact.php')
+];
+
 $navItems = [
     [
         'title' => 'Home',
@@ -35,19 +44,20 @@ $navItems = [
         'active' => isActive('products.php', $currentPath) || isActive('product.php', $currentPath)
     ],
     [
-        'title' => 'Categories',
-        'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>',
-        'url' => base_url('products.php'),
-        'active' => false
+        'title' => 'Search',
+        'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>',
+        'url' => '#',
+        'active' => false,
+        'action' => 'toggleSearch'
     ],
     [
-        'title' => 'Contact',
-        'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>',
-        'url' => base_url('contact.php'),
-        'active' => isActive('contact.php', $currentPath)
+        'title' => 'Quote',
+        'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>',
+        'url' => $pagesExist['quote'] ? base_url('quote.php') : base_url('contact.php'),
+        'active' => isActive('quote.php', $currentPath)
     ],
     [
-        'title' => 'Menu',
+        'title' => 'More',
         'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>',
         'url' => '#',
         'active' => false,
@@ -59,17 +69,32 @@ $navItems = [
 <!-- Mobile Bottom Navigation -->
 <nav class="app-bottom-nav mobile-only" id="app-bottom-nav">
     <?php foreach ($navItems as $item): ?>
-        <?php if (isset($item['action']) && $item['action'] === 'toggleMobileMenu'): ?>
-            <button 
-                onclick="if (typeof toggleMobileMenu === 'function') toggleMobileMenu();" 
-                class="app-bottom-nav-item <?php echo $item['active'] ? 'active' : ''; ?>"
-                aria-label="<?php echo e($item['title']); ?>"
-            >
-                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                    <?php echo $item['icon']; ?>
-                </svg>
-                <span class="app-bottom-nav-label"><?php echo e($item['title']); ?></span>
-            </button>
+        <?php if (isset($item['action'])): ?>
+            <?php if ($item['action'] === 'toggleMobileMenu'): ?>
+                <button 
+                    type="button"
+                    onclick="if (typeof toggleMobileMenu === 'function') { toggleMobileMenu(); } return false;" 
+                    class="app-bottom-nav-item <?php echo $item['active'] ? 'active' : ''; ?>"
+                    aria-label="<?php echo e($item['title']); ?>"
+                >
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <?php echo $item['icon']; ?>
+                    </svg>
+                    <span class="app-bottom-nav-label"><?php echo e($item['title']); ?></span>
+                </button>
+            <?php elseif ($item['action'] === 'toggleSearch'): ?>
+                <button 
+                    type="button"
+                    onclick="document.getElementById('product-search')?.focus(); document.querySelector('.modern-search-container')?.scrollIntoView({behavior: 'smooth', block: 'center'}); return false;" 
+                    class="app-bottom-nav-item <?php echo $item['active'] ? 'active' : ''; ?>"
+                    aria-label="<?php echo e($item['title']); ?>"
+                >
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <?php echo $item['icon']; ?>
+                    </svg>
+                    <span class="app-bottom-nav-label"><?php echo e($item['title']); ?></span>
+                </button>
+            <?php endif; ?>
         <?php else: ?>
             <a 
                 href="<?php echo e($item['url']); ?>" 
@@ -99,14 +124,25 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Handle menu button click
-    const menuButton = document.querySelector('.app-bottom-nav-item[onclick]');
-    if (menuButton) {
-        menuButton.addEventListener('click', function(e) {
-            if (typeof toggleMobileMenu === 'function') {
-                toggleMobileMenu();
+    const menuButtons = document.querySelectorAll('.app-bottom-nav-item[type="button"]');
+    menuButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            const onclick = this.getAttribute('onclick');
+            if (onclick && onclick.includes('toggleMobileMenu')) {
+                if (typeof toggleMobileMenu === 'function') {
+                    toggleMobileMenu();
+                }
             }
         });
-    }
+    });
+    
+    // Ensure all nav items are visible
+    const navItems = document.querySelectorAll('.app-bottom-nav-item');
+    navItems.forEach(item => {
+        item.style.display = 'flex';
+        item.style.visibility = 'visible';
+        item.style.opacity = '1';
+    });
 });
 </script>
 

@@ -221,6 +221,10 @@
     -webkit-backdrop-filter: blur(10px);
 }
 
+.admin-modal.hidden {
+    display: none !important;
+}
+
 .admin-modal-content {
     background: var(--mac-surface);
     border-radius: 12px;

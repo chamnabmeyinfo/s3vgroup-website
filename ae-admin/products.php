@@ -278,7 +278,7 @@ include __DIR__ . '/includes/header.php';
             </div>
         </div>
         <div class="overflow-x-auto">
-            <table id="products-table" class="admin-table w-full text-left text-sm hidden">
+            <table id="products-table" class="admin-table w-full text-left text-sm" style="display: none;">
                 <thead class="bg-gray-50 text-gray-700">
                     <tr>
                         <th class="px-4 md:px-6 py-3 font-medium" data-column="image">Image</th>
@@ -415,7 +415,7 @@ include __DIR__ . '/includes/header.php';
                         <button type="button" onclick="document.getElementById('product-hero-image-file').click()" class="admin-btn admin-btn-secondary whitespace-nowrap">Upload</button>
                     </div>
                     <div id="product-hero-image-preview" class="mt-2"></div>
-                    <p class="text-xs text-gray-500 mt-1">Recommended: 1200x800px or larger</p>
+                    <p class="text-xs text-gray-500 mt-1">All image sizes are accepted. Images will be automatically optimized after upload.</p>
                 </div>
             </div>
 
@@ -496,15 +496,39 @@ include __DIR__ . '/includes/header.php';
         return false;
     }
 
+    // Helper function to convert relative path to full URL for display
+    function getFullUrlForDisplay(url) {
+        if (!url) return '';
+        const trimmed = url.trim();
+        
+        // If it's already a full URL, return as-is
+        if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+            return trimmed;
+        }
+        
+        // If it's a relative path, convert to full URL
+        if (trimmed.startsWith('/')) {
+            return window.location.origin + trimmed;
+        }
+        
+        // If it doesn't start with /, add it
+        return window.location.origin + '/' + trimmed;
+    }
+
     // Update image preview based on status and URL
     function updateImagePreview() {
         const preview = document.getElementById('product-hero-image-preview');
-        const imageUrl = form.heroImage.value.trim();
+        let imageUrl = form.heroImage.value.trim();
         const status = form.status.value;
         
         if (!imageUrl) {
             preview.innerHTML = '';
             return;
+        }
+        
+        // Ensure we have a full URL for preview (convert relative paths)
+        if (imageUrl.startsWith('/') && !imageUrl.startsWith('//')) {
+            imageUrl = window.location.origin + imageUrl;
         }
         
         // For DRAFT products, don't show external images
@@ -536,7 +560,8 @@ include __DIR__ . '/includes/header.php';
         form.status.value = data?.status || 'DRAFT';
         form.price.value = data?.price ?? '';
         form.sku.value = data?.sku || '';
-        form.heroImage.value = data?.heroImage || '';
+        // Convert relative path to full URL for display
+        form.heroImage.value = data?.heroImage ? getFullUrlForDisplay(data.heroImage) : '';
         form.summary.value = data?.summary || '';
         form.description.value = data?.description || '';
         form.specs.value = formatJsonField(data?.specs);
@@ -572,6 +597,35 @@ include __DIR__ . '/includes/header.php';
         errorEl.classList.add('hidden');
         errorEl.textContent = '';
 
+        // Helper function to convert full URL to relative path if it's from our domain
+        function normalizeImageUrl(url) {
+            if (!url) return null;
+            const trimmed = url.trim();
+            if (!trimmed) return null;
+            
+            // If it's already a relative path, return as-is
+            if (trimmed.startsWith('/')) {
+                return trimmed;
+            }
+            
+            // If it's a full URL, check if it's from our domain
+            try {
+                const urlObj = new URL(trimmed);
+                const currentOrigin = window.location.origin;
+                
+                // If it's from our domain, extract the path
+                if (urlObj.origin === currentOrigin) {
+                    return urlObj.pathname;
+                }
+                
+                // If it's an external URL, return as-is (for external images)
+                return trimmed;
+            } catch (e) {
+                // If URL parsing fails, assume it's a relative path or invalid
+                return trimmed.startsWith('/') ? trimmed : '/' + trimmed;
+            }
+        }
+
         const payload = {
             name: form.name.value.trim(),
             slug: form.slug.value.trim() || null,
@@ -579,7 +633,7 @@ include __DIR__ . '/includes/header.php';
             status: form.status.value,
             price: form.price.value ? parseFloat(form.price.value) : null,
             sku: form.sku.value.trim() || null,
-            heroImage: form.heroImage.value.trim() || null,
+            heroImage: normalizeImageUrl(form.heroImage.value),
             summary: form.summary.value.trim() || null,
             description: form.description.value.trim() || null,
         };
@@ -669,6 +723,7 @@ include __DIR__ . '/includes/header.php';
         try {
             const formData = new FormData();
             formData.append('file', file);
+            formData.append('type', 'product'); // Specify this is a product image upload
 
             const response = await fetch('/api/admin/upload.php', {
                 method: 'POST',
@@ -682,28 +737,8 @@ include __DIR__ . '/includes/header.php';
             console.log('Full URL:', result.data?.url);
 
             if (result.status === 'success') {
-                // ALWAYS use relative path for database storage (never store full URLs)
-                let pathToStore = result.data.relativePath;
-                
-                // Fallback: if relativePath is missing, extract it from URL
-                if (!pathToStore && result.data.url) {
-                    try {
-                        const urlObj = new URL(result.data.url);
-                        pathToStore = urlObj.pathname; // Extract just the path
-                    } catch (e) {
-                        // If URL parsing fails, try to extract path manually
-                        const match = result.data.url.match(/\/ae-content\/uploads\/[^?#]+/);
-                        pathToStore = match ? match[0] : result.data.url;
-                    }
-                }
-                
-                // Ensure it's a relative path (starts with /)
-                if (pathToStore && !pathToStore.startsWith('/')) {
-                    pathToStore = '/' + pathToStore;
-                }
-                
-                console.log('Path to store in database:', pathToStore);
-                input.value = pathToStore;
+                // Display the full URL in the input field for user visibility
+                input.value = result.data.url || result.data.relativePath;
                 
                 // Show preview using the full URL
                 preview.innerHTML = `<img src="${result.data.url}" alt="Preview" class="h-32 w-auto rounded border border-gray-300 object-contain">`;
@@ -877,7 +912,7 @@ include __DIR__ . '/includes/header.php';
         try {
             loadingEl.classList.remove('hidden');
             errorEl.classList.add('hidden');
-            tableEl.classList.add('hidden');
+            tableEl.style.display = 'none';
             paginationEl.classList.add('hidden');
 
             const filters = getFilters();
@@ -888,7 +923,7 @@ include __DIR__ . '/includes/header.php';
             if (result.status === 'success' && result.data.products) {
                 renderProducts(result.data.products);
                 loadingEl.classList.add('hidden');
-                tableEl.classList.remove('hidden');
+                tableEl.style.display = 'table';
                 
                 // Update pagination info
                 if (result.data.pagination) {

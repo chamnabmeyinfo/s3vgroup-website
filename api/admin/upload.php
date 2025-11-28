@@ -9,12 +9,27 @@ ob_start();
 ini_set('display_errors', '0');
 error_reporting(E_ALL);
 
+// Load bootstrap to ensure base_path() function is available
+if (file_exists(__DIR__ . '/../../bootstrap/app.php')) {
+    require_once __DIR__ . '/../../bootstrap/app.php';
+} elseif (file_exists(__DIR__ . '/../../ae-load.php')) {
+    require_once __DIR__ . '/../../ae-load.php';
+}
+
 require_once __DIR__ . '/../../config/database.php';
 
 use App\Http\AdminGuard;
 use App\Http\JsonResponse;
 use App\Support\Id;
 use App\Support\ImageOptimizer;
+
+// Ensure base_path function exists
+if (!function_exists('base_path')) {
+    function base_path(string $path = ''): string {
+        $base = defined('BASE_PATH') ? BASE_PATH : dirname(__DIR__, 2);
+        return rtrim($base . ($path !== '' ? '/' . ltrim($path, '/\\') : ''), '/\\');
+    }
+}
 
 if (!function_exists('ae_store_uploaded_file')) {
     /**
@@ -70,15 +85,49 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 try {
+// Determine upload type (default: 'site', can be 'product')
+$requestedType = $_POST['type'] ?? $_GET['type'] ?? 'site';
+// Sanitize upload type to prevent directory traversal
+$requestedType = preg_replace('/[^a-z0-9_-]/', '', strtolower($requestedType));
+
+// Map requested types to actual directory names
+$uploadTypeMap = [
+    'site' => 'site',
+    'product' => 'products',
+    'products' => 'products', // Allow both singular/plural inputs
+];
+
+if (empty($requestedType) || !isset($uploadTypeMap[$requestedType])) {
+    $requestedType = 'site'; // Default to 'site' if invalid
+}
+
+$uploadSubdir = $uploadTypeMap[$requestedType];
+
 // Create uploads directory if it doesn't exist (use ae-content/uploads for Ant Elite)
 $uploadDir = base_path('ae-content/uploads');
 if (!is_dir($uploadDir)) {
-    mkdir($uploadDir, 0755, true);
+    if (!@mkdir($uploadDir, 0755, true)) {
+        error_log("Failed to create upload directory: " . $uploadDir);
+        ob_end_clean();
+        JsonResponse::error('Failed to create upload directory. Please check server permissions.', 500);
+    }
 }
 
-$uploadDir .= '/site';
+// Use the appropriate subdirectory based on type
+$uploadDir .= '/' . $uploadSubdir;
 if (!is_dir($uploadDir)) {
-    mkdir($uploadDir, 0755, true);
+    if (!@mkdir($uploadDir, 0755, true)) {
+        error_log("Failed to create upload subdirectory: " . $uploadDir);
+        ob_end_clean();
+        JsonResponse::error('Failed to create upload subdirectory. Please check server permissions.', 500);
+    }
+}
+
+// Verify directory is writable
+if (!is_writable($uploadDir)) {
+    error_log("Upload directory is not writable: " . $uploadDir);
+    ob_end_clean();
+    JsonResponse::error('Upload directory is not writable. Please check server permissions.', 500);
 }
 
 // Check if file was uploaded
@@ -142,24 +191,44 @@ try {
     ae_store_uploaded_file($file, $destination);
 } catch (\Throwable $e) {
     error_log('Upload storage failure: ' . $e->getMessage());
+    error_log('Destination: ' . $destination);
+    error_log('Upload dir: ' . $uploadDir);
     ob_end_clean();
-    JsonResponse::error('Failed to save uploaded file.', 500);
+    JsonResponse::error('Failed to save uploaded file: ' . $e->getMessage(), 500);
+}
+
+// Verify file was saved before optimization
+if (!file_exists($destination)) {
+    error_log("CRITICAL: File does not exist immediately after save: " . $destination);
+    ob_end_clean();
+    JsonResponse::error('File was not saved correctly. Please check server permissions.', 500);
 }
 
 // AUTOMATIC IMAGE OPTIMIZATION - Always runs on upload
 // This prevents users from uploading large images that slow down the website
-if (in_array($mimeType, ['image/jpeg', 'image/png', 'image/webp'], true)) {
+// Only optimize if GD extension is available
+if (in_array($mimeType, ['image/jpeg', 'image/png', 'image/webp'], true) && extension_loaded('gd')) {
     $originalSize = file_exists($destination) ? filesize($destination) : ($file['size'] ?? 0);
     $originalDimensions = @getimagesize($destination);
     
+    // Store original destination in case optimization fails
+    $originalDestination = $destination;
+    $originalFilename = $filename;
+    
     // Use smart optimization: maintain aspect ratio, target 300KB max file size
-    // For product images, 1200x1200 is plenty for web display and keeps files small
+    // Accept all image sizes - only optimize if image is very large
     try {
+        // Make a backup copy before optimization (in case optimization deletes the original)
+        $backupPath = $destination . '.backup';
+        if (!@copy($destination, $backupPath)) {
+            error_log("Warning: Could not create backup before optimization");
+        }
+        
         ImageOptimizer::resize(
             $destination, 
             $mimeType, 
-            1200,  // Max width (good for product images)
-            1200,  // Max height
+            10000,  // Max width (accepts all reasonable image sizes)
+            10000,  // Max height (accepts all reasonable image sizes)
             false, // Don't crop - maintain aspect ratio
             300 * 1024 // Target: 300KB maximum file size (aggressive compression)
         );
@@ -184,6 +253,30 @@ if (in_array($mimeType, ['image/jpeg', 'image/png', 'image/webp'], true)) {
             }
         }
         
+        // CRITICAL: Ensure file exists after optimization
+        // If optimization deleted the file, restore from backup
+        if (!file_exists($destination)) {
+            error_log("WARNING: File missing after optimization, attempting restore from backup");
+            if (file_exists($backupPath)) {
+                if (@copy($backupPath, $destination)) {
+                    error_log("SUCCESS: Restored file from backup");
+                } else {
+                    error_log("ERROR: Failed to restore from backup");
+                    ob_end_clean();
+                    JsonResponse::error('Image optimization failed and file could not be restored.', 500);
+                }
+            } else {
+                error_log("ERROR: No backup available and file is missing");
+                ob_end_clean();
+                JsonResponse::error('Image optimization failed and file was lost.', 500);
+            }
+        }
+        
+        // Clean up backup
+        if (file_exists($backupPath)) {
+            @unlink($backupPath);
+        }
+        
         // Get final file size and dimensions after optimization
         $finalSize = file_exists($destination) ? filesize($destination) : $originalSize;
         $finalDimensions = @getimagesize($destination);
@@ -193,8 +286,27 @@ if (in_array($mimeType, ['image/jpeg', 'image/png', 'image/webp'], true)) {
         $optimized = $finalSize < $originalSize;
         
     } catch (\Throwable $e) {
-        // If optimization fails, log but don't fail the upload
+        // If optimization fails, restore from backup if available
         error_log("Image optimization failed: " . $e->getMessage());
+        error_log("Stack trace: " . $e->getTraceAsString());
+        
+        if (!file_exists($destination)) {
+            $backupPath = $originalDestination . '.backup';
+            if (file_exists($backupPath)) {
+                if (@copy($backupPath, $destination)) {
+                    error_log("Restored file from backup after optimization error");
+                }
+                @unlink($backupPath);
+            }
+        }
+        
+        // Ensure we have a valid file
+        if (!file_exists($destination)) {
+            error_log("CRITICAL: No file exists after optimization error");
+            ob_end_clean();
+            JsonResponse::error('Image optimization failed: ' . $e->getMessage(), 500);
+        }
+        
         $finalSize = $file['size'];
         $finalDimensions = $originalDimensions ?? null;
         $optimized = false;
@@ -205,18 +317,8 @@ if (in_array($mimeType, ['image/jpeg', 'image/png', 'image/webp'], true)) {
     // Update file size after optimization
     $file['size'] = $finalSize;
     
-    // DEBUG: Check if file actually exists
-    if (!file_exists($destination)) {
-        error_log("ERROR: File does not exist after optimization: " . $destination);
-        error_log("Original file size: " . $originalSize);
-        error_log("Final size: " . $finalSize);
-    } else {
-        $actualSize = filesize($destination);
-        error_log("SUCCESS: File exists at: " . $destination . " with size: " . $actualSize);
-    }
-    
     // Update relative path if filename changed (e.g., WebP conversion)
-    $relativePath = '/ae-content/uploads/site/' . $filename;
+    $relativePath = '/ae-content/uploads/' . $uploadSubdir . '/' . $filename;
 } else {
     // SVG/GIF - no optimization needed
     $optimized = false;
@@ -224,14 +326,18 @@ if (in_array($mimeType, ['image/jpeg', 'image/png', 'image/webp'], true)) {
     $finalSize = $file['size'];
     $finalDimensions = null;
     // Ensure relative path is set for non-optimized images
-    $relativePath = '/ae-content/uploads/site/' . $filename;
+    $relativePath = '/ae-content/uploads/' . $uploadSubdir . '/' . $filename;
 }
 
 // Verify file actually exists before proceeding
 if (!file_exists($destination)) {
     error_log("CRITICAL: Uploaded file does not exist at: " . $destination);
+    error_log("Upload directory: " . $uploadDir);
+    error_log("Directory exists: " . (is_dir($uploadDir) ? 'yes' : 'no'));
+    error_log("Directory writable: " . (is_writable($uploadDir) ? 'yes' : 'no'));
+    error_log("Destination path: " . $destination);
     ob_end_clean();
-    JsonResponse::error('File upload failed: file was not saved correctly.', 500);
+    JsonResponse::error('File upload failed: file was not saved correctly. Please check server logs for details.', 500);
 }
 
 // Verify file is readable
@@ -266,7 +372,7 @@ $siteUrl = rtrim($siteUrl, '/');
 
 // Ensure relative path is set (should always be set by now, but safety check)
 if (!isset($relativePath) || empty($relativePath)) {
-    $relativePath = '/ae-content/uploads/site/' . $filename;
+    $relativePath = '/ae-content/uploads/' . $uploadSubdir . '/' . $filename;
 }
 
 // Build full URL - ALWAYS use relativePath, never construct from filename

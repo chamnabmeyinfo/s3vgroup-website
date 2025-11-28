@@ -50,6 +50,8 @@ setup-live-site.php
 database-*.sql
 *-backup.sql
 *-export.sql
+tmp/
+*.sql
 
 # cPanel specific
 .htpasswd

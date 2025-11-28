@@ -137,12 +137,23 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Ensure all nav items are visible
-    const navItems = document.querySelectorAll('.app-bottom-nav-item');
-    navItems.forEach(item => {
+    const allNavItems = document.querySelectorAll('.app-bottom-nav-item');
+    console.log('Total nav items:', allNavItems.length);
+    allNavItems.forEach((item, index) => {
         item.style.display = 'flex';
         item.style.visibility = 'visible';
         item.style.opacity = '1';
+        item.style.flex = '1';
+        item.style.minWidth = '0';
+        console.log(`Nav item ${index}:`, item.textContent.trim());
     });
+    
+    // Ensure container is visible
+    const bottomNav = document.getElementById('app-bottom-nav');
+    if (bottomNav) {
+        bottomNav.style.display = 'flex';
+        bottomNav.style.visibility = 'visible';
+    }
 });
 </script>
 

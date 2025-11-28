@@ -1,0 +1,394 @@
+/**
+ * Theme Styles - Dark Mode and Light Mode
+ * Supports smooth transitions between themes
+ */
+
+/* Light Mode (Default) */
+:root,
+.theme-light {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f9fafb;
+    --bg-tertiary: #f3f4f6;
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+    --text-tertiary: #9ca3af;
+    --border-color: #e5e7eb;
+    --header-bg: #ffffff;
+    --card-bg: #ffffff;
+    --section-bg: #ffffff;
+    --hover-bg: #f9fafb;
+}
+
+/* Dark Mode */
+.theme-dark {
+    --bg-primary: #111827;
+    --bg-secondary: #1f2937;
+    --bg-tertiary: #374151;
+    --text-primary: #f9fafb;
+    --text-secondary: #d1d5db;
+    --text-tertiary: #9ca3af;
+    --border-color: #374151;
+    --header-bg: #1f2937;
+    --card-bg: #1f2937;
+    --section-bg: #111827;
+    --hover-bg: #374151;
+}
+
+/* Smooth transitions for theme changes */
+* {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Body and HTML */
+html,
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+/* Header Styles */
+header.theme-header {
+    background-color: var(--header-bg) !important;
+    border-bottom-color: var(--border-color) !important;
+}
+
+.theme-dark header.theme-header {
+    background-color: #1f2937 !important;
+    border-bottom-color: #374151 !important;
+}
+
+.theme-light header.theme-header {
+    background-color: #ffffff !important;
+    border-bottom-color: #e5e7eb !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Navigation Links */
+header.theme-header nav a {
+    color: var(--text-primary) !important;
+}
+
+.theme-dark header.theme-header nav a {
+    color: #f9fafb !important;
+}
+
+.theme-dark header.theme-header nav a:hover {
+    color: #f97316 !important;
+}
+
+.theme-light header.theme-header nav a {
+    color: #374151 !important;
+}
+
+.theme-light header.theme-header nav a:hover {
+    color: #f97316 !important;
+}
+
+/* Logo Text */
+.theme-dark header.theme-header .text-white {
+    color: #f9fafb !important;
+}
+
+.theme-light header.theme-header .text-white {
+    color: #111827 !important;
+}
+
+.theme-dark header.theme-header .text-gray-400 {
+    color: #9ca3af !important;
+}
+
+.theme-light header.theme-header .text-gray-400 {
+    color: #6b7280 !important;
+}
+
+/* Search Input */
+header input[type="search"] {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.theme-dark header input[type="search"] {
+    background-color: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
+}
+
+.theme-light header input[type="search"] {
+    background-color: #f9fafb;
+    border-color: #e5e7eb;
+    color: #111827;
+}
+
+/* Cards */
+.card,
+.bg-white {
+    background-color: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+.theme-dark .card,
+.theme-dark .bg-white {
+    background-color: #1f2937 !important;
+    color: #f9fafb !important;
+    border-color: #374151 !important;
+}
+
+/* Sections */
+section {
+    background-color: var(--section-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Dark sections in dark mode */
+.theme-dark section.bg-gray-800,
+.theme-dark section.bg-gray-900 {
+    background-color: #1f2937 !important;
+}
+
+.theme-dark section.bg-gray-900 {
+    background-color: #111827 !important;
+}
+
+/* Light sections in light mode */
+.theme-light section.bg-gray-50,
+.theme-light section.bg-white {
+    background-color: #ffffff !important;
+}
+
+.theme-light section.bg-gray-50 {
+    background-color: #f9fafb !important;
+}
+
+/* Text Colors */
+.text-gray-900 {
+    color: var(--text-primary) !important;
+}
+
+.text-gray-600,
+.text-gray-700 {
+    color: var(--text-secondary) !important;
+}
+
+.text-gray-500 {
+    color: var(--text-tertiary) !important;
+}
+
+/* Buttons - Keep orange accent */
+.theme-dark .bg-orange-500,
+.theme-light .bg-orange-500 {
+    background-color: #f97316 !important;
+}
+
+.theme-dark .bg-orange-500:hover,
+.theme-light .bg-orange-500:hover {
+    background-color: #ea580c !important;
+}
+
+/* Borders */
+.border-gray-200,
+.border-gray-300 {
+    border-color: var(--border-color) !important;
+}
+
+.theme-dark .border-gray-200,
+.theme-dark .border-gray-300 {
+    border-color: #374151 !important;
+}
+
+/* Hover Effects */
+.theme-dark .hover\:bg-gray-100:hover {
+    background-color: #374151 !important;
+}
+
+.theme-light .hover\:bg-gray-800:hover {
+    background-color: #f3f4f6 !important;
+}
+
+/* Product Cards */
+.theme-dark .category-item,
+.theme-dark .group {
+    background-color: #1f2937 !important;
+    border-color: #374151 !important;
+}
+
+.theme-dark .category-item:hover,
+.theme-dark .group:hover {
+    background-color: #374151 !important;
+    border-color: #f97316 !important;
+}
+
+/* Theme Toggle Button */
+.theme-toggle-btn {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.theme-dark .theme-toggle-btn {
+    border-color: #4b5563;
+    color: #f9fafb;
+}
+
+.theme-dark .theme-toggle-btn:hover {
+    background-color: #374151;
+    border-color: #f97316;
+}
+
+.theme-light .theme-toggle-btn {
+    border-color: #e5e7eb;
+    color: #374151;
+}
+
+.theme-light .theme-toggle-btn:hover {
+    background-color: #f3f4f6;
+    border-color: #f97316;
+}
+
+.theme-toggle-icon {
+    color: inherit;
+}
+
+/* Navigation Links */
+.theme-nav-link {
+    color: var(--text-primary) !important;
+}
+
+.theme-text-primary {
+    color: var(--text-primary) !important;
+}
+
+.theme-text-secondary {
+    color: var(--text-secondary) !important;
+}
+
+/* Footer */
+footer {
+    background-color: var(--section-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+.theme-dark footer {
+    background-color: #1f2937 !important;
+    color: #f9fafb !important;
+}
+
+/* Secondary Menu Bar */
+.theme-secondary-bar {
+    background-color: var(--bg-tertiary) !important;
+    border-bottom-color: var(--border-color) !important;
+}
+
+.theme-dark .theme-secondary-bar {
+    background-color: #1f2937 !important;
+    border-bottom-color: #374151 !important;
+}
+
+.theme-light .theme-secondary-bar {
+    background-color: #f3f4f6 !important;
+    border-bottom-color: #e5e7eb !important;
+}
+
+/* Footer Menu Styling */
+.footer-menu-wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+}
+
+.footer-menu-column h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: inherit;
+}
+
+.footer-menu-column ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-menu-column ul li {
+    margin-bottom: 0.5rem;
+}
+
+.footer-menu-column a {
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.footer-menu-column a:hover {
+    color: #f97316;
+}
+
+/* Mobile Menu Theme Support */
+.theme-mobile-menu {
+    background-color: var(--card-bg) !important;
+    border-top-color: var(--border-color) !important;
+}
+
+.theme-dark .theme-mobile-menu {
+    background-color: #1f2937 !important;
+    border-top-color: #374151 !important;
+}
+
+.theme-light .theme-mobile-menu {
+    background-color: #ffffff !important;
+    border-top-color: #e5e7eb !important;
+}
+
+.theme-search-input {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+/* Mobile Menu Button Theme Support */
+.theme-mobile-menu-btn {
+    color: var(--text-primary);
+}
+
+.theme-dark .theme-mobile-menu-btn {
+    color: #f9fafb;
+}
+
+.theme-dark .theme-mobile-menu-btn:hover {
+    background-color: #374151;
+}
+
+.theme-light .theme-mobile-menu-btn {
+    color: #374151;
+}
+
+.theme-light .theme-mobile-menu-btn:hover {
+    background-color: #f3f4f6;
+}
+
+.theme-menu-icon {
+    color: inherit;
+}
+
+/* Smooth scrollbar for dark mode */
+.theme-dark ::-webkit-scrollbar-track {
+    background: #1f2937;
+}
+
+.theme-dark ::-webkit-scrollbar-thumb {
+    background: #4b5563;
+}
+
+.theme-dark ::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
+}
+
+/* Override specific sections that should stay dark/light */
+.theme-dark .hero-section-dark {
+    background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
+}
+
+.theme-light .hero-section-light {
+    background: linear-gradient(135deg, #ffffff, #f9fafb) !important;
+}
+

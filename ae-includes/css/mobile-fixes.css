@@ -1,0 +1,241 @@
+/**
+ * Mobile-Specific Fixes
+ * Critical fixes for mobile layout issues
+ */
+
+/* ============================================
+   CRITICAL MOBILE FIXES
+   ============================================ */
+
+/* Ensure body is scrollable on mobile */
+@media (max-width: 1024px) {
+    body {
+        position: relative !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        width: 100% !important;
+        min-height: 100vh !important;
+    }
+    
+    html {
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+    }
+}
+
+/* Fix mobile menu positioning */
+#mobile-menu {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    left: 0 !important;
+    right: 0 !important;
+    transform: none !important;
+}
+
+/* Ensure header doesn't break layout */
+header {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Fix container overflow */
+.container {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    box-sizing: border-box;
+}
+
+/* Fix images on mobile */
+img {
+    max-width: 100% !important;
+    height: auto !important;
+    display: block;
+}
+
+/* Fix grid layouts on mobile */
+.grid {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Fix flex containers */
+.flex {
+    flex-wrap: wrap;
+    max-width: 100%;
+}
+
+/* Prevent horizontal scroll */
+* {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Fix text overflow */
+p, h1, h2, h3, h4, h5, h6, span, a {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+}
+
+/* Fix buttons on mobile */
+button, a.btn, .btn {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Fix input fields */
+input, textarea, select {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Fix sections */
+section {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+/* Fix cards */
+.card, .bg-white, .bg-gray-800, .bg-gray-900 {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Fix mobile app header if it exists */
+.app-header.mobile-only {
+    display: none !important;
+}
+
+/* Ensure main content is scrollable */
+main {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+/* Fix footer */
+footer {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* ============================================
+   MOBILE MENU SPECIFIC FIXES
+   ============================================ */
+
+#mobile-menu.hidden {
+    display: none !important;
+}
+
+#mobile-menu:not(.hidden) {
+    display: block !important;
+}
+
+/* Fix mobile menu links */
+#mobile-menu a {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    word-wrap: break-word;
+}
+
+/* ============================================
+   RESPONSIVE IMAGES
+   ============================================ */
+
+img[src*="unsplash"],
+img[src*="products"],
+img[src*="uploads"] {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+/* ============================================
+   FIX OVERLAPPING ELEMENTS
+   ============================================ */
+
+@media (max-width: 640px) {
+    /* Ensure no elements overlap */
+    header,
+    main,
+    section,
+    footer {
+        position: relative;
+        z-index: auto;
+    }
+    
+    /* Fix z-index conflicts */
+    header {
+        z-index: 1000;
+    }
+    
+    #mobile-menu {
+        z-index: 999;
+    }
+}
+
+/* ============================================
+   TOUCH FIXES
+   ============================================ */
+
+@media (hover: none) and (pointer: coarse) {
+    /* Larger touch targets */
+    button,
+    a,
+    input[type="button"],
+    input[type="submit"] {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 0.75rem 1rem;
+    }
+    
+    /* Prevent text selection on buttons */
+    button,
+    a.btn {
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+    }
+}
+
+/* ============================================
+   SCROLLING FIXES
+   ============================================ */
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Fix scroll on iOS */
+body {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* ============================================
+   VIEWPORT FIXES
+   ============================================ */
+
+/* Ensure viewport is correct */
+@supports (-webkit-touch-callout: none) {
+    /* iOS specific fixes */
+    body {
+        position: relative;
+        overflow-x: hidden;
+    }
+}
+

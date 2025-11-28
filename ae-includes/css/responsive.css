@@ -1,0 +1,912 @@
+/**
+ * Comprehensive Responsive Design Styles
+ * Ensures all components work perfectly on mobile, tablet, and desktop
+ */
+
+/* ============================================
+   GLOBAL RESPONSIVE UTILITIES
+   ============================================ */
+
+/* Container Responsive Padding */
+.container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+    .container {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+}
+
+/* ============================================
+   HEADER RESPONSIVE
+   ============================================ */
+
+/* Header Container */
+header {
+    min-height: 64px;
+}
+
+/* Header Logo and Brand */
+header .flex.items-center.gap-2 {
+    flex-wrap: nowrap;
+    min-width: 0;
+}
+
+@media (max-width: 640px) {
+    header .flex.items-center.gap-2 {
+        gap: 0.5rem;
+    }
+    
+    header .flex.items-center.gap-2 .flex.flex-col {
+        font-size: 0.875rem;
+    }
+    
+    header .flex.items-center.gap-2 .text-xl {
+        font-size: 0.875rem;
+        line-height: 1.2;
+    }
+    
+    header .flex.items-center.gap-2 .text-xs {
+        font-size: 0.625rem;
+        display: none; /* Hide tagline on very small screens */
+    }
+    
+    header .w-10.h-10 {
+        width: 2rem;
+        height: 2rem;
+    }
+}
+
+/* Navigation Menu - Desktop Hidden on Mobile */
+header nav {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    header nav {
+        display: flex;
+    }
+}
+
+/* Search Bar Responsive */
+header input[type="search"] {
+    min-width: 150px;
+    width: 100%;
+    max-width: 220px;
+}
+
+@media (max-width: 768px) {
+    header input[type="search"] {
+        display: none;
+    }
+}
+
+/* Mobile Menu Button */
+.md\:hidden {
+    display: flex;
+}
+
+@media (min-width: 768px) {
+    .md\:hidden {
+        display: none;
+    }
+}
+
+/* Mobile Menu Dropdown */
+#mobile-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+#mobile-menu:not(.hidden) {
+    max-height: 100vh;
+    overflow-y: auto;
+}
+
+/* ============================================
+   HERO SECTION RESPONSIVE
+   ============================================ */
+
+/* Hero Text Sizing */
+.hero-section h1,
+section h1 {
+    font-size: 2rem;
+    line-height: 1.2;
+}
+
+@media (min-width: 640px) {
+    .hero-section h1,
+    section h1 {
+        font-size: 2.5rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .hero-section h1,
+    section h1 {
+        font-size: 3rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .hero-section h1,
+    section h1 {
+        font-size: 3.5rem;
+    }
+}
+
+@media (min-width: 1280px) {
+    .hero-section h1,
+    section h1 {
+        font-size: 4rem;
+    }
+}
+
+/* Hero Subtitle */
+.hero-section p,
+section p.text-xl {
+    font-size: 1rem;
+}
+
+@media (min-width: 768px) {
+    .hero-section p,
+    section p.text-xl {
+        font-size: 1.25rem;
+    }
+}
+
+/* Hero Buttons */
+.hero-section .flex.flex-col {
+    gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+    .hero-section .flex.flex-col {
+        flex-direction: row;
+    }
+}
+
+.hero-section a {
+    width: 100%;
+    text-align: center;
+}
+
+@media (min-width: 640px) {
+    .hero-section a {
+        width: auto;
+    }
+}
+
+/* Hero Padding */
+.hero-section,
+section.py-32,
+section.py-16.sm\:py-24.md\:py-32 {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
+
+@media (min-width: 640px) {
+    .hero-section,
+    section.py-32,
+    section.py-16.sm\:py-24.md\:py-32 {
+        padding-top: 4rem;
+        padding-bottom: 4rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .hero-section,
+    section.py-32,
+    section.py-16.sm\:py-24.md\:py-32 {
+        padding-top: 6rem;
+        padding-bottom: 6rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .hero-section,
+    section.py-32,
+    section.py-16.sm\:py-24.md\:py-32 {
+        padding-top: 8rem;
+        padding-bottom: 8rem;
+    }
+}
+
+/* Hero Min Height */
+section[style*="min-height: 600px"] {
+    min-height: 400px !important;
+}
+
+@media (min-width: 640px) {
+    section[style*="min-height: 600px"] {
+        min-height: 500px !important;
+    }
+}
+
+@media (min-width: 768px) {
+    section[style*="min-height: 600px"] {
+        min-height: 600px !important;
+    }
+}
+
+/* ============================================
+   SERVICE ICONS SECTION RESPONSIVE
+   ============================================ */
+
+/* Service Icons Grid */
+.grid.grid-cols-2.md\:grid-cols-5 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+    .grid.grid-cols-2.md\:grid-cols-5 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 768px) {
+    .grid.grid-cols-2.md\:grid-cols-5 {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
+/* Service Icon Size */
+.w-20.h-20 {
+    width: 3rem;
+    height: 3rem;
+}
+
+@media (min-width: 640px) {
+    .w-20.h-20 {
+        width: 4rem;
+        height: 4rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .w-20.h-20 {
+        width: 5rem;
+        height: 5rem;
+    }
+}
+
+/* Service Icon Text */
+.font-semibold.text-lg {
+    font-size: 0.875rem;
+}
+
+@media (min-width: 640px) {
+    .font-semibold.text-lg {
+        font-size: 1rem;
+    }
+}
+
+/* ============================================
+   CATEGORIES SECTION RESPONSIVE
+   ============================================ */
+
+/* Categories Grid */
+.grid.grid-cols-2.sm\:grid-cols-3.md\:grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+    .grid.grid-cols-2.sm\:grid-cols-3.md\:grid-cols-4 {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .grid.grid-cols-2.sm\:grid-cols-3.md\:grid-cols-4 {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+    }
+}
+
+/* Category Cards */
+.category-item {
+    padding: 0.75rem;
+}
+
+@media (min-width: 640px) {
+    .category-item {
+        padding: 1rem;
+    }
+}
+
+/* Category Image */
+.category-image-wrapper {
+    width: 3rem;
+    height: 3rem;
+}
+
+@media (min-width: 640px) {
+    .category-image-wrapper {
+        width: 4rem;
+        height: 4rem;
+    }
+}
+
+/* ============================================
+   PRODUCTS SECTION RESPONSIVE
+   ============================================ */
+
+/* Products Grid */
+.grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-3 {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 640px) {
+    .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-3 {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-3 {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+    }
+}
+
+/* Product Cards */
+.group.rounded-2xl,
+.group.rounded-lg {
+    padding: 1rem;
+}
+
+@media (min-width: 640px) {
+    .group.rounded-2xl,
+    .group.rounded-lg {
+        padding: 1.5rem;
+    }
+}
+
+/* Product Images */
+[style*="aspect-ratio: 4/3"] {
+    min-height: 200px;
+}
+
+@media (min-width: 640px) {
+    [style*="aspect-ratio: 4/3"] {
+        min-height: 250px;
+    }
+}
+
+/* ============================================
+   WHY CHOOSE US SECTION RESPONSIVE
+   ============================================ */
+
+/* Feature Cards Grid */
+.grid.md\:grid-cols-3 {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .grid.md\:grid-cols-3 {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+    }
+}
+
+/* Feature Card Padding */
+.bg-gray-800.rounded-lg.p-8 {
+    padding: 1.5rem;
+}
+
+@media (min-width: 640px) {
+    .bg-gray-800.rounded-lg.p-8 {
+        padding: 2rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .bg-gray-800.rounded-lg.p-8 {
+        padding: 2.5rem;
+    }
+}
+
+/* ============================================
+   CTA SECTION RESPONSIVE
+   ============================================ */
+
+/* CTA Buttons */
+.flex.flex-col.sm\:flex-row {
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+    .flex.flex-col.sm\:flex-row {
+        flex-direction: row;
+        gap: 1rem;
+    }
+}
+
+/* CTA Button Width */
+.flex.flex-col.sm\:flex-row a {
+    width: 100%;
+}
+
+@media (min-width: 640px) {
+    .flex.flex-col.sm\:flex-row a {
+        width: auto;
+    }
+}
+
+/* ============================================
+   FOOTER RESPONSIVE
+   ============================================ */
+
+/* Footer Grid */
+.grid.md\:grid-cols-4 {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 640px) {
+    .grid.md\:grid-cols-4 {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .grid.md\:grid-cols-4 {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 2rem;
+    }
+}
+
+/* Footer Menu */
+.footer-menu-wrapper {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 640px) {
+    .footer-menu-wrapper {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 768px) {
+    .footer-menu-wrapper {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* ============================================
+   MENU RESPONSIVE
+   ============================================ */
+
+/* Dynamic Menu - Mobile */
+.dynamic-menu .menu-list {
+    flex-direction: column;
+    gap: 0;
+}
+
+@media (min-width: 768px) {
+    .dynamic-menu .menu-list {
+        flex-direction: row;
+        gap: 0.5rem;
+    }
+}
+
+/* Submenu Positioning - Mobile */
+@media (max-width: 767px) {
+    .submenu {
+        position: static;
+        transform: none;
+        box-shadow: none;
+        opacity: 1;
+        visibility: visible;
+        margin-left: 1rem;
+        margin-top: 0.5rem;
+        padding: 0.5rem 0;
+        background: transparent;
+    }
+    
+    .mega-menu-dropdown {
+        position: static;
+        transform: none;
+        box-shadow: none;
+        opacity: 1;
+        visibility: visible;
+        margin-left: 1rem;
+        margin-top: 0.5rem;
+        padding: 1rem;
+        background: transparent;
+    }
+}
+
+/* ============================================
+   SECONDARY MENU BAR RESPONSIVE
+   ============================================ */
+
+.theme-secondary-bar {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .theme-secondary-bar {
+        display: block;
+    }
+}
+
+.secondary-menu-list {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+/* ============================================
+   SECTION HEADINGS RESPONSIVE
+   ============================================ */
+
+/* Section Titles */
+.text-4xl.md\:text-5xl {
+    font-size: 2rem;
+    line-height: 1.2;
+}
+
+@media (min-width: 768px) {
+    .text-4xl.md\:text-5xl {
+        font-size: 2.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .text-4xl.md\:text-5xl {
+        font-size: 3rem;
+    }
+}
+
+/* Section Padding */
+section.py-20,
+section.py-24 {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
+
+@media (min-width: 768px) {
+    section.py-20,
+    section.py-24 {
+        padding-top: 5rem;
+        padding-bottom: 5rem;
+    }
+}
+
+/* ============================================
+   BUTTONS RESPONSIVE
+   ============================================ */
+
+/* Button Sizing */
+.px-8.py-4 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    font-size: 0.875rem;
+}
+
+@media (min-width: 640px) {
+    .px-8.py-4 {
+        padding-left: 2rem;
+        padding-right: 2rem;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        font-size: 1rem;
+    }
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+/* Hide on Mobile */
+.mobile-hidden {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .mobile-hidden {
+        display: block;
+    }
+}
+
+/* Show on Mobile Only */
+.mobile-only {
+    display: block;
+}
+
+@media (min-width: 768px) {
+    .mobile-only {
+        display: none;
+    }
+}
+
+/* Desktop Only */
+.desktop-only {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .desktop-only {
+        display: block;
+    }
+}
+
+/* ============================================
+   TOUCH FRIENDLY ELEMENTS
+   ============================================ */
+
+/* Minimum Touch Target Size */
+button,
+a,
+input[type="button"],
+input[type="submit"] {
+    min-height: 44px;
+    min-width: 44px;
+}
+
+/* ============================================
+   TEXT RESPONSIVE
+   ============================================ */
+
+/* Responsive Text Sizes */
+.text-sm {
+    font-size: 0.875rem;
+}
+
+.text-base {
+    font-size: 1rem;
+}
+
+.text-lg {
+    font-size: 1.125rem;
+}
+
+@media (min-width: 768px) {
+    .text-sm {
+        font-size: 0.875rem;
+    }
+    
+    .text-base {
+        font-size: 1rem;
+    }
+    
+    .text-lg {
+        font-size: 1.25rem;
+    }
+}
+
+/* ============================================
+   IMAGES RESPONSIVE
+   ============================================ */
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ============================================
+   OVERFLOW HANDLING
+   ============================================ */
+
+/* Prevent Horizontal Scroll */
+html,
+body {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Word Wrapping */
+* {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Prevent body scroll when mobile menu is open - Better approach */
+body.menu-open {
+    overflow: hidden;
+    /* Don't use position: fixed as it breaks layout */
+    /* Instead, use overflow: hidden which prevents scrolling */
+}
+
+/* ============================================
+   MOBILE MENU ANIMATIONS
+   ============================================ */
+
+#mobile-menu {
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+}
+
+#mobile-menu:not(.hidden) {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   TOUCH DEVICE OPTIMIZATIONS
+   ============================================ */
+
+/* Better touch targets for mobile */
+@media (hover: none) and (pointer: coarse) {
+    button,
+    a,
+    input,
+    select,
+    textarea {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Larger tap targets */
+    .menu-link {
+        padding: 0.75rem 1rem;
+    }
+    
+    /* Prevent double-tap zoom on buttons */
+    button,
+    a {
+        touch-action: manipulation;
+    }
+}
+
+/* ============================================
+   Z-INDEX MANAGEMENT
+   ============================================ */
+
+/* Ensure proper stacking order */
+header {
+    z-index: 1000;
+}
+
+#mobile-menu {
+    z-index: 999;
+}
+
+.submenu,
+.mega-menu-dropdown {
+    z-index: 1001;
+}
+
+/* ============================================
+   FIX OVERFLOW ISSUES
+   ============================================ */
+
+/* Prevent text overflow */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Ensure images don't break layout */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Fix for flex items */
+.flex.items-center {
+    flex-wrap: wrap;
+}
+
+@media (max-width: 640px) {
+    .flex.items-center.justify-between {
+        flex-wrap: wrap;
+    }
+}
+
+/* ============================================
+   TABLET SPECIFIC (640px - 1023px)
+   ============================================ */
+
+@media (min-width: 640px) and (max-width: 1023px) {
+    /* Tablet optimizations */
+    .container {
+        max-width: 100%;
+    }
+}
+
+/* ============================================
+   MOBILE SPECIFIC (max 639px)
+   ============================================ */
+
+@media (max-width: 639px) {
+    /* Reduce padding on mobile */
+    .px-4 {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    /* Stack elements vertically when needed */
+    .flex.items-center.justify-between {
+        flex-wrap: wrap;
+    }
+    
+    /* Full width buttons on mobile (only for CTA buttons) */
+    .flex.flex-col.sm\:flex-row button,
+    .flex.flex-col.sm\:flex-row a {
+        width: 100%;
+    }
+    
+    /* Reduce font sizes on very small screens */
+    h1 {
+        font-size: 1.75rem;
+        line-height: 1.2;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+        line-height: 1.3;
+    }
+    
+    h3 {
+        font-size: 1.25rem;
+        line-height: 1.4;
+    }
+    
+    /* Smaller gaps */
+    .gap-4 {
+        gap: 0.75rem;
+    }
+    
+    .gap-6 {
+        gap: 1rem;
+    }
+    
+    .gap-8 {
+        gap: 1.5rem;
+    }
+    
+    /* Ensure text doesn't overflow */
+    p, span, a {
+        word-break: break-word;
+    }
+    
+    /* Fix category cards on very small screens */
+    .category-item {
+        min-height: auto;
+    }
+    
+    /* Ensure buttons are touch-friendly */
+    button, a.btn, .btn {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+

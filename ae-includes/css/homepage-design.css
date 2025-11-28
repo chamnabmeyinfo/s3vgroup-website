@@ -1,0 +1,477 @@
+/**
+ * Homepage Design - Matching GLOBAL INDUSTRIAL SOLUTIONS Design
+ * Modern industrial design with dark blue, yellow accents, and app-like mobile experience
+ */
+
+/* ============================================
+   COLOR SCHEME
+   ============================================ */
+:root {
+    --gis-primary-blue: #1a237e;
+    --gis-dark-blue: #0d47a1;
+    --gis-yellow: #ffc107;
+    --gis-yellow-dark: #ffa000;
+    --gis-white: #ffffff;
+    --gis-gray-light: #f5f5f5;
+    --gis-gray-dark: #424242;
+}
+
+/* ============================================
+   HEADER DESIGN
+   ============================================ */
+header.gis-header,
+header {
+    background: var(--gis-white) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.gis-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+.gis-logo-text-yellow {
+    color: var(--gis-yellow);
+}
+
+.gis-logo-text-blue {
+    color: var(--gis-dark-blue);
+}
+
+.gis-nav-link {
+    color: var(--gis-gray-dark);
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s;
+    border-radius: 0.25rem;
+}
+
+.gis-nav-link:hover,
+.gis-nav-link.active {
+    color: var(--gis-yellow) !important;
+    background: rgba(255, 193, 7, 0.1);
+    font-weight: 600;
+}
+
+.gis-nav-contact-btn {
+    background: var(--gis-dark-blue);
+    color: var(--gis-white);
+    padding: 0.5rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.gis-nav-contact-btn:hover {
+    background: var(--gis-primary-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(13, 71, 161, 0.3);
+}
+
+/* ============================================
+   HERO SECTION
+   ============================================ */
+.gis-hero {
+    position: relative;
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.gis-hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.gis-hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, rgba(26, 35, 126, 0.85), rgba(13, 71, 161, 0.6));
+    z-index: 2;
+}
+
+.gis-hero-content {
+    position: relative;
+    z-index: 3;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    color: var(--gis-white);
+}
+
+.gis-hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.gis-hero-subtitle {
+    font-size: 1.5rem;
+    font-weight: 400;
+    opacity: 0.95;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================
+   PRODUCTS SECTION
+   ============================================ */
+.gis-section {
+    padding: 4rem 0;
+    background: var(--gis-white);
+}
+
+.gis-section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--gis-dark-blue);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.gis-product-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.gis-product-tab {
+    padding: 0.75rem 1.5rem;
+    background: var(--gis-white);
+    border: 2px solid var(--gis-gray-light);
+    border-radius: 0.5rem;
+    color: var(--gis-gray-dark);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.gis-product-tab:hover,
+.gis-product-tab.active {
+    background: var(--gis-yellow);
+    border-color: var(--gis-yellow);
+    color: var(--gis-dark-blue);
+}
+
+.gis-product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.gis-product-card {
+    background: var(--gis-white);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.gis-product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.gis-product-image {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    background: var(--gis-gray-light);
+}
+
+.gis-product-card-content {
+    padding: 1.5rem;
+}
+
+.gis-product-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--gis-dark-blue);
+    margin-bottom: 1rem;
+    min-height: 3rem;
+}
+
+.gis-view-products-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--gis-yellow);
+    color: var(--gis-dark-blue);
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.gis-view-products-btn:hover {
+    background: var(--gis-yellow-dark);
+    transform: scale(1.02);
+}
+
+/* ============================================
+   FEATURED PRODUCTS
+   ============================================ */
+.gis-featured-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.gis-featured-card {
+    background: var(--gis-white);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s;
+}
+
+.gis-featured-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.gis-featured-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+/* ============================================
+   SERVICES SECTION
+   ============================================ */
+.gis-services-box {
+    max-width: 800px;
+    margin: 0 auto;
+    background: var(--gis-white);
+    border-radius: 0.75rem;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.gis-services-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.gis-services-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--gis-gray-light);
+    font-size: 1.125rem;
+    color: var(--gis-gray-dark);
+}
+
+.gis-services-item:last-child {
+    border-bottom: none;
+}
+
+.gis-services-icon {
+    width: 12px;
+    height: 12px;
+    background: var(--gis-yellow);
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+.gis-footer {
+    background: var(--gis-dark-blue);
+    color: var(--gis-white);
+    padding: 3rem 0;
+}
+
+.gis-footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+}
+
+.gis-footer-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1rem;
+}
+
+.gis-footer-icon {
+    width: 24px;
+    height: 24px;
+    color: var(--gis-yellow);
+    flex-shrink: 0;
+}
+
+/* ============================================
+   MOBILE APP EXPERIENCE
+   ============================================ */
+@media (max-width: 768px) {
+    /* App-like body styling */
+    body {
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-y: contain;
+    }
+    
+    /* App-like header */
+    header {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* App-like smooth transitions */
+    * {
+        -webkit-tap-highlight-color: rgba(255, 193, 7, 0.2);
+    }
+    /* Hero Mobile */
+    .gis-hero {
+        min-height: 400px;
+    }
+    
+    .gis-hero-title {
+        font-size: 2rem;
+    }
+    
+    .gis-hero-subtitle {
+        font-size: 1.125rem;
+    }
+    
+    /* Product Tabs Mobile */
+    .gis-product-tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        padding-bottom: 0.5rem;
+    }
+    
+    .gis-product-tabs::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .gis-product-tab {
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+    
+    /* Product Grid Mobile */
+    .gis-product-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 0 1rem;
+    }
+    
+    /* Featured Grid Mobile */
+    .gis-featured-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    /* Services Mobile */
+    .gis-services-box {
+        margin: 0 1rem;
+        padding: 1.5rem;
+    }
+    
+    /* Footer Mobile */
+    .gis-footer-content {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    /* App-like smooth scrolling */
+    html {
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* App-like card interactions */
+    .gis-product-card,
+    .gis-featured-card {
+        -webkit-tap-highlight-color: rgba(255, 193, 7, 0.2);
+    }
+    
+    .gis-product-card:active,
+    .gis-featured-card:active {
+        transform: scale(0.98);
+    }
+    
+    /* App-like button feedback */
+    .gis-view-products-btn:active {
+        transform: scale(0.95);
+    }
+}
+
+/* ============================================
+   TABLET OPTIMIZATIONS
+   ============================================ */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .gis-product-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .gis-featured-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.gis-animate-fade-in {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.gis-product-card,
+.gis-featured-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.gis-product-card:nth-child(1) { animation-delay: 0.1s; }
+.gis-product-card:nth-child(2) { animation-delay: 0.2s; }
+.gis-product-card:nth-child(3) { animation-delay: 0.3s; }
+.gis-product-card:nth-child(4) { animation-delay: 0.4s; }
+.gis-product-card:nth-child(5) { animation-delay: 0.5s; }
+.gis-product-card:nth-child(6) { animation-delay: 0.6s; }
+

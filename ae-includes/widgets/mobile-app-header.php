@@ -25,7 +25,7 @@ $primaryColor = option('primary_color', '#0b3a63');
     </button>
     <div class="app-header-title">
         <?php if ($siteLogoUrl): ?>
-            <img src="<?php echo e($siteLogoUrl); ?>" alt="<?php echo e($siteName); ?>" class="h-6 w-auto mx-auto">
+            <img src="<?php echo e($siteLogoUrl); ?>" alt="<?php echo e($siteName); ?>" style="max-height: 32px; max-width: 180px; width: auto; height: auto; object-fit: contain;">
         <?php else: ?>
             <?php echo e($siteName); ?>
         <?php endif; ?>

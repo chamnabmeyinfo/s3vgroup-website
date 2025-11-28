@@ -15,6 +15,13 @@ if (file_exists(__DIR__ . '/../ae-includes/functions.php')) {
     require_once __DIR__ . '/../wp-includes/functions.php';
 }
 
+// Ensure e() function exists
+if (!function_exists('e')) {
+    function e($string) {
+        return htmlspecialchars((string) $string, ENT_QUOTES, 'UTF-8');
+    }
+}
+
 startAdminSession();
 
 requireAdmin();
@@ -212,96 +219,102 @@ $stats = [
 ];
 
 $pageTitle = 'Dashboard';
+
+// Include header - errors are handled within header.php itself
 include __DIR__ . '/includes/header.php';
 ?>
 
-<div>
-    <!-- macOS Header -->
-    <div class="admin-card" style="margin-bottom: 20px;">
-        <h1 style="font-size: 22px; font-weight: 600; margin: 0 0 6px 0; padding: 0; letter-spacing: -0.3px; color: var(--mac-text);">Dashboard</h1>
-        <p style="margin: 0; color: var(--mac-text-secondary); font-size: 13px;">Welcome back, <?php echo e($_SESSION['admin_email'] ?? 'Admin'); ?>! Here's an overview of your site.</p>
+<div class="admin-page-container">
+    <!-- Page Header -->
+    <div class="admin-page-header">
+        <h1>Dashboard</h1>
+        <p>Welcome back, <?php echo e($_SESSION['admin_email'] ?? 'Admin'); ?>! Here's an overview of your site.</p>
     </div>
 
-    <!-- macOS Stats Cards -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px;">
+    <!-- Dashboard Layout -->
+    <div class="admin-dashboard-layout">
+        <!-- Stats Cards - Smart Grid -->
+        <div class="admin-dashboard-stats">
+            <div class="admin-stats-grid">
         <?php foreach ($stats as $key => $stat): ?>
-            <a href="<?php echo e($stat['url']); ?>" style="display: block; background: #ffffff; border: 1px solid #b0b0b0; border-radius: 6px; padding: 16px; text-decoration: none; color: inherit; box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 1px 3px rgba(0, 0, 0, 0.12); transition: all 0.15s;" onmouseover="this.style.boxShadow='0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 2px 6px rgba(0, 0, 0, 0.15)'; this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 1px 3px rgba(0, 0, 0, 0.12)'; this.style.transform='translateY(0)'">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-                    <div style="font-size: 32px; opacity: 0.7;"><?php echo e($stat['icon']); ?></div>
-                    <div style="text-align: right;">
-                        <div style="font-size: 28px; font-weight: 600; color: var(--mac-text); letter-spacing: -0.4px;"><?php echo e($stat['total']); ?></div>
+            <a href="<?php echo e($stat['url']); ?>" class="admin-stat-card">
+                <div class="admin-stat-card-content">
+                    <div class="admin-stat-card-icon"><?php echo e($stat['icon']); ?></div>
+                    <div class="admin-stat-card-value">
+                        <div class="admin-stat-card-number"><?php echo e($stat['total']); ?></div>
                         <?php if (isset($stat['published'])): ?>
-                            <div style="font-size: 11px; color: var(--mac-text-secondary); margin-top: 2px;"><?php echo e($stat['published']); ?> published</div>
+                            <div class="admin-stat-card-meta"><?php echo e($stat['published']); ?> published</div>
                         <?php elseif (isset($stat['active'])): ?>
-                            <div style="font-size: 11px; color: var(--mac-text-secondary); margin-top: 2px;"><?php echo e($stat['active']); ?> active</div>
+                            <div class="admin-stat-card-meta"><?php echo e($stat['active']); ?> active</div>
                         <?php elseif (isset($stat['new'])): ?>
-                            <div style="font-size: 11px; color: var(--mac-yellow); font-weight: 500; margin-top: 2px;"><?php echo e($stat['new']); ?> new</div>
+                            <div class="admin-stat-card-meta admin-stat-card-meta-warning"><?php echo e($stat['new']); ?> new</div>
                         <?php endif; ?>
                     </div>
                 </div>
-                <div style="font-size: 13px; font-weight: 500; color: var(--mac-text); letter-spacing: -0.1px;"><?php echo e($stat['label']); ?></div>
+                <div class="admin-stat-card-label"><?php echo e($stat['label']); ?></div>
             </a>
         <?php endforeach; ?>
-    </div>
+            </div>
+        </div>
 
-    <!-- macOS Quick Actions -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-bottom: 20px;">
+        <!-- Quick Actions - Smart Grid -->
+        <div class="admin-dashboard-content">
         <!-- Catalog -->
         <div class="admin-card">
-            <div style="border-bottom: 1px solid #b0b0b0; padding-bottom: 12px; margin-bottom: 12px;">
-                <h2 style="font-size: 15px; font-weight: 600; color: var(--mac-text); letter-spacing: -0.2px; margin: 0;">Catalog</h2>
+            <div class="admin-section-header">
+                <h2 class="admin-section-title">Catalog</h2>
             </div>
-            <div style="display: flex; flex-direction: column; gap: 4px;">
-                <a href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/products.php" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; text-decoration: none; color: var(--mac-text); font-size: 13px; border-radius: 4px; transition: background 0.15s;" onmouseover="this.style.background='rgba(0,122,255,0.08)'" onmouseout="this.style.background='transparent'">
+            <div class="admin-nav-list">
+                <a href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/products.php" class="admin-nav-link">
                     <span>Manage Products</span>
-                    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" style="opacity: 0.4;"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
+                    <svg class="admin-nav-link-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
                 </a>
-                <a href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/categories.php" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; text-decoration: none; color: var(--mac-text); font-size: 13px; border-radius: 4px; transition: background 0.15s;" onmouseover="this.style.background='rgba(0,122,255,0.08)'" onmouseout="this.style.background='transparent'">
+                <a href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/categories.php" class="admin-nav-link">
                     <span>Manage Categories</span>
-                    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" style="opacity: 0.4;"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
+                    <svg class="admin-nav-link-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
                 </a>
             </div>
         </div>
 
         <!-- Content -->
         <div class="admin-card">
-            <div style="border-bottom: 1px solid #b0b0b0; padding-bottom: 12px; margin-bottom: 12px;">
-                <h2 style="font-size: 15px; font-weight: 600; color: var(--mac-text); letter-spacing: -0.2px; margin: 0;">Content</h2>
+            <div class="admin-section-header">
+                <h2 class="admin-section-title">Content</h2>
             </div>
-            <div style="display: flex; flex-direction: column; gap: 4px;">
-                <a href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/pages.php" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; text-decoration: none; color: var(--mac-text); font-size: 13px; border-radius: 4px; transition: background 0.15s;" onmouseover="this.style.background='rgba(0,122,255,0.08)'" onmouseout="this.style.background='transparent'">
+            <div class="admin-nav-list">
+                <a href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/pages.php" class="admin-nav-link">
                     <span>All Pages</span>
-                    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" style="opacity: 0.4;"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
+                    <svg class="admin-nav-link-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
                 </a>
-                <a href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/team.php" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; text-decoration: none; color: var(--mac-text); font-size: 13px; border-radius: 4px; transition: background 0.15s;" onmouseover="this.style.background='rgba(0,122,255,0.08)'" onmouseout="this.style.background='transparent'">
+                <a href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/team.php" class="admin-nav-link">
                     <span>Team Members</span>
-                    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" style="opacity: 0.4;"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
+                    <svg class="admin-nav-link-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
                 </a>
             </div>
         </div>
 
         <!-- Marketing -->
         <div class="admin-card">
-            <div style="border-bottom: 1px solid #b0b0b0; padding-bottom: 12px; margin-bottom: 12px;">
-                <h2 style="font-size: 15px; font-weight: 600; color: var(--mac-text); letter-spacing: -0.2px; margin: 0;">Marketing</h2>
+            <div class="admin-section-header">
+                <h2 class="admin-section-title">Marketing</h2>
             </div>
-            <div style="display: flex; flex-direction: column; gap: 4px;">
-                <a href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/sliders.php" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; text-decoration: none; color: var(--mac-text); font-size: 13px; border-radius: 4px; transition: background 0.15s;" onmouseover="this.style.background='rgba(0,122,255,0.08)'" onmouseout="this.style.background='transparent'">
+            <div class="admin-nav-list">
+                <a href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/sliders.php" class="admin-nav-link">
                     <span>Hero Slider</span>
-                    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" style="opacity: 0.4;"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
+                    <svg class="admin-nav-link-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
                 </a>
-                <a href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/testimonials.php" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; text-decoration: none; color: var(--mac-text); font-size: 13px; border-radius: 4px; transition: background 0.15s;" onmouseover="this.style.background='rgba(0,122,255,0.08)'" onmouseout="this.style.background='transparent'">
+                <a href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/testimonials.php" class="admin-nav-link">
                     <span>Testimonials</span>
-                    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" style="opacity: 0.4;"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
+                    <svg class="admin-nav-link-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
                 </a>
             </div>
         </div>
-    </div>
 
-    <!-- macOS Recent Activity -->
-    <div class="admin-card">
-        <div style="border-bottom: 1px solid #b0b0b0; padding-bottom: 12px; margin-bottom: 12px;">
-            <h2 style="font-size: 15px; font-weight: 600; color: var(--mac-text); letter-spacing: -0.2px; margin: 0;">Recent Quote Requests</h2>
+        <!-- Recent Activity - Full Width -->
+        <div class="admin-dashboard-full-width">
+            <div class="admin-card">
+        <div class="admin-section-header">
+            <h2 class="admin-section-title">Recent Quote Requests</h2>
         </div>
         <?php
         // Get recent quotes using paginate method
@@ -313,9 +326,9 @@ include __DIR__ . '/includes/header.php';
         }
         ?>
         <?php if (empty($recentQuotes)): ?>
-            <p style="color: var(--mac-text-secondary); font-size: 14px; margin: 0;">No quote requests yet.</p>
+            <p class="admin-empty-state">No quote requests yet.</p>
         <?php else: ?>
-            <table class="mac-table">
+            <table class="admin-table">
                 <thead>
                     <tr>
                         <th>Company</th>
@@ -327,15 +340,15 @@ include __DIR__ . '/includes/header.php';
                 <tbody>
                     <?php foreach ($recentQuotes as $quote): ?>
                         <tr>
-                            <td><strong style="font-weight: 600;"><?php echo e($quote['companyName']); ?></strong></td>
+                            <td><strong><?php echo e($quote['companyName']); ?></strong></td>
                             <td><?php echo e($quote['contactName']); ?></td>
-                            <td style="color: var(--mac-text-secondary);"><?php echo date('M d, Y', strtotime($quote['createdAt'])); ?></td>
+                            <td class="admin-text-muted"><?php echo date('M d, Y', strtotime($quote['createdAt'])); ?></td>
                             <td>
-                                <span class="mac-badge <?php
+                                <span class="admin-badge <?php
                                     echo match($quote['status']) {
-                                        'NEW' => 'mac-badge-warning',
-                                        'IN_PROGRESS' => 'mac-badge-info',
-                                        'RESOLVED' => 'mac-badge-success',
+                                        'NEW' => 'admin-badge-warning',
+                                        'IN_PROGRESS' => 'admin-badge-info',
+                                        'RESOLVED' => 'admin-badge-success',
                                         default => '',
                                     };
                                 ?>">
@@ -346,10 +359,12 @@ include __DIR__ . '/includes/header.php';
                     <?php endforeach; ?>
                 </tbody>
             </table>
-            <div style="margin-top: 16px; text-align: center;">
+            <div class="admin-table-actions">
                 <a href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/quotes.php" class="admin-btn admin-btn-secondary">View all quote requests</a>
             </div>
         <?php endif; ?>
+            </div>
+        </div>
     </div>
 </div>
 

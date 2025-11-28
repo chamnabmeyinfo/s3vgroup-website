@@ -7,29 +7,60 @@
         display: none !important;
     }
 
-    /* App-like Full Screen */
+    /* DO NOT FIX BODY - This breaks scrolling! */
+    /* body should remain scrollable */
     body {
-        position: fixed;
+        position: relative;
         width: 100%;
-        height: 100%;
-        overflow: hidden;
+        min-height: 100vh;
+        overflow-x: hidden;
+        overflow-y: auto;
         -webkit-overflow-scrolling: touch;
     }
 
-    /* App Container */
+    /* App Container - Only use if explicitly needed */
     .app-container {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 60px; /* Space for bottom nav */
+        position: relative;
+        min-height: 100vh;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
         background: #f5f5f5;
     }
 
-    /* App Header */
-    .app-header {
+    /* Main content - no fixed padding needed */
+    main {
+        position: relative;
+        min-height: 100vh;
+    }
+
+    /* Ensure container content doesn't overlap with fixed header */
+    .container {
+        position: relative;
+    }
+
+    /* Prevent logo overflow in mobile header */
+    .app-header-title img {
+        max-height: 32px !important;
+        max-width: 180px !important;
+        width: auto !important;
+        height: auto !important;
+        object-fit: contain;
+        display: block;
+    }
+
+    /* Additional spacing for page content on mobile */
+    main > .container,
+    main > div.container {
+        padding-top: 1rem;
+    }
+
+    /* App Header - Only show if mobile-app-header widget is used */
+    .app-header.mobile-only {
+        display: none; /* Hide by default - only show if explicitly enabled */
+    }
+    
+    /* If app header is enabled, make it fixed */
+    .app-header:not(.mobile-only) {
         position: fixed;
         top: 0;
         left: 0;
@@ -42,6 +73,7 @@
         align-items: center;
         padding: 0 16px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
     }
 
     .app-header-title {
@@ -50,6 +82,22 @@
         color: #1a1a1a;
         flex: 1;
         text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        max-width: 200px;
+        margin: 0 auto;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .app-header-title img {
+        max-height: 32px !important;
+        max-width: 180px !important;
+        width: auto !important;
+        height: auto !important;
+        object-fit: contain;
+        display: block;
     }
 
     .app-header-button {

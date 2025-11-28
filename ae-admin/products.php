@@ -28,16 +28,20 @@ $pageTitle = 'Products';
 include __DIR__ . '/includes/header.php';
 ?>
 
-<div class="bg-white rounded-xl border border-gray-200 shadow-sm">
-    <!-- Header -->
+<div class="admin-page-container">
+    <!-- Page Header -->
+    <div class="admin-page-header">
+        <h1>Products</h1>
+        <p>Manage your product catalog</p>
+    </div>
+
+    <!-- Products Container -->
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+    <!-- Action Bar -->
     <div class="px-6 py-5 border-b border-gray-200">
         <div class="flex items-center justify-between">
             <div>
-                <h1 class="text-2xl font-semibold text-gray-900 mb-1">Products</h1>
-                <p class="text-sm text-gray-500">
-                    Manage your product catalog
-                    <span id="product-count" class="ml-2 font-medium text-gray-700"></span>
-                </p>
+                <span id="product-count" class="text-sm font-medium text-gray-700"></span>
             </div>
             <button type="button" id="new-product-btn" class="admin-btn admin-btn-primary flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg shadow-sm hover:shadow transition-all">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -1683,5 +1687,6 @@ include __DIR__ . '/includes/header.php';
 
     </div> <!-- End content wrapper -->
 </div> <!-- End main container -->
+</div> <!-- End admin-page-container -->
 
 <?php include __DIR__ . '/includes/footer.php'; ?>

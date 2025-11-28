@@ -66,16 +66,21 @@ $faviconUrl = $favicon ? fullImageUrl($favicon) : '';
     
     <!-- Professional Frontend CSS - Using version numbers for proper caching -->
     <link rel="stylesheet" href="<?php echo asset('ae-includes/css/frontend.css'); ?>?v=<?php echo $assetVersion; ?>">
+    <link rel="stylesheet" href="<?php echo asset('ae-includes/css/theme-styles.css'); ?>?v=<?php echo $assetVersion; ?>">
+    <link rel="stylesheet" href="<?php echo asset('ae-includes/css/responsive.css'); ?>?v=<?php echo $assetVersion; ?>">
+    <link rel="stylesheet" href="<?php echo asset('ae-includes/css/mobile-fixes.css'); ?>?v=<?php echo $assetVersion; ?>">
+    <link rel="stylesheet" href="<?php echo asset('ae-includes/css/homepage-design.css'); ?>?v=<?php echo $assetVersion; ?>">
     <link rel="stylesheet" href="<?php echo asset('ae-includes/css/pages.css'); ?>?v=<?php echo $assetVersion; ?>">
     <link rel="stylesheet" href="<?php echo asset('ae-includes/css/mobile-app.css'); ?>?v=<?php echo $assetVersion; ?>">
     <link rel="stylesheet" href="<?php echo asset('ae-includes/css/categories.css'); ?>?v=<?php echo $assetVersion; ?>">
     <link rel="stylesheet" href="<?php echo asset('ae-includes/css/modern-animations.css'); ?>?v=<?php echo $assetVersion; ?>">
+    <link rel="stylesheet" href="<?php echo asset('ae-includes/css/modern-frontend.css'); ?>?v=<?php echo $assetVersion; ?>">
     <script src="<?php echo asset('ae-includes/js/category-images.js'); ?>?v=<?php echo $assetVersion; ?>" defer></script>
     <?php
     ?>
     
-    <!-- Mobile Viewport -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <!-- Mobile Viewport - Optimized for Responsive Design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -101,11 +106,13 @@ $faviconUrl = $favicon ? fullImageUrl($favicon) : '';
     <?php
     // JS files are in ae-includes/js/ (confirmed to exist)
     ?>
+    <script src="<?php echo asset('ae-includes/js/theme-toggle.js'); ?>?v=<?php echo $assetVersion; ?>"></script>
     <script src="<?php echo asset('ae-includes/js/modern.js'); ?>?v=<?php echo $assetVersion; ?>" defer></script>
     <script src="<?php echo asset('ae-includes/js/modern-animations.js'); ?>?v=<?php echo $assetVersion; ?>" defer></script>
     <script src="<?php echo asset('ae-includes/js/animations.js'); ?>?v=<?php echo $assetVersion; ?>" defer></script>
     <script src="<?php echo asset('ae-includes/js/mobile-app.js'); ?>?v=<?php echo $assetVersion; ?>" defer></script>
     <script src="<?php echo asset('ae-includes/js/mobile-touch.js'); ?>?v=<?php echo $assetVersion; ?>" defer></script>
+    <script src="<?php echo asset('ae-includes/js/modern-frontend.js'); ?>?v=<?php echo $assetVersion; ?>"></script>
     <?php if (option('enable_social_sharing', '1') === '1'): ?>
         <script src="<?php echo asset('ae-includes/js/social-sharing.js'); ?>?v=<?php echo $assetVersion; ?>" defer></script>
     <?php endif; ?>
@@ -139,60 +146,130 @@ $faviconUrl = $favicon ? fullImageUrl($favicon) : '';
     <!-- Mobile App Header -->
     <?php include __DIR__ . '/widgets/mobile-app-header.php'; ?>
     
-    <!-- Desktop Header - Dark Theme -->
-    <header class="sticky top-0 z-50 w-full border-b border-gray-700 backdrop-blur desktop-only bg-gray-900">
-        <div class="container mx-auto px-4">
-            <div class="flex h-16 items-center justify-between">
-                <a href="<?php echo base_url('/'); ?>" class="flex items-center gap-2">
-                    <?php if ($siteLogoUrl): ?>
-                        <img src="<?php echo e($siteLogoUrl); ?>" alt="<?php echo e($siteName); ?>" class="h-8 w-auto">
-                    <?php else: ?>
-                        <div class="w-10 h-10 bg-orange-500 rounded flex items-center justify-center">
-                            <span class="text-white font-bold text-xl">F</span>
+    <!-- Secondary Menu Top Bar (Optional) -->
+    <?php 
+    if (file_exists(__DIR__ . '/widgets/secondary-menu.php')) {
+        if (!function_exists('getDB')) {
+            require_once __DIR__ . '/../config/database.php';
+        }
+        if (class_exists('App\Domain\Menus\MenuRepository')) {
+            $db = getDB();
+            $repository = new \App\Domain\Menus\MenuRepository($db);
+            $menuService = new \App\Application\Services\MenuService($repository);
+            $secondaryMenu = $menuService->getMenuByLocation('secondary');
+            if ($secondaryMenu) {
+                ?>
+                <div class="bg-gray-800 text-white py-2 text-sm border-b border-gray-700 theme-secondary-bar">
+                    <div class="container mx-auto px-4">
+                        <div class="flex items-center justify-between">
+                            <?php 
+                            $location = 'secondary';
+                            include __DIR__ . '/widgets/secondary-menu.php'; 
+                            ?>
                         </div>
-                    <?php endif; ?>
-                    <div class="flex flex-col">
-                        <span class="text-xl font-bold text-white"><?php echo e($siteName); ?></span>
-                        <span class="text-xs text-gray-400">Your Industrial Solutions Partner</span>
                     </div>
-                </a>
+                </div>
+                <?php
+            }
+        }
+    }
+    ?>
+    
+    <!-- Modern Header -->
+    <header class="modern-header" id="modern-header">
+        <div class="modern-header-container">
+            <a href="<?php echo base_url('/'); ?>" class="modern-logo">
+                <?php if ($siteLogoUrl): ?>
+                    <img src="<?php echo e($siteLogoUrl); ?>" alt="<?php echo e($siteName); ?>">
+                <?php else: ?>
+                    <svg class="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                <?php endif; ?>
+                <div class="modern-logo-text">
+                    <span class="modern-logo-text-top">GLOBAL</span>
+                    <span class="modern-logo-text-bottom">INDUSTRIAL SOLUTIONS</span>
+                </div>
+            </a>
 
-                <nav class="hidden md:flex items-center gap-6">
-                    <?php if (option('enable_search', '1') === '1'): ?>
-                        <div class="relative">
-                            <input 
-                                type="search" 
-                                id="product-search"
-                                placeholder="Search products..." 
-                                class="px-4 py-2 text-sm bg-gray-800 border border-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
-                                style="min-width: 220px;"
-                            >
-                            <svg class="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                            </svg>
-                        </div>
-                    <?php endif; ?>
-                    
-                    <a href="<?php echo base_url('products.php'); ?>" class="text-sm font-semibold text-white hover:text-orange-500 transition-colors">
-                        Products
-                    </a>
-                    <a href="<?php echo base_url('about.php'); ?>" class="text-sm font-semibold text-white hover:text-orange-500 transition-colors">
-                        About Us
-                    </a>
-                    <a href="<?php echo base_url('team.php'); ?>" class="text-sm font-semibold text-white hover:text-orange-500 transition-colors">
-                        Services
-                    </a>
-                    <a href="<?php echo base_url('contact.php'); ?>" class="text-sm font-semibold text-white hover:text-orange-500 transition-colors">
-                        Contact
-                    </a>
-                    <a href="<?php echo base_url('quote.php'); ?>" class="text-sm font-semibold text-white px-5 py-2 rounded-lg transition-all hover:shadow-lg hover:scale-105 transform bg-orange-500 hover:bg-orange-600">
-                        Get a Quote
-                    </a>
-                </nav>
+            <nav class="modern-nav">
+                <?php 
+                // Load Primary Menu
+                $location = 'primary';
+                $currentPath = $_SERVER['REQUEST_URI'] ?? '/';
+                if (file_exists(__DIR__ . '/widgets/dynamic-menu.php')) {
+                    $db = getDB();
+                    $repository = new \App\Domain\Menus\MenuRepository($db);
+                    $menuService = new \App\Application\Services\MenuService($repository);
+                    $primaryMenu = $menuService->getMenuByLocation('primary');
+                    if ($primaryMenu) {
+                        $menuItems = $menuService->getMenuWithItems($primaryMenu['id'])['items'] ?? [];
+                        foreach ($menuItems as $item) {
+                            $isActive = strpos($currentPath, parse_url($item['url'], PHP_URL_PATH)) !== false;
+                            ?>
+                            <a href="<?php echo e($item['url']); ?>" class="modern-nav-link <?php echo $isActive ? 'active' : ''; ?>">
+                                <?php echo htmlspecialchars($item['title']); ?>
+                            </a>
+                            <?php
+                        }
+                    } else {
+                        // Fallback menu
+                        ?>
+                        <a href="<?php echo base_url('/'); ?>" class="modern-nav-link <?php echo $currentPath === '/' ? 'active' : ''; ?>">Home</a>
+                        <a href="<?php echo base_url('products.php'); ?>" class="modern-nav-link <?php echo strpos($currentPath, 'products') !== false ? 'active' : ''; ?>">Products</a>
+                        <a href="<?php echo base_url('about.php'); ?>" class="modern-nav-link <?php echo strpos($currentPath, 'about') !== false ? 'active' : ''; ?>">About</a>
+                        <a href="<?php echo base_url('contact.php'); ?>" class="modern-nav-link <?php echo strpos($currentPath, 'contact') !== false ? 'active' : ''; ?>">Contact</a>
+                        <?php
+                    }
+                } else {
+                    // Fallback menu
+                    ?>
+                    <a href="<?php echo base_url('/'); ?>" class="modern-nav-link <?php echo $currentPath === '/' ? 'active' : ''; ?>">Home</a>
+                    <a href="<?php echo base_url('products.php'); ?>" class="modern-nav-link <?php echo strpos($currentPath, 'products') !== false ? 'active' : ''; ?>">Products</a>
+                    <a href="<?php echo base_url('about.php'); ?>" class="modern-nav-link <?php echo strpos($currentPath, 'about') !== false ? 'active' : ''; ?>">About</a>
+                    <a href="<?php echo base_url('contact.php'); ?>" class="modern-nav-link <?php echo strpos($currentPath, 'contact') !== false ? 'active' : ''; ?>">Contact</a>
+                    <?php
+                }
+                ?>
+            </nav>
+
+            <div class="modern-header-actions">
+                <?php if (option('enable_search', '1') === '1'): ?>
+                    <div class="modern-search-container">
+                        <svg class="modern-search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                        <input 
+                            type="search" 
+                            id="product-search"
+                            placeholder="Search products..." 
+                            class="modern-search-input"
+                        >
+                    </div>
+                <?php endif; ?>
+                
+                <a href="<?php echo base_url('quote.php'); ?>" class="modern-cta-button">
+                    <span>Get Quote</span>
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                    </svg>
+                </a>
+                
+                <!-- Theme Toggle Button -->
+                <button 
+                    id="theme-toggle-btn" 
+                    onclick="toggleTheme()" 
+                    class="modern-mobile-menu-btn"
+                    aria-label="Toggle theme"
+                    title="Toggle dark/light mode">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
 
                 <!-- Mobile Menu Button -->
-                <button class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors" onclick="toggleMobileMenu()" aria-label="Toggle menu">
-                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button class="modern-mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                 </button>
@@ -200,39 +277,76 @@ $faviconUrl = $favicon ? fullImageUrl($favicon) : '';
         </div>
         
         <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden border-t border-gray-200 bg-white shadow-lg">
-            <div class="container mx-auto px-4 py-4">
+        <div id="mobile-menu" class="hidden" style="border-top: 1px solid var(--color-gray-200); background: var(--color-white); box-shadow: var(--shadow-lg);">
+            <div style="max-width: 1400px; margin: 0 auto; padding: var(--space-lg);">
                 <?php if (option('enable_search', '1') === '1'): ?>
-                    <div class="relative mb-4">
+                    <div class="modern-search-container" style="width: 100%; margin-bottom: var(--space-lg);">
+                        <svg class="modern-search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
                         <input 
                             type="search" 
                             id="mobile-product-search"
-                            placeholder="<?php echo e('Search products...'); ?>" 
-                            class="w-full px-4 py-2 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2"
-                            style="focus:ring-color: <?php echo e($primaryColor); ?>;"
+                            placeholder="Search products..." 
+                            class="modern-search-input"
+                            style="width: 100%;"
                         >
                     </div>
                 <?php endif; ?>
-                <nav class="flex flex-col gap-2">
-                    <a href="<?php echo base_url('products.php'); ?>" class="px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
-                        Products
-                    </a>
-                    <a href="<?php echo base_url('about.php'); ?>" class="px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
-                        About Us
-                    </a>
-                    <a href="<?php echo base_url('team.php'); ?>" class="px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
-                        Our Team
-                    </a>
-                    <a href="<?php echo base_url('quote.php'); ?>" class="px-4 py-3 text-sm font-semibold text-white rounded-lg transition-colors" style="background-color: <?php echo e($primaryColor); ?>;">
-                        Get Quote
-                    </a>
-                    <a href="<?php echo base_url('contact.php'); ?>" class="px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
-                        Contact Us
-                    </a>
-                    
+                <nav style="display: flex; flex-direction: column; gap: var(--space-sm);">
+                    <?php 
+                    // Load Primary Menu for Mobile
+                    $location = 'primary';
+                    if (file_exists(__DIR__ . '/widgets/dynamic-menu.php')) {
+                        $db = getDB();
+                        $repository = new \App\Domain\Menus\MenuRepository($db);
+                        $menuService = new \App\Application\Services\MenuService($repository);
+                        $primaryMenu = $menuService->getMenuByLocation('primary');
+                        if ($primaryMenu) {
+                            $mobileMenuItems = $menuService->getMenuWithItems($primaryMenu['id'])['items'] ?? [];
+                            foreach ($mobileMenuItems as $item) {
+                                $isActive = strpos($currentPath, parse_url($item['url'], PHP_URL_PATH)) !== false;
+                                ?>
+                                <a href="<?php echo e($item['url']); ?>" 
+                                   class="modern-nav-link <?php echo $isActive ? 'active' : ''; ?>"
+                                   style="padding: var(--space-md); border-radius: var(--radius-md);">
+                                    <?php echo htmlspecialchars($item['title']); ?>
+                                </a>
+                                <?php
+                                if (!empty($item['children'])) {
+                                    foreach ($item['children'] as $child) {
+                                        ?>
+                                        <a href="<?php echo e($child['url']); ?>" 
+                                           class="modern-nav-link"
+                                           style="padding: var(--space-sm) var(--space-xl); font-size: 0.875rem;">
+                                            <?php echo htmlspecialchars($child['title']); ?>
+                                        </a>
+                                        <?php
+                                    }
+                                }
+                            }
+                        } else {
+                            // Fallback
+                            ?>
+                            <a href="<?php echo base_url('products.php'); ?>" class="modern-nav-link" style="padding: var(--space-md);">Products</a>
+                            <a href="<?php echo base_url('about.php'); ?>" class="modern-nav-link" style="padding: var(--space-md);">About Us</a>
+                            <a href="<?php echo base_url('team.php'); ?>" class="modern-nav-link" style="padding: var(--space-md);">Our Team</a>
+                            <a href="<?php echo base_url('quote.php'); ?>" class="modern-cta-button" style="width: 100%; justify-content: center; margin-top: var(--space-sm);">Get Quote</a>
+                            <a href="<?php echo base_url('contact.php'); ?>" class="modern-nav-link" style="padding: var(--space-md);">Contact Us</a>
+                            <?php
+                        }
+                    } else {
+                        // Fallback
+                        ?>
+                        <a href="<?php echo base_url('products.php'); ?>" class="modern-nav-link" style="padding: var(--space-md);">Products</a>
+                        <a href="<?php echo base_url('about.php'); ?>" class="modern-nav-link" style="padding: var(--space-md);">About Us</a>
+                        <a href="<?php echo base_url('team.php'); ?>" class="modern-nav-link" style="padding: var(--space-md);">Our Team</a>
+                        <a href="<?php echo base_url('quote.php'); ?>" class="modern-cta-button" style="width: 100%; justify-content: center; margin-top: var(--space-sm);">Get Quote</a>
+                        <a href="<?php echo base_url('contact.php'); ?>" class="modern-nav-link" style="padding: var(--space-md);">Contact Us</a>
+                        <?php
+                    }
+                    ?>
                 </nav>
-            </div>
-        </div>
             </div>
         </div>
     </header>

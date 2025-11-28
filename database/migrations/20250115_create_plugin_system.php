@@ -2,15 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Database;
-
-use PDO;
+use App\Database\Migration;
 
 /**
  * Migration: Create Plugin System Tables
  */
-class Migration_20250115_CreatePluginSystem extends Migration
-{
+return new class ('20250115_create_plugin_system') extends Migration {
     public function up(PDO $pdo): void
     {
         // Create plugins table
@@ -52,5 +49,5 @@ SQL;
         $pdo->exec("DROP TABLE IF EXISTS plugin_options");
         $pdo->exec("DROP TABLE IF EXISTS plugins");
     }
-}
+};
 

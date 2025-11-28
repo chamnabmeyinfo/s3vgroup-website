@@ -294,5 +294,12 @@
     <?php if ($customJSFooter = option('custom_js_footer', '')): ?>
         <script><?php echo $customJSFooter; ?></script>
     <?php endif; ?>
+    
+    <!-- Mobile Bottom Navigation -->
+    <?php 
+    if (file_exists(__DIR__ . '/widgets/bottom-nav.php')) {
+        include __DIR__ . '/widgets/bottom-nav.php';
+    }
+    ?>
 </body>
 </html>

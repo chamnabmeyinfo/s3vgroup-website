@@ -153,6 +153,7 @@ SQL;
         if (!empty($filters['sortBy'])) {
             $sortField = match($filters['sortBy']) {
                 'name' => 'p.name',
+                'sku' => 'p.sku',
                 'price' => 'p.price',
                 'status' => 'p.status',
                 'createdAt' => 'p.createdAt',
@@ -271,6 +272,7 @@ SQL;
         if (!empty($filters['sortBy'])) {
             $sortField = match($filters['sortBy']) {
                 'name' => 'p.name',
+                'sku' => 'p.sku',
                 'price' => 'p.price',
                 'status' => 'p.status',
                 'createdAt' => 'p.createdAt',

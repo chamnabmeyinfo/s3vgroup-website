@@ -2,43 +2,33 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/../../bootstrap/app.php';
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../../includes/translation.php';
 
-use App\Domain\Translation\TranslationRepository;
-use App\Domain\Translation\TranslationService;
 use App\Http\JsonResponse;
-use App\Http\Request;
 
-if (Request::method() !== 'POST') {
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     JsonResponse::error('Method not allowed.', 405);
 }
 
-$payload = Request::json() ?? $_POST;
-$languageCode = $payload['language'] ?? null;
+$language = $_POST['language'] ?? null;
 
-if (!$languageCode) {
-    JsonResponse::error('Language code is required.', 422);
+if (!$language) {
+    JsonResponse::error('Language is required.', 422);
 }
 
-try {
-    $db = getDB();
-    $repository = new TranslationRepository($db);
-    $service = new TranslationService($repository);
-    
-    // Verify language exists
-    $language = $service->getLanguageByCode($languageCode);
-    if (!$language || !$language['is_active']) {
-        JsonResponse::error('Language not found or inactive.', 404);
-    }
-    
-    setCurrentLanguage($languageCode);
-    
-    JsonResponse::success([
-        'message' => 'Language changed successfully.',
-        'language' => $languageCode,
-    ]);
-} catch (\Exception $e) {
-    JsonResponse::error('Failed to set language.', 500);
+$languages = getAvailableLanguages();
+$codes = array_column($languages, 'code');
+
+if (!in_array($language, $codes, true)) {
+    JsonResponse::error('Language not available.', 404);
 }
+
+setCurrentLanguage($language);
+
+JsonResponse::success([
+    'message' => 'Language updated',
+    'language' => $language,
+]);
 

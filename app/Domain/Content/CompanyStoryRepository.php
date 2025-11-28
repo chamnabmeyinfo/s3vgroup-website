@@ -19,11 +19,9 @@ final class CompanyStoryRepository
         $statement = $this->pdo->query('SELECT * FROM company_story ORDER BY updatedAt DESC LIMIT 1');
         $result = $statement->fetch(PDO::FETCH_ASSOC);
         if ($result) {
-            // Decode JSON fields
-            $result['values'] = $result['values'] ? json_decode($result['values'], true) : null;
-            $result['milestones'] = $result['milestones'] ? json_decode($result['milestones'], true) : null;
+            return $this->decodeCollections($result);
         }
-        return $result ?: null;
+        return null;
     }
 
     public function published(): ?array
@@ -31,11 +29,9 @@ final class CompanyStoryRepository
         $statement = $this->pdo->query('SELECT * FROM company_story WHERE status = "PUBLISHED" ORDER BY updatedAt DESC LIMIT 1');
         $result = $statement->fetch(PDO::FETCH_ASSOC);
         if ($result) {
-            // Decode JSON fields
-            $result['values'] = $result['values'] ? json_decode($result['values'], true) : null;
-            $result['milestones'] = $result['milestones'] ? json_decode($result['milestones'], true) : null;
+            return $this->decodeCollections($result);
         }
-        return $result ?: null;
+        return null;
     }
 
     public function findById(string $id): ?array
@@ -44,11 +40,9 @@ final class CompanyStoryRepository
         $statement->execute([':id' => $id]);
         $result = $statement->fetch(PDO::FETCH_ASSOC);
         if ($result) {
-            // Decode JSON fields
-            $result['values'] = $result['values'] ? json_decode($result['values'], true) : null;
-            $result['milestones'] = $result['milestones'] ? json_decode($result['milestones'], true) : null;
+            return $this->decodeCollections($result);
         }
-        return $result ?: null;
+        return null;
     }
 
     public function create(array $attributes): array
@@ -136,5 +130,13 @@ SQL;
             'status'       => $attributes['status'] ?? 'DRAFT',
         ];
     }
+    private function decodeCollections(array $record): array
+    {
+        $record['values'] = $record['values'] ? json_decode($record['values'], true) : null;
+        $record['milestones'] = $record['milestones'] ? json_decode($record['milestones'], true) : null;
+
+        return $record;
+    }
+
 }
 

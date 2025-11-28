@@ -17,13 +17,13 @@ final class PageRepository
     public function all(): array
     {
         $statement = $this->pdo->query('SELECT * FROM pages ORDER BY priority DESC, title ASC');
-        return $statement->fetchAll(PDO::FETCH_ASSOC);
+        return array_map([$this, 'transform'], $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
     public function published(): array
     {
         $statement = $this->pdo->query('SELECT * FROM pages WHERE status = "PUBLISHED" ORDER BY priority DESC, title ASC');
-        return $statement->fetchAll(PDO::FETCH_ASSOC);
+        return array_map([$this, 'transform'], $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
     public function findBySlug(string $slug): ?array
@@ -169,7 +169,7 @@ SQL;
         foreach ($pages as $page) {
             $settings = json_decode($page['settings'] ?? '{}', true);
             if (isset($settings['is_homepage']) && $settings['is_homepage']) {
-                return $this->transform($page);
+                return $this->transformLocalized($page);
             }
         }
         
@@ -275,5 +275,6 @@ SQL;
         $page['settings'] = json_decode($page['settings'] ?? '[]', true);
         return $page;
     }
+
 }
 

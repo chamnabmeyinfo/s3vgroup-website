@@ -1,9 +1,27 @@
 <?php
-// Load bootstrap FIRST to ensure env() function is available
-require_once __DIR__ . '/bootstrap/app.php';
+// Enable error reporting for debugging (remove in production)
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
+// Load Ant Elite bootstrap (ae-load.php)
+if (file_exists(__DIR__ . '/ae-load.php')) {
+    require_once __DIR__ . '/ae-load.php';
+} else {
+    require_once __DIR__ . '/wp-load.php';
+}
+
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/site.php';
-require_once __DIR__ . '/includes/functions.php';
+
+// Load functions (check ae-includes first, then wp-includes as fallback)
+if (file_exists(__DIR__ . '/ae-includes/functions.php')) {
+    require_once __DIR__ . '/ae-includes/functions.php';
+} elseif (file_exists(__DIR__ . '/wp-includes/functions.php')) {
+    require_once __DIR__ . '/wp-includes/functions.php';
+} elseif (file_exists(__DIR__ . '/includes/functions.php')) {
+    require_once __DIR__ . '/includes/functions.php';
+}
 
 $db = getDB();
 $categorySlug = $_GET['category'] ?? null;
@@ -16,7 +34,14 @@ $primaryColor = option('primary_color', '#0b3a63');
 $secondaryColor = option('secondary_color', '#1a5a8a');
 $accentColor = option('accent_color', '#fa4f26');
 
-include __DIR__ . '/includes/header.php';
+// Load header (check ae-includes first, then wp-includes as fallback)
+if (file_exists(__DIR__ . '/ae-includes/header.php')) {
+    include __DIR__ . '/ae-includes/header.php';
+} elseif (file_exists(__DIR__ . '/wp-includes/header.php')) {
+    include __DIR__ . '/wp-includes/header.php';
+} elseif (file_exists(__DIR__ . '/includes/header.php')) {
+    include __DIR__ . '/includes/header.php';
+}
 ?>
 
 <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
@@ -61,7 +86,7 @@ include __DIR__ . '/includes/header.php';
                     <div class="relative w-full bg-gray-100 overflow-hidden" style="aspect-ratio: 4/3;">
                         <?php if ($product['heroImage']): ?>
                             <img 
-                                src="<?php echo e($product['heroImage']); ?>" 
+                                src="<?php echo e(fullImageUrl($product['heroImage'])); ?>" 
                                 alt="<?php echo e($product['name']); ?>" 
                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                 loading="lazy"
@@ -153,4 +178,13 @@ include __DIR__ . '/includes/header.php';
 }
 </style>
 
-<?php include __DIR__ . '/includes/footer.php'; ?>
+<?php
+// Load footer (check ae-includes first, then wp-includes as fallback)
+if (file_exists(__DIR__ . '/ae-includes/footer.php')) {
+    include __DIR__ . '/ae-includes/footer.php';
+} elseif (file_exists(__DIR__ . '/wp-includes/footer.php')) {
+    include __DIR__ . '/wp-includes/footer.php';
+} elseif (file_exists(__DIR__ . '/includes/footer.php')) {
+    include __DIR__ . '/includes/footer.php';
+}
+?>

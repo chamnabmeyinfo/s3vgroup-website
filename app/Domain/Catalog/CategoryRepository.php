@@ -18,8 +18,9 @@ final class CategoryRepository
     public function all(): array
     {
         $statement = $this->pdo->query('SELECT * FROM categories ORDER BY priority DESC, name ASC');
+        $categories = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-        return $statement->fetchAll(PDO::FETCH_ASSOC);
+        return $categories;
     }
 
     public function featured(int $limit = 6): array
@@ -123,5 +124,6 @@ final class CategoryRepository
             'priority'    => (int) ($attributes['priority'] ?? 0),
         ];
     }
+
 }
 

@@ -1,9 +1,27 @@
 <?php
-// Load bootstrap FIRST to ensure env() function is available
-require_once __DIR__ . '/bootstrap/app.php';
+// Enable error reporting for debugging (remove in production)
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
+// Load Ant Elite bootstrap (ae-load.php)
+if (file_exists(__DIR__ . '/ae-load.php')) {
+    require_once __DIR__ . '/ae-load.php';
+} else {
+    require_once __DIR__ . '/wp-load.php';
+}
+
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/site.php';
-require_once __DIR__ . '/includes/functions.php';
+
+// Load functions (check ae-includes first, then wp-includes as fallback)
+if (file_exists(__DIR__ . '/ae-includes/functions.php')) {
+    require_once __DIR__ . '/ae-includes/functions.php';
+} elseif (file_exists(__DIR__ . '/wp-includes/functions.php')) {
+    require_once __DIR__ . '/wp-includes/functions.php';
+} elseif (file_exists(__DIR__ . '/includes/functions.php')) {
+    require_once __DIR__ . '/includes/functions.php';
+}
 
 $pageTitle = 'Contact Us';
 $pageDescription = 'Get in touch with us for warehouse and factory equipment solutions';
@@ -17,7 +35,14 @@ $contactPhone = option('contact_phone', $siteConfig['contact']['phone'] ?? '');
 $contactAddress = option('contact_address', $siteConfig['contact']['address'] ?? '');
 $businessHours = option('business_hours', $siteConfig['contact']['hours'] ?? '');
 
-include __DIR__ . '/includes/header.php';
+// Load header (check ae-includes first, then wp-includes as fallback)
+if (file_exists(__DIR__ . '/ae-includes/header.php')) {
+    include __DIR__ . '/ae-includes/header.php';
+} elseif (file_exists(__DIR__ . '/wp-includes/header.php')) {
+    include __DIR__ . '/wp-includes/header.php';
+} elseif (file_exists(__DIR__ . '/includes/header.php')) {
+    include __DIR__ . '/includes/header.php';
+}
 ?>
 
 <!-- Hero Section -->
@@ -240,4 +265,13 @@ include __DIR__ . '/includes/header.php';
     </section>
 <?php endif; ?>
 
-<?php include __DIR__ . '/includes/footer.php'; ?>
+<?php
+// Load footer (check ae-includes first, then wp-includes as fallback)
+if (file_exists(__DIR__ . '/ae-includes/footer.php')) {
+    include __DIR__ . '/ae-includes/footer.php';
+} elseif (file_exists(__DIR__ . '/wp-includes/footer.php')) {
+    include __DIR__ . '/wp-includes/footer.php';
+} elseif (file_exists(__DIR__ . '/includes/footer.php')) {
+    include __DIR__ . '/includes/footer.php';
+}
+?>

@@ -44,7 +44,7 @@ final class HomepageSectionRepository
             $statement = $this->pdo->query('SELECT * FROM homepage_sections WHERE page_id IS NULL AND status = "ACTIVE" ORDER BY order_index ASC, createdAt ASC');
         }
         $results = $statement->fetchAll(PDO::FETCH_ASSOC);
-        return array_map([$this, 'transform'], $results);
+        return array_map([$this, 'transformLocalized'], $results);
     }
 
     public function findById(string $id): ?array
@@ -154,5 +154,6 @@ SQL;
         $section['settings'] = json_decode($section['settings'] ?? '[]', true);
         return $section;
     }
+
 }
 

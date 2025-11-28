@@ -30,8 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 try {
-// Create uploads directory if it doesn't exist
-$uploadDir = base_path('uploads');
+// Create uploads directory if it doesn't exist (use ae-content/uploads for Ant Elite)
+$uploadDir = base_path('ae-content/uploads');
 if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0755, true);
 }
@@ -162,7 +162,7 @@ if (in_array($mimeType, ['image/jpeg', 'image/png', 'image/webp'], true)) {
     $file['size'] = $finalSize;
     
     // Update relative path if filename changed (e.g., WebP conversion)
-    $relativePath = '/uploads/site/' . $filename;
+$relativePath = '/ae-content/uploads/site/' . $filename;
 } else {
     // SVG/GIF - no optimization needed
     $optimized = false;
@@ -196,7 +196,7 @@ $siteUrl = rtrim($siteUrl, '/');
 
 // Ensure relative path is set (in case optimization didn't run)
 if (!isset($relativePath)) {
-    $relativePath = '/uploads/site/' . $filename;
+$relativePath = '/ae-content/uploads/site/' . $filename;
 }
 
 // Build full URL

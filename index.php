@@ -4,12 +4,12 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0); // Don't show errors to users, log them instead
 ini_set('log_errors', 1);
 
-// Load bootstrap FIRST to ensure env() and other helper functions are available
-require_once __DIR__ . '/bootstrap/app.php';
+// Load Ant Elite bootstrap (ae-load.php)
+require_once __DIR__ . '/ae-load.php';
 
 require_once __DIR__ . '/config/database.php';
 require_once __DIR__ . '/config/site.php';
-require_once __DIR__ . '/includes/functions.php';
+require_once __DIR__ . '/ae-includes/functions.php';
 
 $pageTitle = 'Home';
 $pageDescription = $siteConfig['description'] ?? 'S3V Group - Warehouse Equipment';
@@ -75,14 +75,14 @@ $accentColor = option('accent_color', '#fa4f26');
 $useHomepageBuilder = option('enable_homepage_builder', '0') === '1';
 $homepagePageId = null; // Homepage uses null page_id
 
-include __DIR__ . '/includes/header.php';
+include __DIR__ . '/ae-includes/header.php';
 ?>
 
 <?php
 if ($useHomepageBuilder) {
     // Use homepage builder sections (pass null for homepage)
     $pageId = null; // Homepage
-    $sections = include __DIR__ . '/includes/widgets/homepage-section-renderer.php';
+    $sections = include __DIR__ . '/ae-includes/widgets/homepage-section-renderer.php';
     // If no sections returned or empty, fall back to default
     if (!$sections) {
         $useHomepageBuilder = false;
@@ -93,20 +93,20 @@ if (!$useHomepageBuilder) {
     // Use default homepage sections
     ?>
     <!-- Hero Slider -->
-    <?php include __DIR__ . '/includes/widgets/hero-slider.php'; ?>
+    <?php include __DIR__ . '/ae-includes/widgets/hero-slider.php'; ?>
 
 <!-- Newsletter Section (if enabled) -->
 <?php if (option('enable_newsletter', '1') === '1'): ?>
     <section class="py-20 bg-gradient-to-r" style="background: linear-gradient(to right, <?php echo e($primaryColor); ?>, <?php echo e($secondaryColor); ?>);">
         <div class="container mx-auto px-4">
-            <?php include __DIR__ . '/includes/widgets/newsletter-signup.php'; ?>
+            <?php include __DIR__ . '/ae-includes/widgets/newsletter-signup.php'; ?>
         </div>
     </section>
 <?php endif; ?>
 
 <!-- Testimonials Widget (if enabled) -->
 <?php if (option('enable_testimonials', '1') === '1'): ?>
-    <?php include __DIR__ . '/includes/widgets/testimonials.php'; ?>
+    <?php include __DIR__ . '/ae-includes/widgets/testimonials.php'; ?>
 <?php endif; ?>
 
 <!-- Features Section -->
@@ -197,7 +197,7 @@ if (!$useHomepageBuilder) {
                             
                             <!-- Category Image -->
                             <?php if ($categoryImage): ?>
-                                <img src="<?php echo e($categoryImage); ?>" 
+                                <img src="<?php echo e(fullImageUrl($categoryImage)); ?>" 
                                      alt="<?php echo e($category['name']); ?>" 
                                      loading="lazy"
                                      class="category-image w-full h-full object-cover opacity-0 transition-opacity duration-300">
@@ -354,4 +354,4 @@ if (!$useHomepageBuilder) {
 </section>
 <?php } ?>
 
-<?php include __DIR__ . '/includes/footer.php';
+<?php include __DIR__ . '/ae-includes/footer.php';

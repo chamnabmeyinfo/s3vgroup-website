@@ -18,7 +18,8 @@ final class BlogPostRepository
     public function all(): array
     {
         $statement = $this->pdo->query('SELECT * FROM blog_posts ORDER BY createdAt DESC');
-        return $statement->fetchAll(PDO::FETCH_ASSOC);
+        $results = $statement->fetchAll(PDO::FETCH_ASSOC);
+        return array_map([$this, 'transform'], $results);
     }
 
     public function published(int $limit = null, int $offset = 0): array
@@ -37,7 +38,8 @@ final class BlogPostRepository
         }
         
         $statement->execute();
-        return $statement->fetchAll(PDO::FETCH_ASSOC);
+        $results = $statement->fetchAll(PDO::FETCH_ASSOC);
+        return array_map([$this, 'transform'], $results);
     }
 
     public function findBySlug(string $slug): ?array
@@ -45,7 +47,7 @@ final class BlogPostRepository
         $statement = $this->pdo->prepare('SELECT * FROM blog_posts WHERE slug = :slug LIMIT 1');
         $statement->execute([':slug' => $slug]);
         $result = $statement->fetch(PDO::FETCH_ASSOC);
-        return $result ?: null;
+        return $result ? $this->transform($result) : null;
     }
 
     public function findById(string $id): ?array
@@ -58,7 +60,7 @@ final class BlogPostRepository
             $result['tags'] = json_decode($result['tags'], true) ?? [];
         }
         
-        return $result ?: null;
+        return $result ? $this->transform($result) : null;
     }
 
     public function create(array $attributes): array
@@ -168,6 +170,13 @@ SQL;
             'status'        => $attributes['status'] ?? 'DRAFT',
             'publishedAt'   => $attributes['publishedAt'] ?? null,
         ];
+    }
+    private function transform(array $row): array
+    {
+        if (!empty($row['tags']) && is_string($row['tags'])) {
+            $row['tags'] = json_decode($row['tags'], true) ?? [];
+        }
+        return $row;
     }
 }
 

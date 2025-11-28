@@ -25,7 +25,18 @@ if (file_exists(__DIR__ . '/ae-includes/functions.php')) {
 
 $db = getDB();
 $categorySlug = $_GET['category'] ?? null;
+
+// Fetch only published products (ProductRepository->paginate() already filters by PUBLISHED status)
 $products = getAllProducts($db, $categorySlug);
+
+// Safety check: Ensure only published products are displayed (defense in depth)
+$products = array_filter($products, function($product) {
+    return isset($product['status']) && strtoupper($product['status']) === 'PUBLISHED';
+});
+
+// Re-index array after filtering
+$products = array_values($products);
+
 $categories = getAllCategories($db);
 
 $pageTitle = 'Product Catalog';

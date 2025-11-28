@@ -112,11 +112,25 @@ include __DIR__ . '/includes/header.php';
 ?>
 
 <div class="max-w-7xl mx-auto">
-    <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between mb-6">
-        <div>
-            <p class="text-sm uppercase tracking-wide text-gray-500">Configuration</p>
-            <h1 class="text-3xl font-semibold text-[#0b3a63]">Site Options</h1>
-            <p class="text-sm text-gray-600">Customize your website's appearance, content, and settings</p>
+    <!-- Modern Header -->
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm mb-6">
+        <div class="px-6 py-5 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-semibold text-gray-900">Site Settings</h1>
+                            <p class="text-sm text-gray-500 mt-0.5">Customize your website's appearance and functionality</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -140,18 +154,20 @@ include __DIR__ . '/includes/header.php';
     ?>
 
     <div class="flex flex-col lg:flex-row gap-6">
-        <!-- Sidebar Navigation -->
-        <aside class="lg:w-64 flex-shrink-0">
-            <div class="bg-white rounded-lg border border-gray-200 shadow-sm sticky top-4">
-                <div class="p-4 border-b border-gray-200">
-                    <h2 class="text-sm font-semibold text-gray-900">Sections</h2>
+        <!-- Modern Sidebar Navigation -->
+        <aside class="lg:w-72 flex-shrink-0">
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm sticky top-4 overflow-hidden">
+                <div class="px-5 py-4 bg-gradient-to-r from-gray-50 to-white border-b border-gray-200">
+                    <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wide">Settings Sections</h2>
+                    <p class="text-xs text-gray-500 mt-1">Navigate between settings categories</p>
                 </div>
-                <nav class="p-2 space-y-1" id="options-nav">
+                <nav class="p-3 space-y-1" id="options-nav">
                     <?php 
                     $navFirstKey = null;
                     foreach ($sortedGroups as $groupKey => $groupConfig): 
                         $groupLabel = is_array($groupConfig) ? $groupConfig['label'] : $groupConfig;
                         $groupIcon = is_array($groupConfig) ? ($groupConfig['icon'] ?? '') : '';
+                        $groupDescription = is_array($groupConfig) ? ($groupConfig['description'] ?? '') : '';
                         if ($navFirstKey === null) {
                             $navFirstKey = $groupKey;
                         }
@@ -160,12 +176,20 @@ include __DIR__ . '/includes/header.php';
                         <a
                             href="#section-<?php echo e($groupKey); ?>"
                             data-section="<?php echo e($groupKey); ?>"
-                            class="option-nav-link flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors <?php echo $isNavActive ? 'bg-[#0b3a63] text-white' : 'text-gray-700 hover:bg-gray-100'; ?>"
+                            class="option-nav-link group flex items-start gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 <?php echo $isNavActive ? 'bg-blue-50 border border-blue-200 text-blue-700 shadow-sm' : 'text-gray-700 hover:bg-gray-50 border border-transparent'; ?>"
                         >
-                            <?php if ($groupIcon): ?>
-                                <span class="text-lg"><?php echo $groupIcon; ?></span>
+                            <span class="text-xl mt-0.5 flex-shrink-0"><?php echo $groupIcon ?: '⚙️'; ?></span>
+                            <div class="flex-1 min-w-0">
+                                <div class="font-medium"><?php echo e($groupLabel); ?></div>
+                                <?php if ($groupDescription && $isNavActive): ?>
+                                    <div class="text-xs text-gray-500 mt-0.5 line-clamp-1"><?php echo e($groupDescription); ?></div>
+                                <?php endif; ?>
+                            </div>
+                            <?php if ($isNavActive): ?>
+                                <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
                             <?php endif; ?>
-                            <span><?php echo e($groupLabel); ?></span>
                         </a>
                     <?php endforeach; ?>
                 </nav>
@@ -186,31 +210,35 @@ include __DIR__ . '/includes/header.php';
                 
                 <div 
                     id="section-<?php echo e($groupKey); ?>" 
-                    class="options-section bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden <?php echo $isActive ? '' : 'hidden'; ?>"
+                    class="options-section bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden transition-all duration-300 <?php echo $isActive ? '' : 'hidden'; ?>"
                     data-section-key="<?php echo e($groupKey); ?>"
                 >
-                    <div class="px-6 py-4 bg-gradient-to-r from-gray-50 to-white border-b border-gray-200">
-                        <div class="flex items-center gap-3">
-                            <?php if ($groupIcon): ?>
-                                <span class="text-2xl"><?php echo $groupIcon; ?></span>
-                            <?php endif; ?>
-                            <div>
-                                <h2 class="text-xl font-semibold text-gray-900"><?php echo e($groupLabel); ?></h2>
+                    <!-- Section Header -->
+                    <div class="px-6 py-5 bg-gradient-to-br from-gray-50 via-white to-gray-50 border-b border-gray-200">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center flex-shrink-0">
+                                <span class="text-2xl"><?php echo $groupIcon ?: '⚙️'; ?></span>
+                            </div>
+                            <div class="flex-1">
+                                <h2 class="text-xl font-semibold text-gray-900 mb-1"><?php echo e($groupLabel); ?></h2>
                                 <?php if ($groupDescription): ?>
-                                    <p class="text-sm text-gray-600 mt-1"><?php echo e($groupDescription); ?></p>
+                                    <p class="text-sm text-gray-600 leading-relaxed"><?php echo e($groupDescription); ?></p>
                                 <?php endif; ?>
                             </div>
                         </div>
                     </div>
+                    <!-- Section Content -->
                     <div class="p-6 space-y-6">
                         <?php foreach ($groupedOptions[$groupKey] as $option): ?>
-                            <div class="option-field" data-key="<?php echo e($option['key_name']); ?>">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">
-                                    <?php echo e($option['label']); ?>
-                                </label>
-                                <?php if ($option['description']): ?>
-                                    <p class="text-xs text-gray-500 mb-2"><?php echo e($option['description']); ?></p>
-                                <?php endif; ?>
+                            <div class="option-field bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all" data-key="<?php echo e($option['key_name']); ?>">
+                                <div class="mb-4">
+                                    <label class="block text-sm font-semibold text-gray-900 mb-1.5">
+                                        <?php echo e($option['label']); ?>
+                                    </label>
+                                    <?php if ($option['description']): ?>
+                                        <p class="text-xs text-gray-600 leading-relaxed"><?php echo e($option['description']); ?></p>
+                                    <?php endif; ?>
+                                </div>
 
                                 <?php
                                 $value = $option['value'];
@@ -232,16 +260,24 @@ include __DIR__ . '/includes/header.php';
                                     <textarea
                                         name="<?php echo e($key); ?>"
                                         rows="<?php echo $rows; ?>"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63] <?php echo $isCode ? 'font-mono text-sm' : ''; ?>"
+                                        class="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all <?php echo $isCode ? 'font-mono text-sm' : ''; ?>"
                                         placeholder="<?php 
                                             if (strpos($key, 'custom_css') !== false) echo '/* Add your custom CSS here */';
                                             elseif (strpos($key, 'custom_js') !== false) echo '// Add your custom JavaScript here';
                                         ?>"
                                     ><?php echo e($value); ?></textarea>
                                     <?php if (strpos($key, 'custom_css') !== false): ?>
-                                        <p class="text-xs text-gray-500 mt-1">💡 Use CSS selectors like <code class="bg-gray-100 px-1 rounded text-xs">.class-name</code> or <code class="bg-gray-100 px-1 rounded text-xs">#id-name</code>. Example: <code class="bg-gray-100 px-1 rounded text-xs">body { background: #f0f0f0; }</code></p>
+                                        <div class="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                            <p class="text-xs text-blue-800">
+                                                <span class="font-semibold">💡 Tip:</span> Use CSS selectors like <code class="bg-blue-100 px-1.5 py-0.5 rounded text-xs font-mono">.class-name</code> or <code class="bg-blue-100 px-1.5 py-0.5 rounded text-xs font-mono">#id-name</code>
+                                            </p>
+                                        </div>
                                     <?php elseif (strpos($key, 'custom_js') !== false): ?>
-                                        <p class="text-xs text-gray-500 mt-1">💡 Add JavaScript code that will be executed on the page. Example: <code class="bg-gray-100 px-1 rounded text-xs">console.log('Hello!');</code></p>
+                                        <div class="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                            <p class="text-xs text-blue-800">
+                                                <span class="font-semibold">💡 Tip:</span> Add JavaScript code that will be executed on the page
+                                            </p>
+                                        </div>
                                     <?php endif; ?>
 
                                 <?php elseif ($type === 'color'): ?>
@@ -250,7 +286,7 @@ include __DIR__ . '/includes/header.php';
                                             type="color"
                                             name="<?php echo e($key); ?>"
                                             value="<?php echo e($value ?: '#000000'); ?>"
-                                            class="h-10 w-20 border border-gray-300 rounded cursor-pointer"
+                                            class="h-12 w-20 border-2 border-gray-300 rounded-lg cursor-pointer shadow-sm hover:shadow transition-all"
                                         >
                                         <input
                                             type="text"
@@ -258,22 +294,36 @@ include __DIR__ . '/includes/header.php';
                                             value="<?php echo e($value); ?>"
                                             placeholder="#000000"
                                             pattern="^#[0-9A-Fa-f]{6}$"
-                                            class="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]"
+                                            class="flex-1 px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                         >
                                     </div>
 
                                 <?php elseif ($type === 'boolean'): ?>
-                                    <label class="inline-flex items-center">
-                                        <input
-                                            type="checkbox"
-                                            name="<?php echo e($key); ?>"
-                                            value="1"
-                                            <?php echo $value ? 'checked' : ''; ?>
-                                            class="rounded border-gray-300 text-[#0b3a63] focus:ring-[#0b3a63]"
-                                        >
-                                        <span class="ml-2 text-sm text-gray-600">
-                                            <?php echo $value ? 'Enabled' : 'Disabled'; ?>
-                                        </span>
+                                    <label class="inline-flex items-center gap-3 p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-blue-300 transition-all cursor-pointer group">
+                                        <div class="relative flex-shrink-0">
+                                            <input
+                                                type="checkbox"
+                                                name="<?php echo e($key); ?>"
+                                                value="1"
+                                                <?php echo $value ? 'checked' : ''; ?>
+                                                class="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer transition-all"
+                                            >
+                                        </div>
+                                        <div class="flex-1">
+                                            <span class="text-sm font-semibold text-gray-900 block">
+                                                <?php echo $value ? 'Enabled' : 'Disabled'; ?>
+                                            </span>
+                                            <p class="text-xs text-gray-500 mt-0.5">Toggle this setting on or off</p>
+                                        </div>
+                                        <?php if ($value): ?>
+                                            <svg class="w-5 h-5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                        <?php else: ?>
+                                            <svg class="w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        <?php endif; ?>
                                     </label>
 
                                 <?php elseif (in_array($key, ['design_button_style', 'design_card_shadow', 'design_background_pattern'])): ?>
@@ -301,7 +351,7 @@ include __DIR__ . '/includes/header.php';
                                     ?>
                                     <select
                                         name="<?php echo e($key); ?>"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]"
+                                        class="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                     >
                                         <?php foreach ($options as $optValue => $optLabel): ?>
                                             <option value="<?php echo e($optValue); ?>" <?php echo $value === $optValue ? 'selected' : ''; ?>>
@@ -315,7 +365,7 @@ include __DIR__ . '/includes/header.php';
                                         type="number"
                                         name="<?php echo e($key); ?>"
                                         value="<?php echo e($value); ?>"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]"
+                                        class="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                     >
 
                                 <?php elseif ($type === 'image'): ?>
@@ -326,7 +376,7 @@ include __DIR__ . '/includes/header.php';
                                                 name="<?php echo e($key); ?>"
                                                 value="<?php echo e($value); ?>"
                                                 placeholder="https://example.com/image.jpg or upload file"
-                                                class="flex-1 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]"
+                                                class="flex-1 px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                                 id="input-<?php echo e($key); ?>"
                                             >
                                             <input
@@ -339,9 +389,14 @@ include __DIR__ . '/includes/header.php';
                                             <button
                                                 type="button"
                                                 onclick="document.getElementById('file-<?php echo e($key); ?>').click()"
-                                                class="px-4 py-2 bg-gray-100 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200 transition-colors"
+                                                class="px-5 py-3 bg-gradient-to-r from-gray-100 to-gray-50 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:from-gray-200 hover:to-gray-100 transition-all shadow-sm hover:shadow"
                                             >
-                                                Upload
+                                                <span class="flex items-center gap-2">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                                    </svg>
+                                                    Upload
+                                                </span>
                                             </button>
                                         </div>
                                         <?php if ($value): ?>
@@ -357,7 +412,7 @@ include __DIR__ . '/includes/header.php';
                                         name="<?php echo e($key); ?>"
                                         value="<?php echo e($value); ?>"
                                         placeholder=""
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]"
+                                        class="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                                     >
                                 <?php endif; ?>
                             </div>
@@ -366,23 +421,38 @@ include __DIR__ . '/includes/header.php';
                 </div>
             <?php endforeach; ?>
 
-            <!-- Save Button Bar -->
-            <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6 sticky bottom-0">
-                <div class="flex justify-end gap-3">
-                    <button
-                        type="button"
-                        id="reset-btn"
-                        class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0b3a63]"
-                    >
-                        Reset Changes
-                    </button>
-                    <button
-                        type="submit"
-                        id="save-btn"
-                        class="px-6 py-2 bg-[#0b3a63] text-white rounded-md text-sm font-medium hover:bg-[#0a2d4f] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0b3a63] disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        Save All Changes
-                    </button>
+            <!-- Modern Save Button Bar -->
+            <div class="bg-white rounded-xl border border-gray-200 shadow-lg p-6 sticky bottom-4 mt-8">
+                <div class="flex items-center justify-between">
+                    <div class="text-sm text-gray-600">
+                        <span class="font-medium">💡 Tip:</span> Changes are saved to your database immediately
+                    </div>
+                    <div class="flex gap-3">
+                        <button
+                            type="button"
+                            id="reset-btn"
+                            class="px-5 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-all shadow-sm hover:shadow"
+                        >
+                            <span class="flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                </svg>
+                                Reset Changes
+                            </span>
+                        </button>
+                        <button
+                            type="submit"
+                            id="save-btn"
+                            class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg text-sm font-semibold hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                        >
+                            <span class="flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                Save All Changes
+                            </span>
+                        </button>
+                    </div>
                 </div>
             </div>
             </form>
@@ -404,11 +474,17 @@ include __DIR__ . '/includes/header.php';
             
             // Update active link
             navLinks.forEach(l => {
-                l.classList.remove('bg-[#0b3a63]', 'text-white');
-                l.classList.add('text-gray-700', 'hover:bg-gray-100');
+                l.classList.remove('bg-blue-50', 'border-blue-200', 'text-blue-700', 'shadow-sm');
+                l.classList.add('text-gray-700', 'hover:bg-gray-50', 'border-transparent');
+                // Remove description from inactive items
+                const desc = l.querySelector('.text-xs');
+                if (desc) desc.style.display = 'none';
             });
-            link.classList.remove('text-gray-700', 'hover:bg-gray-100');
-            link.classList.add('bg-[#0b3a63]', 'text-white');
+            link.classList.remove('text-gray-700', 'hover:bg-gray-50', 'border-transparent');
+            link.classList.add('bg-blue-50', 'border-blue-200', 'text-blue-700', 'shadow-sm');
+            // Show description for active item
+            const desc = link.querySelector('.text-xs');
+            if (desc) desc.style.display = 'block';
             
             // Show/hide sections
             sections.forEach(section => {
@@ -440,25 +516,6 @@ include __DIR__ . '/includes/header.php';
 
 })();
 </script>
-
-            <div class="flex justify-end gap-3 pt-6 border-t border-gray-200">
-                <button
-                    type="button"
-                    id="reset-btn"
-                    class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0b3a63]"
-                >
-                    Reset Changes
-                </button>
-                <button
-                    type="submit"
-                    id="save-btn"
-                    class="px-6 py-2 bg-[#0b3a63] text-white rounded-md text-sm font-medium hover:bg-[#0a2d4f] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0b3a63] disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    Save All Changes
-                </button>
-            </div>
-        </form>
-</div>
 
 <script>
 (function() {

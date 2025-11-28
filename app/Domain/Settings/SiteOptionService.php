@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Domain\Settings;
 
-use InvalidArgumentException;
+use App\Domain\Exceptions\DomainException;
+use App\Domain\Exceptions\NotFoundException;
 
 final class SiteOptionService
 {
     private const VALID_GROUPS = [
-        'general', 'design', 'contact', 'social', 'homepage', 'footer',
+        'general', 'design', 'contact', 'social', 'homepage', 'footer', 'advanced',
     ];
 
     private const VALID_TYPES = [
@@ -41,9 +42,19 @@ final class SiteOptionService
         return $grouped;
     }
 
+    public function getByGroup(string $group): array
+    {
+        return $this->repository->byGroup($group);
+    }
+
     public function get(string $key, $default = null)
     {
         return $this->repository->get($key, $default);
+    }
+
+    public function findById(string $id): ?array
+    {
+        return $this->repository->findById($id);
     }
 
     public function update(string $id, array $payload): array
@@ -61,11 +72,11 @@ final class SiteOptionService
     private function validate(array $payload, bool $partial = false): array
     {
         if (isset($payload['type']) && !in_array($payload['type'], self::VALID_TYPES, true)) {
-            throw new InvalidArgumentException('Invalid option type.');
+            throw new DomainException('Invalid option type. Must be one of: ' . implode(', ', self::VALID_TYPES));
         }
 
         if (isset($payload['group_name']) && !in_array($payload['group_name'], self::VALID_GROUPS, true)) {
-            throw new InvalidArgumentException('Invalid option group.');
+            throw new DomainException('Invalid option group. Must be one of: ' . implode(', ', self::VALID_GROUPS));
         }
 
         return [

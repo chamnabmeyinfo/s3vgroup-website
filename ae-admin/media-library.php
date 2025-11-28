@@ -115,157 +115,260 @@ $pageTitle = 'Media Library';
 include __DIR__ . '/includes/header.php';
 ?>
 
-<div class="space-y-8">
-    <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-        <div>
-            <p class="text-sm uppercase tracking-wide text-gray-500">Assets</p>
-            <h1 class="text-3xl font-semibold text-[#0b3a63]">Media Library</h1>
-            <p class="text-sm text-gray-600">
-                Monitor uploaded images, detect oversized files, and review usage.
-            </p>
+<div class="max-w-7xl mx-auto space-y-6">
+    <!-- Modern Header -->
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm mb-6">
+        <div class="px-6 py-5 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-semibold text-gray-900">Media Library</h1>
+                            <p class="text-sm text-gray-500 mt-0.5">Monitor uploaded images, detect oversized files, and review usage</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <?php if ($missingFiles): ?>
-        <div class="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
-            <p class="font-semibold">Warning</p>
-            <p>The uploads directory was not found: <?php echo e(implode(', ', $missingFiles)); ?></p>
+        <div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+            <div class="flex items-start gap-3">
+                <svg class="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <div>
+                    <p class="font-semibold text-red-900">Warning</p>
+                    <p class="text-sm text-red-800 mt-1">The uploads directory was not found: <?php echo e(implode(', ', $missingFiles)); ?></p>
+                </div>
+            </div>
         </div>
     <?php endif; ?>
 
-    <div class="grid gap-4 md:grid-cols-4">
-        <div class="rounded-lg border border-gray-200 bg-white p-4">
-            <p class="text-sm text-gray-500">Total Files</p>
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-2">
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Total Files</p>
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+            </div>
             <p class="text-2xl font-semibold text-gray-900"><?php echo e(number_format($stats['total_files'])); ?></p>
         </div>
-        <div class="rounded-lg border border-gray-200 bg-white p-4">
-            <p class="text-sm text-gray-500">Total Storage</p>
+        
+        <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-2">
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Total Storage</p>
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+                </svg>
+            </div>
             <p class="text-2xl font-semibold text-gray-900"><?php echo e($stats['total_size']); ?></p>
         </div>
-        <div class="rounded-lg border border-yellow-200 bg-yellow-50 p-4">
-            <p class="text-sm text-yellow-700">Large Files (&gt; <?php echo e($largeThresholdKb); ?> KB)</p>
+        
+        <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 border border-yellow-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-2">
+                <p class="text-xs font-medium text-yellow-700 uppercase tracking-wide">Large Files</p>
+                <svg class="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+            </div>
             <p class="text-2xl font-semibold text-yellow-900"><?php echo e(number_format($stats['large_files'])); ?></p>
+            <p class="text-xs text-yellow-700 mt-1">&gt; <?php echo e($largeThresholdKb); ?> KB</p>
         </div>
-        <div class="rounded-lg border border-gray-200 bg-white p-4">
-            <p class="text-sm text-gray-500">Largest File</p>
+        
+        <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between mb-2">
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Largest File</p>
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+                </svg>
+            </div>
             <p class="text-2xl font-semibold text-gray-900"><?php echo e($stats['largest_file']); ?></p>
         </div>
     </div>
 
-    <form method="get" class="bg-white border border-gray-200 rounded-lg p-4 flex flex-col md:flex-row md:items-end gap-4">
-        <div class="flex-1">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
-            <input
-                type="text"
-                name="search"
-                value="<?php echo e($search); ?>"
-                placeholder="Search by filename or path..."
-                class="admin-form-input w-full"
-            >
+    <!-- Filters Card -->
+    <div class="bg-white border border-gray-200 rounded-xl shadow-sm mb-6">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wide">Filters & Search</h2>
         </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Filter</label>
-            <select name="filter" class="admin-form-select">
-                <option value="all" <?php echo $filter === 'all' ? 'selected' : ''; ?>>All Files</option>
-                <option value="large" <?php echo $filter === 'large' ? 'selected' : ''; ?>>Large Only</option>
-            </select>
-        </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Large threshold (KB)</label>
-            <input
-                type="number"
-                name="threshold_kb"
-                value="<?php echo e($largeThresholdKb); ?>"
-                min="50"
-                step="50"
-                class="admin-form-input w-32"
-            >
-        </div>
-        <div class="flex gap-2">
-            <button type="submit" class="admin-btn admin-btn-primary">Apply</button>
-            <a href="?filter=all" class="admin-btn admin-btn-secondary">Reset</a>
-        </div>
-    </form>
+        <form method="get" class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Search Files</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </div>
+                        <input
+                            type="text"
+                            name="search"
+                            value="<?php echo e($search); ?>"
+                            placeholder="Search by filename or path..."
+                            class="w-full pl-10 pr-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                        >
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Filter</label>
+                    <select name="filter" class="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                        <option value="all" <?php echo $filter === 'all' ? 'selected' : ''; ?>>All Files</option>
+                        <option value="large" <?php echo $filter === 'large' ? 'selected' : ''; ?>>Large Only</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Large Threshold (KB)</label>
+                    <input
+                        type="number"
+                        name="threshold_kb"
+                        value="<?php echo e($largeThresholdKb); ?>"
+                        min="50"
+                        step="50"
+                        class="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                    >
+                </div>
+            </div>
+            <div class="flex gap-3 mt-6">
+                <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg text-sm font-semibold hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all shadow-md hover:shadow-lg">
+                    <span class="flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        Apply Filters
+                    </span>
+                </button>
+                <a href="?filter=all" class="px-5 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-all shadow-sm hover:shadow">
+                    Reset
+                </a>
+            </div>
+        </form>
+    </div>
 
-    <div class="overflow-auto bg-white border border-gray-200 rounded-lg shadow-sm">
-        <table class="min-w-full divide-y divide-gray-200 text-sm">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-4 py-3 text-left font-semibold text-gray-600">Preview</th>
-                    <th class="px-4 py-3 text-left font-semibold text-gray-600">File</th>
-                    <th class="px-4 py-3 text-left font-semibold text-gray-600">Size</th>
-                    <th class="px-4 py-3 text-left font-semibold text-gray-600">Dimensions</th>
-                    <th class="px-4 py-3 text-left font-semibold text-gray-600">Usage</th>
-                    <th class="px-4 py-3 text-left font-semibold text-gray-600">Last Modified</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-                <?php if (empty($mediaFiles)): ?>
+    <!-- Media Files Table -->
+    <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+        <div class="px-6 py-4 bg-gradient-to-r from-gray-50 to-white border-b border-gray-200">
+            <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wide">Media Files</h2>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
                     <tr>
-                        <td colspan="6" class="px-4 py-6 text-center text-gray-500">
-                            No media files found with the current filters.
-                        </td>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Preview</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">File Information</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Size</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Dimensions</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Usage</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Last Modified</th>
                     </tr>
-                <?php else: ?>
-                    <?php foreach ($mediaFiles as $file): ?>
-                        <tr class="<?php echo $file['isLarge'] ? 'bg-yellow-50' : ''; ?>">
-                            <td class="px-4 py-3">
-                                <?php if ($file['mime'] === 'image/svg+xml'): ?>
-                                    <div class="w-16 h-16 flex items-center justify-center bg-gray-100 rounded">
-                                        <span class="text-xs text-gray-600">SVG</span>
-                                    </div>
-                                <?php else: ?>
-                                    <img
-                                        src="<?php echo e($file['url']); ?>"
-                                        alt="<?php echo e($file['name']); ?>"
-                                        class="w-16 h-16 object-cover rounded border border-gray-200"
-                                    >
-                                <?php endif; ?>
-                            </td>
-                            <td class="px-4 py-3">
-                                <p class="font-medium text-gray-900"><?php echo e($file['name']); ?></p>
-                                <p class="text-xs text-gray-500"><?php echo e($file['relativePath']); ?></p>
-                                <p class="text-xs text-gray-500"><?php echo e($file['mime']); ?></p>
-                                <?php if ($file['isLarge']): ?>
-                                    <span class="inline-flex items-center px-2 py-0.5 mt-1 rounded text-xs font-medium bg-yellow-200 text-yellow-900">
-                                        Large file
-                                    </span>
-                                <?php endif; ?>
-                            </td>
-                            <td class="px-4 py-3">
-                                <p class="font-semibold text-gray-900"><?php echo e($file['sizeLabel']); ?></p>
-                                <p class="text-xs text-gray-500"><?php echo e(number_format($file['sizeBytes'])); ?> bytes</p>
-                            </td>
-                            <td class="px-4 py-3">
-                                <?php if ($file['dimensions']): ?>
-                                    <p class="font-medium text-gray-900"><?php echo e($file['dimensions']['width']); ?> × <?php echo e($file['dimensions']['height']); ?> px</p>
-                                    <p class="text-xs text-gray-500">Aspect ratio <?php echo e($file['dimensions']['ratio']); ?></p>
-                                <?php else: ?>
-                                    <p class="text-sm text-gray-500">—</p>
-                                <?php endif; ?>
-                            </td>
-                            <td class="px-4 py-3">
-                                <?php if (empty($file['usage'])): ?>
-                                    <span class="text-xs text-gray-500">Unused</span>
-                                <?php else: ?>
-                                    <ul class="space-y-1 text-xs text-gray-700">
-                                        <?php foreach ($file['usage'] as $usage): ?>
-                                            <li>
-                                                <span class="font-semibold text-gray-900"><?php echo e($usage['type']); ?>:</span>
-                                                <?php echo e($usage['label']); ?>
-                                            </li>
-                                        <?php endforeach; ?>
-                                    </ul>
-                                <?php endif; ?>
-                            </td>
-                            <td class="px-4 py-3 text-sm text-gray-600">
-                                <?php echo e(date('Y-m-d H:i', $file['modified'])); ?>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-100">
+                    <?php if (empty($mediaFiles)): ?>
+                        <tr>
+                            <td colspan="6" class="px-6 py-12 text-center">
+                                <div class="flex flex-col items-center justify-center">
+                                    <svg class="w-12 h-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                    <p class="text-sm font-medium text-gray-900">No media files found</p>
+                                    <p class="text-xs text-gray-500 mt-1">Try adjusting your filters or search terms</p>
+                                </div>
                             </td>
                         </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </tbody>
-        </table>
+                    <?php else: ?>
+                        <?php foreach ($mediaFiles as $file): ?>
+                            <tr class="hover:bg-gray-50 transition-colors <?php echo $file['isLarge'] ? 'bg-yellow-50/50' : ''; ?>">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center justify-center w-20 h-20 bg-gray-100 rounded-lg border border-gray-200 overflow-hidden">
+                                        <?php if ($file['mime'] === 'image/svg+xml'): ?>
+                                            <div class="flex items-center justify-center w-full h-full">
+                                                <span class="text-xs font-medium text-gray-600">SVG</span>
+                                            </div>
+                                        <?php else: ?>
+                                            <img
+                                                src="<?php echo e($file['url']); ?>"
+                                                alt="<?php echo e($file['name']); ?>"
+                                                class="w-full h-full object-cover"
+                                                loading="lazy"
+                                            >
+                                        <?php endif; ?>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="space-y-1">
+                                        <p class="text-sm font-semibold text-gray-900"><?php echo e($file['name']); ?></p>
+                                        <p class="text-xs text-gray-500 font-mono truncate max-w-xs"><?php echo e($file['relativePath']); ?></p>
+                                        <div class="flex items-center gap-2 mt-2">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700">
+                                                <?php echo e(explode('/', $file['mime'])[1] ?? 'file'); ?>
+                                            </span>
+                                            <?php if ($file['isLarge']): ?>
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                    <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                                    </svg>
+                                                    Large
+                                                </span>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div>
+                                        <p class="text-sm font-semibold text-gray-900"><?php echo e($file['sizeLabel']); ?></p>
+                                        <p class="text-xs text-gray-500 mt-0.5"><?php echo e(number_format($file['sizeBytes'])); ?> bytes</p>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <?php if ($file['dimensions']): ?>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-900"><?php echo e($file['dimensions']['width']); ?> × <?php echo e($file['dimensions']['height']); ?></p>
+                                            <p class="text-xs text-gray-500 mt-0.5">Ratio: <?php echo e($file['dimensions']['ratio']); ?></p>
+                                        </div>
+                                    <?php else: ?>
+                                        <span class="text-sm text-gray-400">—</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <?php if (empty($file['usage'])): ?>
+                                        <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-600">
+                                            Unused
+                                        </span>
+                                    <?php else: ?>
+                                        <div class="space-y-1">
+                                            <?php foreach (array_slice($file['usage'], 0, 2) as $usage): ?>
+                                                <div class="text-xs">
+                                                    <span class="font-semibold text-gray-900"><?php echo e($usage['type']); ?>:</span>
+                                                    <span class="text-gray-600"><?php echo e($usage['label']); ?></span>
+                                                </div>
+                                            <?php endforeach; ?>
+                                            <?php if (count($file['usage']) > 2): ?>
+                                                <p class="text-xs text-gray-500">+<?php echo e(count($file['usage']) - 2); ?> more</p>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm text-gray-600">
+                                        <p><?php echo e(date('M j, Y', $file['modified'])); ?></p>
+                                        <p class="text-xs text-gray-500"><?php echo e(date('H:i', $file['modified'])); ?></p>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 

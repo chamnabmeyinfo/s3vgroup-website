@@ -18,8 +18,20 @@ $service = new CategoryService($repository);
 
 switch (Request::method()) {
     case 'GET':
+        $categories = $repository->all();
+        
+        // Add product count to each category
+        $db = getDB();
+        foreach ($categories as &$category) {
+            $countStmt = $db->prepare('SELECT COUNT(*) as count FROM products WHERE categoryId = :id');
+            $countStmt->execute([':id' => $category['id']]);
+            $result = $countStmt->fetch(PDO::FETCH_ASSOC);
+            $category['product_count'] = (int) ($result['count'] ?? 0);
+        }
+        unset($category); // Break reference
+        
         JsonResponse::success([
-            'categories' => $repository->all(),
+            'categories' => $categories,
         ]);
         break;
     case 'POST':

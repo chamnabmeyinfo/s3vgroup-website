@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Http;
 
+use App\Http\Middleware\Authenticate;
+
+/**
+ * @deprecated Use App\Http\Middleware\Authenticate instead
+ * Kept for backward compatibility
+ */
 final class AdminGuard
 {
     public static function requireAuth(): void
     {
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
-        }
-
-        if (empty($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-            JsonResponse::error('Unauthorized', 401);
-        }
+        Authenticate::requireAuth();
     }
 }
 

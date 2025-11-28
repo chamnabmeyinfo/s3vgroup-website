@@ -28,118 +28,183 @@ $pageTitle = 'Products';
 include __DIR__ . '/includes/header.php';
 ?>
 
-<div class="space-y-8">
-    <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-        <div>
-            <p class="text-sm uppercase tracking-wide text-gray-500">Catalog</p>
-            <h1 class="text-3xl font-semibold text-[#0b3a63]">Products</h1>
-            <p class="text-sm text-gray-600">
-                Manage published systems and drafts
-                <span id="product-count" class="ml-2 font-medium text-gray-900"></span>
-            </p>
+<div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+    <!-- Header -->
+    <div class="px-6 py-5 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-semibold text-gray-900 mb-1">Products</h1>
+                <p class="text-sm text-gray-500">
+                    Manage your product catalog
+                    <span id="product-count" class="ml-2 font-medium text-gray-700"></span>
+                </p>
+            </div>
+            <button type="button" id="new-product-btn" class="admin-btn admin-btn-primary flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-lg shadow-sm hover:shadow transition-all">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M12 5v14M5 12h14"/>
+                </svg>
+                New Product
+            </button>
         </div>
-        <button type="button" id="new-product-btn" class="admin-btn admin-btn-primary">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-            </svg>
-            <span>New Product</span>
-        </button>
     </div>
 
-    <!-- Filters and Sort -->
-    <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-4 md:p-6">
-        <!-- Basic Filters -->
-        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-            <!-- Search -->
-            <div class="lg:col-span-2">
-                <label for="product-search" class="block text-sm font-medium text-gray-700 mb-1">Search</label>
-                <input 
-                    type="text" 
-                    id="product-search" 
-                    placeholder="Search by name, SKU, description..."
-                    class="admin-form-input w-full"
-                >
+    <!-- Content -->
+    <div class="p-6">
+
+    <!-- Statistics Dashboard - Modern Card Design -->
+    <div id="product-statistics" class="mb-6">
+        <div id="statistics-loading" class="text-center py-8 text-sm text-gray-500">
+            <div class="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-gray-400"></div>
+            <p class="mt-2">Loading statistics...</p>
+        </div>
+        
+        <div id="statistics-content" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <!-- Total Products Card -->
+            <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between mb-2">
+                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Total Products</p>
+                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                    </svg>
+                </div>
+                <p class="text-2xl font-semibold text-gray-900" id="stat-total">0</p>
             </div>
-            
-            <!-- Category Filter -->
-            <div>
-                <label for="product-category-filter" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                <select id="product-category-filter" class="admin-form-select w-full">
-                    <option value="">All Categories</option>
-                    <?php foreach ($categoriesList as $category): ?>
-                        <option value="<?php echo e($category['id']); ?>"><?php echo e($category['name']); ?></option>
-                    <?php endforeach; ?>
-                </select>
+
+            <!-- Published Card -->
+            <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between mb-2">
+                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Published</p>
+                    <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <p class="text-2xl font-semibold text-green-600" id="stat-published">0</p>
             </div>
-            
-            <!-- Status Filter -->
-            <div>
-                <label for="product-status-filter" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                <select id="product-status-filter" class="admin-form-select w-full">
-                    <option value="">All Status</option>
-                    <option value="PUBLISHED">Published</option>
-                    <option value="DRAFT">Draft</option>
-                    <option value="ARCHIVED">Archived</option>
-                </select>
+
+            <!-- Drafts Card -->
+            <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between mb-2">
+                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Drafts</p>
+                    <svg class="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    </svg>
+                </div>
+                <p class="text-2xl font-semibold text-yellow-600" id="stat-draft">0</p>
             </div>
-            
-            <!-- Sort -->
-            <div>
-                <label for="product-sort" class="block text-sm font-medium text-gray-700 mb-1">Sort By</label>
-                <select id="product-sort" class="admin-form-select w-full">
-                    <option value="updatedAt">Last Updated</option>
-                    <option value="name">Name (A-Z)</option>
-                    <option value="sku">SKU</option>
-                    <option value="price">Price</option>
-                    <option value="status">Status</option>
-                    <option value="createdAt">Date Created</option>
-                    <option value="category">Category</option>
-                </select>
+
+            <!-- With Images Card -->
+            <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between mb-2">
+                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">With Images</p>
+                    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                <p class="text-2xl font-semibold text-gray-900" id="stat-with-images">0</p>
+            </div>
+
+            <!-- With Price Card -->
+            <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                <div class="flex items-center justify-between mb-2">
+                    <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">With Price</p>
+                    <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <p class="text-2xl font-semibold text-gray-900" id="stat-with-prices">0</p>
             </div>
         </div>
         
-        <div class="mt-4 flex items-center justify-between flex-wrap gap-4">
-            <div class="flex items-center gap-4">
-                <div class="flex items-center gap-2">
-                    <label class="flex items-center gap-2 text-sm text-gray-700">
-                        <input type="radio" name="sort-order" value="DESC" checked class="text-blue-600">
-                        <span>Descending</span>
-                    </label>
-                    <label class="flex items-center gap-2 text-sm text-gray-700">
-                        <input type="radio" name="sort-order" value="ASC" class="text-blue-600">
-                        <span>Ascending</span>
-                    </label>
-                </div>
-                <div class="flex items-center gap-2">
-                    <label for="items-per-page" class="text-sm text-gray-700">Items per page:</label>
-                    <select id="items-per-page" class="admin-form-select text-sm w-20">
-                        <option value="10">10</option>
-                        <option value="25" selected>25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select>
-                </div>
+        <div id="statistics-error" class="hidden text-center py-8">
+            <div class="inline-flex items-center gap-2 text-red-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <p class="text-sm font-medium">Failed to load statistics</p>
             </div>
-            <div class="flex items-center gap-4">
-                <button 
-                    type="button" 
-                    id="toggle-advanced-filters"
-                    class="text-sm text-blue-600 hover:text-blue-800 underline"
+            <button type="button" id="refresh-statistics" class="mt-3 text-sm text-blue-600 hover:text-blue-700 font-medium">
+                Try again
+            </button>
+        </div>
+    </div>
+
+    <!-- Categories Quick Access -->
+    <div class="pb-3 border-b border-gray-100">
+        <div class="flex items-center gap-3 flex-wrap">
+            <span class="text-xs text-gray-500 font-medium">Categories:</span>
+            <div id="categories-quick-list" class="flex flex-wrap gap-1.5">
+                <div class="text-xs text-gray-400">Loading...</div>
+            </div>
+            <a href="/ae-admin/categories.php" class="ml-auto text-xs text-gray-400 hover:text-gray-600">
+                Manage →
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters and Sort -->
+    <div class="pb-3 border-b border-gray-100">
+        <div class="flex items-center gap-3 flex-wrap">
+            <input 
+                type="text" 
+                id="product-search" 
+                placeholder="Search..."
+                class="admin-form-input"
+                style="flex: 1; min-width: 200px;"
+            >
+            <select id="product-category-filter" class="admin-form-select">
+                <option value="">All Categories</option>
+                <?php foreach ($categoriesList as $category): ?>
+                    <option value="<?php echo e($category['id']); ?>"><?php echo e($category['name']); ?></option>
+                <?php endforeach; ?>
+            </select>
+            <select id="product-status-filter" class="admin-form-select">
+                <option value="">All Status</option>
+                <option value="PUBLISHED">Published</option>
+                <option value="DRAFT">Draft</option>
+                <option value="ARCHIVED">Archived</option>
+            </select>
+            <select id="product-sort" class="admin-form-select">
+                <option value="updatedAt">Last Updated</option>
+                <option value="name">Name</option>
+                <option value="sku">SKU</option>
+                <option value="price">Price</option>
+                <option value="status">Status</option>
+            </select>
+            <select id="items-per-page" class="admin-form-select" style="width: 80px;">
+                <option value="10">10</option>
+                <option value="25" selected>25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+            <div class="flex items-center gap-2">
+                <label class="flex items-center gap-1 text-xs text-gray-600">
+                    <input type="radio" name="sort-order" value="DESC" checked class="w-3 h-3">
+                    <span>↓</span>
+                </label>
+                <label class="flex items-center gap-1 text-xs text-gray-600">
+                    <input type="radio" name="sort-order" value="ASC" class="w-3 h-3">
+                    <span>↑</span>
+                </label>
+            </div>
+            <button 
+                type="button" 
+                id="toggle-advanced-filters"
+                    class="text-xs text-gray-500 hover:text-gray-700"
                 >
-                    <span id="advanced-filters-text">Show Advanced Filters</span>
+                    <span id="advanced-filters-text">Advanced</span>
                 </button>
                 <button 
                     type="button" 
                     id="clear-filters-btn"
-                    class="text-sm text-gray-600 hover:text-gray-900 underline"
+                    class="text-xs text-gray-500 hover:text-gray-700"
                 >
-                    Clear Filters
+                    Clear
                 </button>
             </div>
         </div>
 
         <!-- Advanced Filters (Collapsible) -->
-        <div id="advanced-filters" class="hidden mt-6 pt-6 border-t border-gray-200">
+        <div id="advanced-filters" class="hidden mt-3 pt-3 border-t border-gray-100">
             <h3 class="text-sm font-semibold text-gray-700 mb-4">Advanced Filters</h3>
             <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <!-- Price Range -->
@@ -234,23 +299,15 @@ include __DIR__ . '/includes/header.php';
     </div>
 
     <!-- Column Visibility Controls -->
-    <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-4 mb-6">
-        <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div>
-                <h3 class="text-lg font-semibold text-gray-900">Product Table Columns</h3>
-                <p class="text-sm text-gray-600">Toggle which fields appear in the table for deeper analysis.</p>
-            </div>
-            <div class="relative">
-                <button
-                    type="button"
-                    id="column-visibility-toggle"
-                    class="admin-btn admin-btn-secondary flex items-center gap-2"
-                >
-                    <span>Customize Columns</span>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                    </svg>
-                </button>
+    <div class="pb-2 mb-2 flex justify-end">
+        <div class="relative">
+            <button
+                type="button"
+                id="column-visibility-toggle"
+                class="text-xs text-gray-500 hover:text-gray-700"
+            >
+                Columns
+            </button>
                 <div
                     id="column-visibility-panel"
                     class="hidden absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-20 p-4 space-y-3"
@@ -266,9 +323,9 @@ include __DIR__ . '/includes/header.php';
         </div>
     </div>
 
-    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
-        <div id="products-loading" class="p-8 text-center text-gray-500">
-            <div class="admin-loading">Loading products...</div>
+    <div class="border border-gray-200 overflow-hidden">
+        <div id="products-loading" class="p-6 text-center text-sm text-gray-500">
+            Loading...
         </div>
         <div id="products-error" class="hidden p-8 text-center text-red-600">
             <div class="admin-empty">
@@ -281,42 +338,42 @@ include __DIR__ . '/includes/header.php';
             <table id="products-table" class="admin-table w-full text-left text-sm" style="display: none;">
                 <thead class="bg-gray-50 text-gray-700">
                     <tr>
-                        <th class="px-4 md:px-6 py-3 font-medium" data-column="image">Image</th>
-                        <th class="px-4 md:px-6 py-3 font-medium cursor-pointer hover:bg-gray-100" data-column="name" data-sort="name">
+                        <th class="px-3 py-2 text-xs font-medium text-gray-600 uppercase tracking-wide" data-column="image">Image</th>
+                        <th class="px-3 py-2 text-xs font-medium text-gray-600 uppercase tracking-wide cursor-pointer hover:bg-gray-50" data-column="name" data-sort="name">
                             Name
                             <span class="sort-indicator"></span>
                         </th>
-                        <th class="px-4 md:px-6 py-3 font-medium cursor-pointer hover:bg-gray-100" data-column="sku" data-sort="sku">
+                        <th class="px-3 py-2 text-xs font-medium text-gray-600 uppercase tracking-wide cursor-pointer hover:bg-gray-50" data-column="sku" data-sort="sku">
                             SKU
                             <span class="sort-indicator"></span>
                         </th>
-                        <th class="px-4 md:px-6 py-3 font-medium cursor-pointer hover:bg-gray-100" data-column="category" data-sort="category">
+                        <th class="px-3 py-2 text-xs font-medium text-gray-600 uppercase tracking-wide cursor-pointer hover:bg-gray-50" data-column="category" data-sort="category">
                             Category
                             <span class="sort-indicator"></span>
                         </th>
-                        <th class="px-4 md:px-6 py-3 font-medium cursor-pointer hover:bg-gray-100" data-column="price" data-sort="price">
+                        <th class="px-3 py-2 text-xs font-medium text-gray-600 uppercase tracking-wide cursor-pointer hover:bg-gray-50" data-column="price" data-sort="price">
                             Price
                             <span class="sort-indicator"></span>
                         </th>
-                        <th class="px-4 md:px-6 py-3 font-medium" data-column="summary">
+                        <th class="px-3 py-2 text-xs font-medium text-gray-600 uppercase tracking-wide" data-column="summary">
                             Summary
                         </th>
-                        <th class="px-4 md:px-6 py-3 font-medium cursor-pointer hover:bg-gray-100" data-column="status" data-sort="status">
+                        <th class="px-3 py-2 text-xs font-medium text-gray-600 uppercase tracking-wide cursor-pointer hover:bg-gray-50" data-column="status" data-sort="status">
                             Status
                             <span class="sort-indicator"></span>
                         </th>
-                        <th class="px-4 md:px-6 py-3 font-medium" data-column="hero">
+                        <th class="px-3 py-2 text-xs font-medium text-gray-600 uppercase tracking-wide" data-column="hero">
                             Hero Image URL
                         </th>
-                        <th class="px-4 md:px-6 py-3 font-medium cursor-pointer hover:bg-gray-100" data-column="created" data-sort="createdAt">
+                        <th class="px-3 py-2 text-xs font-medium text-gray-600 uppercase tracking-wide cursor-pointer hover:bg-gray-50" data-column="created" data-sort="createdAt">
                             Created
                             <span class="sort-indicator"></span>
                         </th>
-                        <th class="px-4 md:px-6 py-3 font-medium cursor-pointer hover:bg-gray-100" data-column="updated" data-sort="updatedAt">
+                        <th class="px-3 py-2 text-xs font-medium text-gray-600 uppercase tracking-wide cursor-pointer hover:bg-gray-50" data-column="updated" data-sort="updatedAt">
                             Updated
                             <span class="sort-indicator"></span>
                         </th>
-                        <th class="px-4 md:px-6 py-3 font-medium">Actions</th>
+                        <th class="px-3 py-2 text-xs font-medium text-gray-600 uppercase tracking-wide">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="products-tbody" class="divide-y divide-gray-200">
@@ -326,15 +383,15 @@ include __DIR__ . '/includes/header.php';
         </div>
         
         <!-- Pagination -->
-        <div id="pagination-container" class="hidden px-4 md:px-6 py-4 border-t border-gray-200 bg-gray-50">
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div class="text-sm text-gray-700">
-                    Showing <span id="pagination-from">0</span> to <span id="pagination-to">0</span> of <span id="pagination-total">0</span> products
+        <div id="pagination-container" class="hidden px-3 py-2 border-t border-gray-100 bg-gray-50">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="text-xs text-gray-600">
+                    Showing <span id="pagination-from">0</span> to <span id="pagination-to">0</span> of <span id="pagination-total">0</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <button 
                         id="pagination-prev" 
-                        class="admin-btn admin-btn-secondary text-sm px-3 py-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                        class="text-sm text-gray-600 hover:text-gray-900 px-3 py-1 disabled:opacity-50 disabled:cursor-not-allowed"
                         disabled
                     >
                         Previous
@@ -344,7 +401,7 @@ include __DIR__ . '/includes/header.php';
                     </div>
                     <button 
                         id="pagination-next" 
-                        class="admin-btn admin-btn-secondary text-sm px-3 py-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                        class="text-sm text-gray-600 hover:text-gray-900 px-3 py-1 disabled:opacity-50 disabled:cursor-not-allowed"
                         disabled
                     >
                         Next
@@ -357,12 +414,9 @@ include __DIR__ . '/includes/header.php';
 
 <div id="product-modal" class="admin-modal hidden">
     <div class="admin-modal-content">
-        <div class="flex items-center justify-between border-b border-gray-200 pb-4">
-            <div>
-                <h2 id="product-modal-title" class="text-xl font-semibold text-[#0b3a63]">New Product</h2>
-                <p class="text-sm text-gray-500">Publish products to the public site</p>
-            </div>
-            <button type="button" class="text-gray-500 hover:text-gray-700" id="product-modal-close">&times;</button>
+        <div class="flex items-center justify-between border-b border-gray-100 pb-2 mb-3">
+            <h2 id="product-modal-title" class="text-sm font-medium text-gray-900">New Product</h2>
+            <button type="button" class="text-gray-400 hover:text-gray-600 text-xl leading-none" id="product-modal-close">&times;</button>
         </div>
 
         <form id="product-form" class="mt-4 space-y-4">
@@ -412,7 +466,7 @@ include __DIR__ . '/includes/header.php';
                     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
                         <input type="url" name="heroImage" id="product-hero-image-input" placeholder="https://example.com/image.jpg or upload" class="admin-form-input flex-1">
                         <input type="file" accept="image/*" class="hidden" id="product-hero-image-file" data-target="product-hero-image-input">
-                        <button type="button" onclick="document.getElementById('product-hero-image-file').click()" class="admin-btn admin-btn-secondary whitespace-nowrap">Upload</button>
+                        <button type="button" onclick="document.getElementById('product-hero-image-file').click()" class="admin-btn admin-btn-secondary" style="white-space: nowrap;">Upload</button>
                     </div>
                     <div id="product-hero-image-preview" class="mt-2"></div>
                     <p class="text-xs text-gray-500 mt-1">All image sizes are accepted. Images will be automatically optimized after upload.</p>
@@ -442,12 +496,12 @@ include __DIR__ . '/includes/header.php';
 
             <p id="product-form-error" class="text-sm text-red-600 hidden"></p>
 
-            <div class="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-4 border-t border-gray-200 mt-6">
-                <button type="button" id="product-form-cancel" class="admin-btn admin-btn-secondary">
+            <div class="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 pt-3 border-t border-gray-100 mt-3">
+                <button type="button" id="product-form-cancel" class="text-xs text-gray-500 hover:text-gray-700 px-3 py-1.5">
                     Cancel
                 </button>
-                <button type="submit" id="product-submit-btn" class="admin-btn admin-btn-primary">
-                    Save Product
+                <button type="submit" id="product-submit-btn" class="text-xs font-medium bg-gray-900 text-white px-3 py-1.5 hover:bg-gray-800">
+                    Save
                 </button>
             </div>
         </form>
@@ -989,8 +1043,8 @@ include __DIR__ . '/includes/header.php';
         for (let i = startPage; i <= endPage; i++) {
             const btn = createPageButton(i);
             if (i === currentPage) {
-                btn.classList.add('bg-blue-600', 'text-white');
-                btn.classList.remove('admin-btn-secondary');
+                btn.classList.add('text-gray-900', 'font-medium', 'border-b-2', 'border-gray-900');
+                btn.classList.remove('text-gray-600', 'hover:text-gray-900');
             }
             pagesContainer.appendChild(btn);
         }
@@ -1011,7 +1065,7 @@ include __DIR__ . '/includes/header.php';
     // Create page button
     function createPageButton(page) {
         const btn = document.createElement('button');
-        btn.className = 'admin-btn admin-btn-secondary text-sm px-3 py-1 min-w-[2.5rem]';
+        btn.className = 'text-sm text-gray-600 hover:text-gray-900 px-3 py-1 min-w-[2.5rem]';
         btn.textContent = page;
         btn.addEventListener('click', () => {
             currentPage = page;
@@ -1090,13 +1144,9 @@ include __DIR__ . '/includes/header.php';
                     <a
                         href="/product.php?slug=${encodeURIComponent(slug)}"
                         target="_blank"
-                        class="admin-btn admin-btn-primary text-xs md:text-sm font-semibold flex items-center gap-1.5"
+                        class="text-xs text-gray-500 hover:text-gray-700"
                         title="View on website"
                     >
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                        </svg>
                         View
                     </a>
                 `;
@@ -1106,14 +1156,11 @@ include __DIR__ . '/includes/header.php';
             return `
                 <button
                     type="button"
-                    class="admin-btn admin-btn-primary text-xs md:text-sm font-semibold product-publish-btn"
+                    class="text-xs text-gray-500 hover:text-gray-700 product-publish-btn"
                     data-product-id="${productId}"
                     data-product-name="${productName}"
                     title="Publish this product"
                 >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                    </svg>
                     Publish
                 </button>
             `;
@@ -1122,14 +1169,11 @@ include __DIR__ . '/includes/header.php';
             return `
                 <button
                     type="button"
-                    class="admin-btn admin-btn-primary text-xs md:text-sm font-semibold product-publish-btn"
+                    class="text-xs text-gray-500 hover:text-gray-700 product-publish-btn"
                     data-product-id="${productId}"
                     data-product-name="${productName}"
                     title="Restore and publish this product"
                 >
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                    </svg>
                     Restore
                 </button>
             `;
@@ -1139,7 +1183,7 @@ include __DIR__ . '/includes/header.php';
         return `
             <button
                 type="button"
-                class="admin-btn admin-btn-primary text-xs md:text-sm font-semibold product-edit-btn"
+                class="text-xs text-gray-500 hover:text-gray-700 product-edit-btn"
                 data-product-id="${productId}"
             >
                 Edit
@@ -1196,39 +1240,42 @@ include __DIR__ . '/includes/header.php';
             }
             
             row.innerHTML = `
-                <td class="px-4 md:px-6 py-4" data-label="Image" data-column="image">
+                <td class="px-3 py-2" data-label="Image" data-column="image">
                     ${imageHtml}
                 </td>
-                <td class="px-4 md:px-6 py-4 font-semibold text-gray-900" data-label="Name" data-column="name">${escapeHtml(product.name)}</td>
-                <td class="px-4 md:px-6 py-4 text-gray-600" data-label="SKU" data-column="sku">${sku}</td>
-                <td class="px-4 md:px-6 py-4 text-gray-600" data-label="Category" data-column="category">${escapeHtml(product.category_name || '—')}</td>
-                <td class="px-4 md:px-6 py-4 text-gray-600" data-label="Price" data-column="price">${price}</td>
-                <td class="px-4 md:px-6 py-4 text-gray-600" data-label="Summary" data-column="summary">
-                    <div class="max-w-xl text-xs md:text-sm">${summary}</div>
+                <td class="px-3 py-2 text-sm font-medium text-gray-900" data-label="Name" data-column="name">${escapeHtml(product.name)}</td>
+                <td class="px-3 py-2 text-xs text-gray-600" data-label="SKU" data-column="sku">${sku}</td>
+                <td class="px-3 py-2" data-label="Category" data-column="category">
+                    ${product.category_name 
+                        ? `<span class="text-xs text-gray-600 hover:text-gray-900 cursor-pointer category-badge border-b border-transparent hover:border-gray-400" data-category-id="${escapeHtml(product.categoryId || '')}" title="Click to filter by ${escapeHtml(product.category_name)}">${escapeHtml(product.category_name)}</span>`
+                        : '<span class="text-gray-400 text-xs">—</span>'
+                    }
                 </td>
-                <td class="px-4 md:px-6 py-4" data-label="Status" data-column="status">
-                    <span class="admin-badge ${statusClass}">
-                        ${escapeHtml(product.status)}
-                    </span>
+                <td class="px-3 py-2 text-xs text-gray-600" data-label="Price" data-column="price">${price}</td>
+                <td class="px-3 py-2 text-xs text-gray-600" data-label="Summary" data-column="summary">
+                    <div class="max-w-xl">${summary}</div>
                 </td>
-                <td class="px-4 md:px-6 py-4" data-label="Hero URL" data-column="hero">
-                    ${heroDisplay}
+                <td class="px-3 py-2" data-label="Status" data-column="status">
+                    <span class="text-xs text-gray-500 uppercase">${escapeHtml(product.status)}</span>
                 </td>
-                <td class="px-4 md:px-6 py-4 text-gray-600" data-label="Created" data-column="created">${createdDate}</td>
-                <td class="px-4 md:px-6 py-4 text-gray-600" data-label="Updated" data-column="updated">${updatedDate}</td>
-                <td class="px-4 md:px-6 py-4" data-label="Actions">
-                    <div class="flex items-center gap-2 md:gap-3 flex-wrap">
+                <td class="px-3 py-2" data-label="Hero URL" data-column="hero">
+                    <div class="text-xs text-gray-500 truncate max-w-xs">${heroDisplay}</div>
+                </td>
+                <td class="px-3 py-2 text-xs text-gray-500" data-label="Created" data-column="created">${createdDate}</td>
+                <td class="px-3 py-2 text-xs text-gray-500" data-label="Updated" data-column="updated">${updatedDate}</td>
+                <td class="px-3 py-2" data-label="Actions">
+                    <div class="flex items-center gap-2 flex-wrap">
                         ${getPrimaryActionButton(product)}
                         <button
                             type="button"
-                            class="admin-btn admin-btn-secondary text-xs md:text-sm product-edit-btn"
+                            class="text-xs text-gray-500 hover:text-gray-700 product-edit-btn"
                             data-product-id="${escapeHtml(product.id)}"
                         >
                             Edit
                         </button>
                         <button
                             type="button"
-                            class="admin-btn admin-btn-danger text-xs md:text-sm product-delete-btn"
+                            class="text-xs text-gray-500 hover:text-red-600 product-delete-btn"
                             data-id="${escapeHtml(product.id)}"
                             data-name="${escapeHtml(product.name)}"
                         >
@@ -1472,7 +1519,169 @@ include __DIR__ . '/includes/header.php';
     // Load products on page load
     loadAllProducts();
 
+    // ============================================
+    // PRODUCT STATISTICS
+    // ============================================
+    
+    async function loadStatistics() {
+        const loadingEl = document.getElementById('statistics-loading');
+        const contentEl = document.getElementById('statistics-content');
+        const errorEl = document.getElementById('statistics-error');
+        
+        try {
+            loadingEl.classList.remove('hidden');
+            contentEl.classList.add('hidden');
+            errorEl.classList.add('hidden');
+            
+            const response = await fetch('/api/admin/products/statistics.php');
+            const result = await response.json();
+            
+            if (result.status === 'success' && result.data) {
+                const stats = result.data;
+                
+                // Update overview cards (safely check for element existence)
+                const setTextContent = (id, value) => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = value;
+                };
+                
+                setTextContent('stat-total', stats.total.toLocaleString());
+                setTextContent('stat-published', (stats.byStatus.PUBLISHED || 0).toLocaleString());
+                setTextContent('stat-draft', (stats.byStatus.DRAFT || 0).toLocaleString());
+                
+                // Update statistics (simplified display)
+                const withImages = stats.images?.with_image || 0;
+                const withPrices = stats.prices?.with_price || 0;
+                
+                setTextContent('stat-with-images', withImages.toLocaleString());
+                setTextContent('stat-with-prices', withPrices.toLocaleString());
+                
+                
+                loadingEl.classList.add('hidden');
+                contentEl.classList.remove('hidden');
+            } else {
+                throw new Error(result.message || 'Failed to load statistics');
+            }
+        } catch (error) {
+            console.error('Error loading statistics:', error);
+            loadingEl.classList.add('hidden');
+            contentEl.classList.add('hidden');
+            errorEl.classList.remove('hidden');
+        }
+    }
+    
+    // Refresh statistics button (handle both error state and normal refresh)
+    document.getElementById('refresh-statistics')?.addEventListener('click', loadStatistics);
+    
+    // Load statistics on page load
+    loadStatistics();
+
+    // ============================================
+    // CATEGORIES QUICK ACCESS
+    // ============================================
+    
+    async function loadCategories() {
+        const categoriesListEl = document.getElementById('categories-quick-list');
+        if (!categoriesListEl) return;
+        
+        try {
+            const response = await fetch('/api/admin/categories/index.php');
+            const result = await response.json();
+            
+            if (result.status === 'success' && result.data && result.data.categories) {
+                categoriesListEl.innerHTML = '';
+                
+                if (result.data.categories.length === 0) {
+                    categoriesListEl.innerHTML = '<p class="text-sm text-gray-500">No categories found. <a href="/ae-admin/categories.php" class="text-blue-600 hover:underline">Create one</a></p>';
+                    return;
+                }
+                
+                // Add "All Categories" button first
+                const allBtn = document.createElement('button');
+                allBtn.type = 'button';
+                allBtn.className = 'category-filter-badge inline-flex items-center px-2 py-1 text-xs font-medium text-gray-900 border-b-2 border-gray-900';
+                allBtn.textContent = 'All';
+                allBtn.addEventListener('click', () => {
+                    const filterSelect = document.getElementById('product-category-filter');
+                    filterSelect.value = '';
+                    filterSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                    currentPage = 1;
+                    loadAllProducts();
+                    updateCategoryBadges(null);
+                });
+                categoriesListEl.appendChild(allBtn);
+                
+                result.data.categories.forEach(category => {
+                    const badge = document.createElement('button');
+                    badge.type = 'button';
+                    badge.className = 'category-filter-badge inline-flex items-center px-2 py-1 text-xs font-normal text-gray-600 hover:text-gray-900 border-b border-transparent hover:border-gray-400 transition-colors';
+                    badge.dataset.categoryId = category.id;
+                    const productCount = category.product_count || category.productCount || 0;
+                    badge.innerHTML = `
+                        <span>${escapeHtml(category.name)}</span>
+                        <span class="ml-1.5 text-gray-400">${productCount}</span>
+                    `;
+                    
+                    badge.addEventListener('click', () => {
+                        const filterSelect = document.getElementById('product-category-filter');
+                        filterSelect.value = category.id;
+                        // Trigger change event to ensure filter is applied
+                        filterSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                        currentPage = 1;
+                        loadAllProducts();
+                        updateCategoryBadges(category.id);
+                    });
+                    
+                    categoriesListEl.appendChild(badge);
+                });
+                
+            } else {
+                categoriesListEl.innerHTML = '<p class="text-sm text-red-500">Failed to load categories</p>';
+            }
+        } catch (error) {
+            console.error('Error loading categories:', error);
+            const categoriesListEl = document.getElementById('categories-quick-list');
+            if (categoriesListEl) {
+                categoriesListEl.innerHTML = '<p class="text-sm text-red-500">Error loading categories</p>';
+            }
+        }
+    }
+    
+    function updateCategoryBadges(activeCategoryId) {
+        document.querySelectorAll('.category-filter-badge').forEach(badge => {
+            if (badge.dataset.categoryId === activeCategoryId || (!activeCategoryId && badge.textContent.trim() === 'All')) {
+                badge.classList.remove('text-gray-600', 'border-transparent');
+                badge.classList.add('text-gray-900', 'border-gray-900', 'border-b-2');
+            } else {
+                badge.classList.remove('text-gray-900', 'border-gray-900', 'border-b-2');
+                badge.classList.add('text-gray-600', 'border-transparent');
+            }
+        });
+    }
+    
+    // Make category badges in table clickable
+    document.addEventListener('click', (e) => {
+        const categoryBadge = e.target.closest('.category-badge');
+        if (categoryBadge && categoryBadge.dataset.categoryId) {
+            const categoryId = categoryBadge.dataset.categoryId;
+            if (categoryId) {
+                const filterSelect = document.getElementById('product-category-filter');
+                filterSelect.value = categoryId;
+                filterSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                currentPage = 1;
+                loadAllProducts();
+                updateCategoryBadges(categoryId);
+            }
+        }
+    });
+    
+    // Load categories on page load
+    loadCategories();
+
 })();
 </script>
+
+    </div> <!-- End content wrapper -->
+</div> <!-- End main container -->
 
 <?php include __DIR__ . '/includes/footer.php'; ?>

@@ -31,39 +31,41 @@ $pageTitle = 'Categories';
 include __DIR__ . '/includes/header.php';
 ?>
 
-<div class="space-y-8">
-    <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+<div>
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #b0b0b0;">
         <div>
-            <p class="text-sm uppercase tracking-wide text-gray-500">Catalog</p>
-            <h1 class="text-3xl font-semibold text-[#0b3a63]">Categories</h1>
-            <p class="text-sm text-gray-600">Manage product categories and their priority</p>
+            <h1 style="font-size: 22px; font-weight: 600; color: var(--mac-text); letter-spacing: -0.3px; margin: 0 0 4px 0;">Categories</h1>
+            <p style="margin: 0; color: var(--mac-text-secondary); font-size: 12px;">Manage product categories and their priority</p>
         </div>
-        <button type="button" id="new-category-btn" class="inline-flex items-center rounded-full bg-[#0b3a63] px-5 py-2 text-sm font-semibold text-white hover:bg-[#1a5a8a]">
-            + New category
+        <button type="button" id="new-category-btn" class="admin-btn admin-btn-primary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M5 12h14"/>
+            </svg>
+            New Category
         </button>
     </div>
 
-    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        <table class="w-full text-left text-sm">
-            <thead class="bg-gray-50 text-gray-700">
+    <div class="admin-card" style="padding: 0; overflow: hidden;">
+        <table class="admin-table">
+            <thead>
                 <tr>
-                    <th class="px-6 py-3 font-medium">Name</th>
-                    <th class="px-6 py-3 font-medium">Slug</th>
-                    <th class="px-6 py-3 font-medium">Priority</th>
-                    <th class="px-6 py-3 font-medium">Products</th>
-                    <th class="px-6 py-3 font-medium">Updated</th>
-                    <th class="px-6 py-3 font-medium"></th>
+                    <th>Name</th>
+                    <th>Slug</th>
+                    <th>Priority</th>
+                    <th>Products</th>
+                    <th>Updated</th>
+                    <th style="text-align: right;">Actions</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200">
+            <tbody>
                 <?php foreach ($categories as $category): ?>
                     <tr>
-                        <td class="px-6 py-4 font-semibold"><?php echo e($category['name']); ?></td>
-                        <td class="px-6 py-4 text-gray-600"><?php echo e($category['slug']); ?></td>
-                        <td class="px-6 py-4 text-gray-600"><?php echo e($category['priority']); ?></td>
-                        <td class="px-6 py-4 text-gray-600"><?php echo e($category['product_count']); ?></td>
-                        <td class="px-6 py-4 text-gray-600"><?php echo date('M d, Y', strtotime($category['updatedAt'])); ?></td>
-                        <td class="px-6 py-4 text-right">
+                        <td style="font-weight: 600;"><?php echo e($category['name']); ?></td>
+                        <td style="color: var(--mac-text-secondary);"><?php echo e($category['slug']); ?></td>
+                        <td style="color: var(--mac-text-secondary);"><?php echo e($category['priority']); ?></td>
+                        <td style="color: var(--mac-text-secondary);"><?php echo e($category['product_count']); ?></td>
+                        <td style="color: var(--mac-text-secondary); font-size: 12px;"><?php echo date('M d, Y', strtotime($category['updatedAt'])); ?></td>
+                        <td style="text-align: right;">
                             <?php
                                 $categoryData = [
                                     'id'          => $category['id'],
@@ -74,22 +76,25 @@ include __DIR__ . '/includes/header.php';
                                     'priority'    => $category['priority'],
                                 ];
                             ?>
-                            <div class="flex items-center justify-end gap-3">
+                            <div style="display: flex; align-items: center; gap: 6px; justify-content: flex-end;">
                                 <button
                                     type="button"
-                                    class="text-sm font-medium text-[#0b3a63] hover:underline category-edit-btn"
+                                    class="category-edit-btn admin-btn admin-btn-secondary"
+                                    style="font-size: 11px; padding: 4px 12px;"
                                     data-category="<?php echo htmlspecialchars(json_encode($categoryData), ENT_QUOTES, 'UTF-8'); ?>"
                                 >
                                     Edit
                                 </button>
                                 <button
                                     type="button"
-                                    class="text-sm font-medium text-red-600 hover:text-red-800 category-delete-btn"
+                                    class="category-delete-btn admin-btn admin-btn-danger"
+                                    style="font-size: 11px; padding: 4px 12px;"
                                     data-id="<?php echo htmlspecialchars($category['id'], ENT_QUOTES, 'UTF-8'); ?>"
                                     data-name="<?php echo htmlspecialchars($category['name'], ENT_QUOTES, 'UTF-8'); ?>"
                                     <?php if ($category['product_count'] > 0): ?>
                                         disabled
                                         title="Cannot delete category with products"
+                                        style="opacity: 0.5; cursor: not-allowed;"
                                     <?php endif; ?>
                                 >
                                     Delete
@@ -103,44 +108,44 @@ include __DIR__ . '/includes/header.php';
     </div>
 </div>
 
-<div id="category-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 px-4">
-    <div class="w-full max-w-xl rounded-lg bg-white p-6 shadow-xl">
-        <div class="flex items-center justify-between border-b border-gray-200 pb-4">
+<div id="category-modal" class="admin-modal hidden">
+    <div class="admin-modal-content" style="max-width: 600px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #b0b0b0;">
             <div>
-                <h2 id="category-modal-title" class="text-xl font-semibold text-[#0b3a63]">New Category</h2>
-                <p class="text-sm text-gray-500">Manage catalog categories</p>
+                <h2 id="category-modal-title" style="font-size: 18px; font-weight: 600; color: var(--mac-text); letter-spacing: -0.3px; margin: 0 0 4px 0;">New Category</h2>
+                <p style="margin: 0; color: var(--mac-text-secondary); font-size: 12px;">Manage catalog categories</p>
             </div>
-            <button type="button" class="text-gray-500 hover:text-gray-700" id="category-modal-close">&times;</button>
+            <button type="button" id="category-modal-close" style="background: none; border: none; color: var(--mac-text-secondary); cursor: pointer; font-size: 24px; line-height: 1; padding: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;" onmouseover="this.style.color='var(--mac-text)'" onmouseout="this.style.color='var(--mac-text-secondary)'">&times;</button>
         </div>
 
-        <form id="category-form" class="mt-4 space-y-4">
+        <form id="category-form">
             <input type="hidden" name="id" />
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Name</label>
-                <input type="text" name="name" class="mt-1 w-full rounded border border-gray-300 px-3 py-2" required>
+            <div class="admin-form-group">
+                <label class="admin-form-label">Name</label>
+                <input type="text" name="name" class="admin-form-input" required>
             </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Slug (optional)</label>
-                <input type="text" name="slug" class="mt-1 w-full rounded border border-gray-300 px-3 py-2">
+            <div class="admin-form-group">
+                <label class="admin-form-label">Slug (optional)</label>
+                <input type="text" name="slug" class="admin-form-input">
             </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Description</label>
-                <textarea name="description" rows="3" class="mt-1 w-full rounded border border-gray-300 px-3 py-2"></textarea>
+            <div class="admin-form-group">
+                <label class="admin-form-label">Description</label>
+                <textarea name="description" rows="3" class="admin-form-textarea"></textarea>
             </div>
-            <div class="grid gap-4 md:grid-cols-2">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Icon URL</label>
-                    <input type="text" name="icon" class="mt-1 w-full rounded border border-gray-300 px-3 py-2">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="admin-form-group">
+                    <label class="admin-form-label">Icon URL</label>
+                    <input type="text" name="icon" class="admin-form-input">
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Priority</label>
-                    <input type="number" name="priority" class="mt-1 w-full rounded border border-gray-300 px-3 py-2" value="0">
+                <div class="admin-form-group">
+                    <label class="admin-form-label">Priority</label>
+                    <input type="number" name="priority" class="admin-form-input" value="0">
                 </div>
             </div>
-            <p id="category-form-error" class="text-sm text-red-600 hidden"></p>
-            <div class="flex items-center justify-end gap-3 pt-2">
-                <button type="button" class="rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50" id="category-cancel-btn">Cancel</button>
-                <button type="submit" class="rounded bg-[#0b3a63] px-5 py-2 text-sm font-semibold text-white hover:bg-[#1a5a8a]" id="category-submit-btn">
+            <p id="category-form-error" style="font-size: 12px; color: var(--mac-red); margin: 0 0 16px 0;" class="hidden"></p>
+            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding-top: 16px; border-top: 1px solid #b0b0b0; margin-top: 20px;">
+                <button type="button" class="admin-btn admin-btn-secondary" id="category-cancel-btn">Cancel</button>
+                <button type="submit" class="admin-btn admin-btn-primary" id="category-submit-btn">
                     Save Category
                 </button>
             </div>
@@ -176,7 +181,6 @@ include __DIR__ . '/includes/header.php';
         form.priority.value = data?.priority ?? 0;
 
         modal.classList.remove('hidden');
-        modal.classList.add('flex');
     }
 
     function hideModal() {

@@ -43,6 +43,11 @@ final class ProductService
         $this->repository->delete($id);
     }
 
+    public function findById(string $id): ?array
+    {
+        return $this->repository->findById($id);
+    }
+
     private function validate(array $payload, bool $partial = false): array
     {
         if (!$partial) {

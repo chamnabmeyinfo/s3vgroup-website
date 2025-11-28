@@ -1,80 +1,151 @@
-/* macOS-inspired Modern Admin Styles */
+/* Apple macOS Design System - Exact Specifications */
 
 :root {
-    --mac-bg: #f5f5f7;
-    --mac-surface: #ffffff;
-    --mac-border: #e5e5e7;
+    --mac-bg: #ececec;
+    --mac-window-bg: #f5f5f7;
+    --mac-sidebar: #f6f6f6;
+    --mac-border: #d0d0d0;
     --mac-text: #1d1d1f;
-    --mac-text-secondary: #86868b;
-    --mac-accent: #007aff;
-    --mac-accent-hover: #0051d5;
-    --mac-success: #34c759;
-    --mac-warning: #ff9500;
-    --mac-error: #ff3b30;
-    --mac-sidebar: #fafafa;
-    --mac-shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
-    --mac-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    --mac-shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+    --mac-text-secondary: #6e6e73;
+    --mac-blue: #007aff;
+    --mac-blue-hover: #0051d5;
+    --mac-red: #ff3b30;
+    --mac-yellow: #ffcc00;
+    --mac-green: #34c759;
 }
 
-/* macOS-like Buttons */
+/* Global macOS Typography */
+h1, h2, h3, h4, h5, h6 {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    letter-spacing: -0.3px;
+}
+
+/* Ensure all text inputs use macOS styling */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="url"],
+input[type="number"],
+input[type="date"],
+input[type="time"],
+textarea,
+select {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+/* macOS Link Styling */
+a {
+    color: var(--mac-blue);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+a:hover {
+    color: var(--mac-blue-hover);
+    text-decoration: underline;
+}
+
+/* Apple Buttons - Exact macOS Style */
 .admin-btn,
 .button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
-    padding: 8px 16px;
-    font-size: 14px;
+    padding: 4px 16px;
+    font-size: 13px;
     font-weight: 500;
-    border-radius: 8px;
-    border: none;
+    border-radius: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.25);
     cursor: pointer;
     text-decoration: none;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    letter-spacing: -0.1px;
+    transition: all 0.1s ease;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background: linear-gradient(to bottom, #ffffff 0%, #f8f8f8 50%, #f0f0f0 100%);
+    box-shadow: 
+        0 1px 0 rgba(255, 255, 255, 0.8) inset,
+        0 1px 1px rgba(0, 0, 0, 0.1),
+        0 0 0 0.5px rgba(0, 0, 0, 0.1);
+    color: var(--mac-text);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+    position: relative;
+    min-height: 22px;
+}
+
+.admin-btn:hover,
+.button:hover {
+    background: linear-gradient(to bottom, #fafafa 0%, #f2f2f2 50%, #eaeaea 100%);
+    box-shadow: 
+        0 1px 0 rgba(255, 255, 255, 0.9) inset,
+        0 1px 2px rgba(0, 0, 0, 0.15),
+        0 0 0 0.5px rgba(0, 0, 0, 0.15);
+}
+
+.admin-btn:active,
+.button:active {
+    background: linear-gradient(to bottom, #e8e8e8 0%, #e0e0e0 50%, #d8d8d8 100%);
+    box-shadow: 
+        0 1px 2px rgba(0, 0, 0, 0.2) inset,
+        0 0 0 0.5px rgba(0, 0, 0, 0.2);
+    text-shadow: none;
 }
 
 .admin-btn-primary,
 .button-primary {
-    background: var(--mac-accent);
-    color: #fff;
-    box-shadow: 0 1px 3px rgba(0, 122, 255, 0.3);
+    background: linear-gradient(to bottom, #4a9eff 0%, #007aff 50%, #0051d5 100%);
+    border-color: #0040aa;
+    color: #ffffff;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: 
+        0 1px 0 rgba(255, 255, 255, 0.3) inset,
+        0 1px 1px rgba(0, 0, 0, 0.2),
+        0 0 0 0.5px rgba(0, 0, 0, 0.15);
 }
 
 .admin-btn-primary:hover,
 .button-primary:hover {
-    background: var(--mac-accent-hover);
-    box-shadow: 0 2px 6px rgba(0, 122, 255, 0.4);
-    transform: translateY(-1px);
+    background: linear-gradient(to bottom, #5aafff 0%, #0080ff 50%, #0061e5 100%);
+    box-shadow: 
+        0 1px 0 rgba(255, 255, 255, 0.4) inset,
+        0 1px 2px rgba(0, 0, 0, 0.25),
+        0 0 0 0.5px rgba(0, 0, 0, 0.2);
+}
+
+.admin-btn-primary:active,
+.button-primary:active {
+    background: linear-gradient(to bottom, #007aff 0%, #0051d5 50%, #0040aa 100%);
+    box-shadow: 
+        0 1px 2px rgba(0, 0, 0, 0.3) inset,
+        0 0 0 0.5px rgba(0, 0, 0, 0.25);
 }
 
 .admin-btn-secondary,
 .button-secondary {
-    background: var(--mac-surface);
-    color: var(--mac-text);
-    border: 0.5px solid var(--mac-border);
-}
-
-.admin-btn-secondary:hover,
-.button-secondary:hover {
-    background: rgba(0, 0, 0, 0.04);
+    background: linear-gradient(to bottom, #ffffff 0%, #f8f8f8 50%, #f0f0f0 100%);
+    border-color: rgba(0, 0, 0, 0.25);
 }
 
 .admin-btn-danger {
-    background: var(--mac-error);
-    color: #fff;
-    box-shadow: 0 1px 3px rgba(255, 59, 48, 0.3);
+    background: linear-gradient(to bottom, #ff5a4d 0%, #ff3b30 50%, #d70015 100%);
+    border-color: #b50012;
+    color: #ffffff;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: 
+        0 1px 0 rgba(255, 255, 255, 0.3) inset,
+        0 1px 1px rgba(0, 0, 0, 0.2),
+        0 0 0 0.5px rgba(0, 0, 0, 0.15);
 }
 
 .admin-btn-danger:hover {
-    background: #d70015;
-    box-shadow: 0 2px 6px rgba(255, 59, 48, 0.4);
-    transform: translateY(-1px);
+    background: linear-gradient(to bottom, #ff6a5d 0%, #ff4b40 50%, #e70025 100%);
 }
 
-/* macOS-like Forms */
+.admin-btn-danger:active {
+    background: linear-gradient(to bottom, #ff3b30 0%, #d70015 50%, #b50012 100%);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) inset;
+}
+
+/* Apple Form Inputs - Exact macOS Style */
 .admin-form-input,
 .admin-form-textarea,
 .admin-form-select,
@@ -82,14 +153,19 @@
 .mac-form-textarea,
 .mac-form-select {
     width: 100%;
-    padding: 10px 14px;
-    border: 0.5px solid var(--mac-border);
-    border-radius: 8px;
-    font-size: 14px;
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    background: var(--mac-surface);
+    padding: 6px 8px;
+    border: 1px solid #b0b0b0;
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background: #ffffff;
     color: var(--mac-text);
-    transition: all 0.2s;
+    transition: all 0.15s ease;
+    box-shadow: 
+        0 1px 0 rgba(255, 255, 255, 0.8) inset,
+        inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    appearance: none;
+    -webkit-appearance: none;
 }
 
 .admin-form-input:focus,
@@ -98,51 +174,77 @@
 .mac-form-input:focus,
 .mac-form-textarea:focus,
 .mac-form-select:focus {
-    border-color: var(--mac-accent);
+    border-color: var(--mac-blue);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+    box-shadow: 
+        0 1px 0 rgba(255, 255, 255, 0.8) inset,
+        inset 0 1px 2px rgba(0, 0, 0, 0.1),
+        0 0 0 3px rgba(0, 122, 255, 0.25);
+}
+
+.admin-form-textarea,
+.mac-form-textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+.admin-form-select,
+.mac-form-select {
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23666' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    padding-right: 28px;
 }
 
 .admin-form-label,
 .mac-form-label {
     display: block;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
     color: var(--mac-text);
-    margin-bottom: 8px;
+    margin-bottom: 5px;
     letter-spacing: -0.1px;
 }
 
-/* macOS-like Tables */
+/* Apple Tables - Exact macOS Style */
 .admin-table,
 .mac-table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    background: var(--mac-surface);
-    border: 0.5px solid var(--mac-border);
-    border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid #b0b0b0;
+    border-radius: 5px;
     overflow: hidden;
+    box-shadow: 
+        0 1px 0 rgba(255, 255, 255, 0.6) inset,
+        0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .admin-table thead th,
 .mac-table thead th {
-    background: var(--mac-sidebar);
-    border-bottom: 0.5px solid var(--mac-border);
-    padding: 12px 16px;
+    background: linear-gradient(to bottom, #f8f8f8 0%, #f0f0f0 50%, #e8e8e8 100%);
+    border-bottom: 1px solid #b0b0b0;
+    padding: 8px 10px;
     text-align: left;
     font-weight: 600;
-    font-size: 13px;
+    font-size: 11px;
     color: var(--mac-text);
-    letter-spacing: -0.1px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 
+        0 1px 0 rgba(255, 255, 255, 0.8) inset,
+        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
 }
 
 .admin-table tbody td,
 .mac-table tbody td {
-    padding: 14px 16px;
-    border-bottom: 0.5px solid var(--mac-border);
-    font-size: 14px;
+    padding: 8px 10px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 13px;
     color: var(--mac-text);
+    background: #ffffff;
 }
 
 .admin-table tbody tr:last-child td,
@@ -150,64 +252,74 @@
     border-bottom: none;
 }
 
-.admin-table tbody tr:hover,
-.mac-table tbody tr:hover {
-    background: rgba(0, 0, 0, 0.02);
+.admin-table tbody tr:hover td,
+.mac-table tbody tr:hover td {
+    background: rgba(0, 122, 255, 0.08);
 }
 
-/* macOS-like Cards */
+.admin-table tbody tr:active td,
+.mac-table tbody tr:active td {
+    background: rgba(0, 122, 255, 0.15);
+}
+
+/* Apple Cards/Panels - Exact macOS Style */
 .admin-card,
 .mac-card {
-    background: var(--mac-surface);
-    border: 0.5px solid var(--mac-border);
-    border-radius: 12px;
-    box-shadow: var(--mac-shadow-sm);
-    padding: 24px;
-    margin-bottom: 24px;
-    transition: box-shadow 0.2s, transform 0.2s;
+    background: #ffffff;
+    border: 1px solid #b0b0b0;
+    border-radius: 6px;
+    box-shadow: 
+        0 1px 0 rgba(255, 255, 255, 0.6) inset,
+        0 1px 3px rgba(0, 0, 0, 0.12);
+    padding: 16px;
+    margin-bottom: 16px;
 }
 
-.admin-card:hover,
-.mac-card:hover {
-    box-shadow: var(--mac-shadow);
-}
-
-/* macOS-like Badges */
+/* Apple Badges - Exact macOS Style */
 .admin-badge,
 .mac-badge {
     display: inline-flex;
     align-items: center;
-    padding: 4px 10px;
-    font-size: 12px;
+    padding: 2px 8px;
+    font-size: 11px;
     font-weight: 500;
-    border-radius: 6px;
-    letter-spacing: -0.1px;
+    border-radius: 3px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    background: linear-gradient(to bottom, #ffffff 0%, #f8f8f8 100%);
+    box-shadow: 
+        0 1px 0 rgba(255, 255, 255, 0.8) inset,
+        0 1px 1px rgba(0, 0, 0, 0.1);
+    color: var(--mac-text);
 }
 
 .admin-badge-success,
 .mac-badge-success {
-    background: rgba(52, 199, 89, 0.1);
-    color: var(--mac-success);
+    background: linear-gradient(to bottom, rgba(52, 199, 89, 0.2) 0%, rgba(52, 199, 89, 0.15) 100%);
+    border-color: rgba(52, 199, 89, 0.4);
+    color: #1d8a3d;
 }
 
 .admin-badge-warning,
 .mac-badge-warning {
-    background: rgba(255, 149, 0, 0.1);
-    color: var(--mac-warning);
+    background: linear-gradient(to bottom, rgba(255, 149, 0, 0.2) 0%, rgba(255, 149, 0, 0.15) 100%);
+    border-color: rgba(255, 149, 0, 0.4);
+    color: #cc7700;
 }
 
 .admin-badge-danger {
-    background: rgba(255, 59, 48, 0.1);
-    color: var(--mac-error);
+    background: linear-gradient(to bottom, rgba(255, 59, 48, 0.2) 0%, rgba(255, 59, 48, 0.15) 100%);
+    border-color: rgba(255, 59, 48, 0.4);
+    color: #cc2e24;
 }
 
 .admin-badge-info,
 .mac-badge-info {
-    background: rgba(0, 122, 255, 0.1);
-    color: var(--mac-accent);
+    background: linear-gradient(to bottom, rgba(0, 122, 255, 0.2) 0%, rgba(0, 122, 255, 0.15) 100%);
+    border-color: rgba(0, 122, 255, 0.4);
+    color: var(--mac-blue);
 }
 
-/* Modal Improvements */
+/* Apple Modal - Exact macOS Style */
 .admin-modal {
     position: fixed;
     inset: 0;
@@ -217,8 +329,8 @@
     justify-content: center;
     padding: 20px;
     background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
 }
 
 .admin-modal.hidden {
@@ -226,33 +338,35 @@
 }
 
 .admin-modal-content {
-    background: var(--mac-surface);
-    border-radius: 12px;
-    box-shadow: var(--mac-shadow-lg);
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.4),
+        0 1px 0 rgba(255, 255, 255, 0.6) inset;
     width: 100%;
     max-width: 600px;
     max-height: 90vh;
     overflow-y: auto;
-    padding: 24px;
-    border: 0.5px solid var(--mac-border);
+    padding: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.3);
 }
 
-/* Loading States */
+/* Apple Loading Spinner */
 .admin-loading {
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 40px;
     color: var(--mac-text-secondary);
-    font-size: 14px;
+    font-size: 13px;
 }
 
 .admin-loading::after {
     content: '';
     width: 16px;
     height: 16px;
-    border: 2px solid var(--mac-border);
-    border-top-color: var(--mac-accent);
+    border: 2px solid #e0e0e0;
+    border-top-color: var(--mac-blue);
     border-radius: 50%;
     animation: spin 0.6s linear infinite;
     margin-left: 10px;
@@ -267,12 +381,140 @@
     text-align: center;
     padding: 60px 20px;
     color: var(--mac-text-secondary);
+    font-size: 13px;
 }
 
-.admin-empty-icon {
-    font-size: 48px;
+/* Form Groups */
+.admin-form-group {
     margin-bottom: 16px;
-    opacity: 0.5;
+}
+
+/* Apple Toast Notifications */
+.toast-container {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toast {
+    padding: 10px 14px;
+    border-radius: 6px;
+    box-shadow: 
+        0 4px 12px rgba(0, 0, 0, 0.25),
+        0 1px 0 rgba(255, 255, 255, 0.6) inset;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 280px;
+    animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    font-size: 13px;
+}
+
+.toast-success {
+    border-left: 3px solid var(--mac-green);
+}
+
+.toast-error {
+    border-left: 3px solid var(--mac-red);
+}
+
+.toast-warning {
+    border-left: 3px solid var(--mac-yellow);
+}
+
+.toast-info {
+    border-left: 3px solid var(--mac-blue);
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Apple Checkbox and Radio - Exact macOS Style */
+input[type="checkbox"],
+input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border: 1px solid #b0b0b0;
+    border-radius: 3px;
+    background: linear-gradient(to bottom, #ffffff 0%, #f8f8f8 100%);
+    box-shadow: 
+        0 1px 0 rgba(255, 255, 255, 0.8) inset,
+        inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    position: relative;
+    transition: all 0.15s ease;
+}
+
+input[type="radio"] {
+    border-radius: 50%;
+}
+
+input[type="checkbox"]:checked {
+    background: linear-gradient(to bottom, #4a9eff 0%, #007aff 100%);
+    border-color: #0051d5;
+    box-shadow: 
+        0 1px 0 rgba(255, 255, 255, 0.3) inset,
+        inset 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: -2px;
+    left: 2px;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.3);
+}
+
+input[type="radio"]:checked {
+    background: linear-gradient(to bottom, #4a9eff 0%, #007aff 100%);
+    border-color: #0051d5;
+    box-shadow: 
+        0 1px 0 rgba(255, 255, 255, 0.3) inset,
+        inset 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+input[type="radio"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+input[type="checkbox"]:hover,
+input[type="radio"]:hover {
+    border-color: #909090;
+    box-shadow: 
+        0 1px 0 rgba(255, 255, 255, 0.9) inset,
+        inset 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+input[type="checkbox"]:active,
+input[type="radio"]:active {
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 /* Responsive Tables */
@@ -282,7 +524,6 @@
         display: block;
         width: 100%;
         overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
     }
     
     .admin-table thead,
@@ -293,12 +534,14 @@
     .admin-table tbody tr,
     .mac-table tbody tr {
         display: block;
-        margin-bottom: 16px;
-        border: 0.5px solid var(--mac-border);
-        border-radius: 12px;
-        padding: 16px;
-        background: var(--mac-surface);
-        box-shadow: var(--mac-shadow-sm);
+        margin-bottom: 12px;
+        border: 1px solid #b0b0b0;
+        border-radius: 5px;
+        padding: 12px;
+        background: #ffffff;
+        box-shadow: 
+            0 1px 0 rgba(255, 255, 255, 0.6) inset,
+            0 1px 2px rgba(0, 0, 0, 0.1);
     }
     
     .admin-table tbody td,
@@ -306,7 +549,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 10px 0;
+        padding: 8px 0;
         border: none;
         text-align: left !important;
     }
@@ -317,40 +560,44 @@
         font-weight: 600;
         color: var(--mac-text-secondary);
         margin-right: 12px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 }
 
-/* Better Scrollbar */
+/* Apple Scrollbar - Exact macOS Style */
 .admin-scroll::-webkit-scrollbar,
-.mac-sidebar::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+.mac-sidebar::-webkit-scrollbar,
+.mac-content::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
 }
 
 .admin-scroll::-webkit-scrollbar-track,
-.mac-sidebar::-webkit-scrollbar-track {
+.mac-sidebar::-webkit-scrollbar-track,
+.mac-content::-webkit-scrollbar-track {
     background: transparent;
 }
 
 .admin-scroll::-webkit-scrollbar-thumb,
-.mac-sidebar::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 3px;
+.mac-sidebar::-webkit-scrollbar-thumb,
+.mac-content::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.25);
+    border: 3px solid transparent;
+    background-clip: padding-box;
+    border-radius: 8px;
 }
 
 .admin-scroll::-webkit-scrollbar-thumb:hover,
-.mac-sidebar::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.3);
+.mac-sidebar::-webkit-scrollbar-thumb:hover,
+.mac-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.35);
+    background-clip: padding-box;
 }
 
-/* Form Groups */
-.admin-form-group {
-    margin-bottom: 20px;
-}
-
-/* Better spacing */
-@media (max-width: 1024px) {
-    .mac-content {
-        padding: 20px;
-    }
+.admin-scroll::-webkit-scrollbar-corner,
+.mac-sidebar::-webkit-scrollbar-corner,
+.mac-content::-webkit-scrollbar-corner {
+    background: transparent;
 }

@@ -139,30 +139,33 @@ $faviconUrl = $favicon ? fullImageUrl($favicon) : '';
     <!-- Mobile App Header -->
     <?php include __DIR__ . '/widgets/mobile-app-header.php'; ?>
     
-    <!-- Desktop Header -->
-    <header class="sticky top-0 z-50 w-full border-b backdrop-blur desktop-only" style="background-color: <?php echo e($headerBackground); ?>;">
+    <!-- Desktop Header - Dark Theme -->
+    <header class="sticky top-0 z-50 w-full border-b border-gray-700 backdrop-blur desktop-only bg-gray-900">
         <div class="container mx-auto px-4">
             <div class="flex h-16 items-center justify-between">
                 <a href="<?php echo base_url('/'); ?>" class="flex items-center gap-2">
                     <?php if ($siteLogoUrl): ?>
                         <img src="<?php echo e($siteLogoUrl); ?>" alt="<?php echo e($siteName); ?>" class="h-8 w-auto">
                     <?php else: ?>
-                        <svg class="h-6 w-6" style="color: <?php echo e($primaryColor); ?>;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                        </svg>
+                        <div class="w-10 h-10 bg-orange-500 rounded flex items-center justify-center">
+                            <span class="text-white font-bold text-xl">F</span>
+                        </div>
                     <?php endif; ?>
-                    <span class="text-xl font-bold" style="color: <?php echo e($primaryColor); ?>;"><?php echo e($siteName); ?></span>
+                    <div class="flex flex-col">
+                        <span class="text-xl font-bold text-white"><?php echo e($siteName); ?></span>
+                        <span class="text-xs text-gray-400">Your Industrial Solutions Partner</span>
+                    </div>
                 </a>
 
-                <nav class="hidden md:flex items-center gap-8">
+                <nav class="hidden md:flex items-center gap-6">
                     <?php if (option('enable_search', '1') === '1'): ?>
                         <div class="relative">
                             <input 
                                 type="search" 
                                 id="product-search"
                                 placeholder="Search products..." 
-                                class="px-4 py-2 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all"
-                                style="min-width: 220px; focus:ring-color: <?php echo e($primaryColor); ?>;"
+                                class="px-4 py-2 text-sm bg-gray-800 border border-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
+                                style="min-width: 220px;"
                             >
                             <svg class="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -170,20 +173,20 @@ $faviconUrl = $favicon ? fullImageUrl($favicon) : '';
                         </div>
                     <?php endif; ?>
                     
-                    <a href="<?php echo base_url('products.php'); ?>" class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors" style="color: var(--text-color); --hover-color: <?php echo e($primaryColor); ?>;">
+                    <a href="<?php echo base_url('products.php'); ?>" class="text-sm font-semibold text-white hover:text-orange-500 transition-colors">
                         Products
                     </a>
-                    <a href="<?php echo base_url('about.php'); ?>" class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors" style="color: var(--text-color); --hover-color: <?php echo e($primaryColor); ?>;">
-                        About
+                    <a href="<?php echo base_url('about.php'); ?>" class="text-sm font-semibold text-white hover:text-orange-500 transition-colors">
+                        About Us
                     </a>
-                    <a href="<?php echo base_url('team.php'); ?>" class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors" style="color: var(--text-color); --hover-color: <?php echo e($primaryColor); ?>;">
-                        Team
+                    <a href="<?php echo base_url('team.php'); ?>" class="text-sm font-semibold text-white hover:text-orange-500 transition-colors">
+                        Services
                     </a>
-                    <a href="<?php echo base_url('quote.php'); ?>" class="text-sm font-semibold text-white px-5 py-2 rounded-full transition-all hover:shadow-lg hover:scale-105 transform" style="background-color: <?php echo e($primaryColor); ?>;">
-                        Get Quote
-                    </a>
-                    <a href="<?php echo base_url('contact.php'); ?>" class="text-sm font-semibold text-gray-700 hover:text-primary transition-colors" style="color: var(--text-color); --hover-color: <?php echo e($primaryColor); ?>;">
+                    <a href="<?php echo base_url('contact.php'); ?>" class="text-sm font-semibold text-white hover:text-orange-500 transition-colors">
                         Contact
+                    </a>
+                    <a href="<?php echo base_url('quote.php'); ?>" class="text-sm font-semibold text-white px-5 py-2 rounded-lg transition-all hover:shadow-lg hover:scale-105 transform bg-orange-500 hover:bg-orange-600">
+                        Get a Quote
                     </a>
                 </nav>
 

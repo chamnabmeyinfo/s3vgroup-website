@@ -2,46 +2,22 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../../../config/database.php';
+require_once __DIR__ . '/../../../bootstrap/app.php';
 
-use App\Domain\Settings\SiteOptionRepository;
-use App\Domain\Settings\SiteOptionService;
-use App\Http\AdminGuard;
-use App\Http\JsonResponse;
-use App\Http\Request;
+use App\Http\Controllers\SiteOptionController;
 
-AdminGuard::requireAuth();
+$controller = new SiteOptionController();
 
-$repository = new SiteOptionRepository(getDB());
-$service = new SiteOptionService($repository);
-
-switch (Request::method()) {
+switch (\App\Http\Request::method()) {
     case 'GET':
-        $grouped = $service->getGrouped();
-        JsonResponse::success(['options' => $grouped]);
+        $controller->index();
         break;
 
     case 'POST':
-        $payload = Request::json() ?? $_POST;
-
-        if (!is_array($payload)) {
-            JsonResponse::error('Invalid payload.', 400);
-        }
-
-        try {
-            if (isset($payload['bulk']) && is_array($payload['bulk'])) {
-                // Bulk update
-                $service->bulkUpdate($payload['bulk']);
-                JsonResponse::success(['message' => 'Options updated successfully.']);
-            } else {
-                JsonResponse::error('Invalid request format.', 422);
-            }
-        } catch (\InvalidArgumentException $exception) {
-            JsonResponse::error($exception->getMessage(), 422);
-        }
+        $controller->bulkUpdate();
         break;
 
     default:
-        JsonResponse::error('Method not allowed.', 405);
+        \App\Http\JsonResponse::error('Method not allowed.', 405);
 }
 

@@ -426,3 +426,206 @@ header.scrolled {
     background: var(--secondary-color);
 }
 
+/* Modern Homepage Enhancements */
+
+/* Enhanced Category Cards */
+.category-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.category-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+}
+
+.category-item:hover::before {
+    left: 100%;
+}
+
+/* Modern Product Cards */
+.group:hover .category-image-wrapper,
+.group:hover img {
+    transform: scale(1.1);
+}
+
+/* Gradient Text Effect */
+.text-gradient {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Enhanced Shadows */
+.shadow-3xl {
+    box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Smooth Hover Transitions */
+.hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Modern Button Effects */
+.btn-animate {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-animate::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn-animate:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* Stats Section Animation */
+@keyframes countUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Modern Card Hover Effects */
+.rounded-2xl {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.rounded-2xl:hover {
+    transform: translateY(-4px) scale(1.02);
+}
+
+/* Image Overlay Effects */
+.group:hover img {
+    filter: brightness(1.1);
+}
+
+/* Modern Border Effects */
+.border-3 {
+    border-width: 3px;
+}
+
+/* Enhanced Animations */
+@keyframes pulse-glow {
+    0%, 100% {
+        opacity: 0.1;
+    }
+    50% {
+        opacity: 0.2;
+    }
+}
+
+.animate-pulse-glow {
+    animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* Glass Morphism Effect */
+.backdrop-blur-sm {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+/* Modern Grid Pattern */
+.grid-pattern {
+    background-image: 
+        linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+}
+
+/* Smooth Scroll Indicator */
+@keyframes bounce-slow {
+    0%, 100% {
+        transform: translateY(0) translateX(-50%);
+    }
+    50% {
+        transform: translateY(-10px) translateX(-50%);
+    }
+}
+
+.animate-bounce {
+    animation: bounce-slow 2s ease-in-out infinite;
+}
+
+/* Enhanced Text Reveal */
+.text-reveal {
+    background: linear-gradient(90deg, transparent, white, transparent);
+    background-size: 200% 100%;
+    animation: text-reveal 3s ease-in-out infinite;
+}
+
+@keyframes text-reveal {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* Modern Category Icon Animation */
+.category-image-wrapper {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.category-item:hover .category-image-wrapper {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Product Card Image Overlay */
+.group:hover .relative::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.3), transparent);
+    z-index: 1;
+}
+
+/* Modern Section Spacing */
+section {
+    position: relative;
+}
+
+/* Enhanced Mobile Responsiveness */
+@media (max-width: 768px) {
+    .text-5xl {
+        font-size: 2.5rem;
+    }
+    
+    .text-6xl {
+        font-size: 3rem;
+    }
+    
+    .text-7xl {
+        font-size: 3.5rem;
+    }
+}
+

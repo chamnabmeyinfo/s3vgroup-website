@@ -95,6 +95,54 @@ if (!$useHomepageBuilder) {
     <!-- Hero Slider -->
     <?php include __DIR__ . '/ae-includes/widgets/hero-slider.php'; ?>
 
+<!-- Service Icons Section - Like Screenshot Design -->
+<section class="py-16 bg-gray-800 text-white">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-8">
+            <div class="text-center animate-on-scroll" data-animation="fadeInUp">
+                <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-orange-500 flex items-center justify-center">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                </div>
+                <h3 class="font-semibold text-lg">Expert Support</h3>
+            </div>
+            <div class="text-center animate-on-scroll" data-animation="fadeInUp" data-delay="0.1">
+                <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-orange-500 flex items-center justify-center">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                </div>
+                <h3 class="font-semibold text-lg">Wide Selection</h3>
+            </div>
+            <div class="text-center animate-on-scroll" data-animation="fadeInUp" data-delay="0.2">
+                <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-orange-500 flex items-center justify-center">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                </div>
+                <h3 class="font-semibold text-lg">Quality Assurance</h3>
+            </div>
+            <div class="text-center animate-on-scroll" data-animation="fadeInUp" data-delay="0.3">
+                <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-orange-500 flex items-center justify-center">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                </div>
+                <h3 class="font-semibold text-lg">Warehouse</h3>
+            </div>
+            <div class="text-center animate-on-scroll" data-animation="fadeInUp" data-delay="0.4">
+                <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-orange-500 flex items-center justify-center">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+                <h3 class="font-semibold text-lg">Fast Delivery</h3>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- Newsletter Section (if enabled) -->
 <?php if (option('enable_newsletter', '1') === '1'): ?>
     <section class="py-20 bg-gradient-to-r" style="background: linear-gradient(to right, <?php echo e($primaryColor); ?>, <?php echo e($secondaryColor); ?>);">
@@ -109,75 +157,80 @@ if (!$useHomepageBuilder) {
     <?php include __DIR__ . '/ae-includes/widgets/testimonials.php'; ?>
 <?php endif; ?>
 
-<!-- Features Section -->
-<section class="py-20 bg-white">
+<!-- Why Choose Us Section - Dark Theme Like Screenshot -->
+<section class="py-20 bg-gray-900 text-white">
     <div class="container mx-auto px-4">
-        <div class="grid md:grid-cols-4 gap-6">
-            <div class="rounded-lg border border-gray-200 bg-white shadow-sm p-6 text-center animate-on-scroll hover-lift hover-glow"
-                 data-animation="zoomIn">
-                <svg class="h-12 w-12 mx-auto mb-4" style="color: <?php echo e($primaryColor); ?>;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                </svg>
-                <h3 class="font-semibold text-lg mb-2">Wide Selection</h3>
-                <p class="text-gray-600 text-sm">
-                    Comprehensive range of warehouse and factory equipment from trusted brands
+        <div class="text-center mb-16 animate-on-scroll" data-animation="fadeInDown">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4 text-white">
+                Why Choose Us?
+            </h2>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Feature Card 1 -->
+            <div class="bg-gray-800 rounded-lg p-8 text-center animate-on-scroll hover:bg-gray-750 transition-all duration-300"
+                 data-animation="fadeInUp">
+                <div class="w-24 h-24 mx-auto mb-6 rounded-lg bg-orange-500 flex items-center justify-center">
+                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                </div>
+                <h3 class="font-bold text-xl mb-3 text-white">Expert Support</h3>
+                <p class="text-gray-300 leading-relaxed">
+                    Professional maintenance, repair, and technical support from certified technicians
                 </p>
             </div>
-                    <div class="rounded-lg border border-gray-200 bg-white shadow-sm p-6 text-center animate-on-scroll hover-lift hover-glow"
-                         data-animation="zoomIn"
-                         data-delay="0.1">
-                <svg class="h-12 w-12 mx-auto mb-4" style="color: <?php echo e($primaryColor); ?>;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-                <h3 class="font-semibold text-lg mb-2">Fast Delivery</h3>
-                <p class="text-gray-600 text-sm">
-                    Quick delivery and installation across Cambodia
+            
+            <!-- Feature Card 2 -->
+            <div class="bg-gray-800 rounded-lg p-8 text-center animate-on-scroll hover:bg-gray-750 transition-all duration-300"
+                 data-animation="fadeInUp"
+                 data-delay="0.1">
+                <div class="w-24 h-24 mx-auto mb-6 rounded-lg bg-orange-500 flex items-center justify-center">
+                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                </div>
+                <h3 class="font-bold text-xl mb-3 text-white">Wide Selection</h3>
+                <p class="text-gray-300 leading-relaxed">
+                    Comprehensive range of forklifts, racks, and factory equipment from trusted global brands
                 </p>
             </div>
-            <div class="rounded-lg border border-gray-200 bg-white shadow-sm p-6 text-center animate-on-scroll hover-lift hover-glow"
-                 data-animation="zoomIn"
+            
+            <!-- Feature Card 3 -->
+            <div class="bg-gray-800 rounded-lg p-8 text-center animate-on-scroll hover:bg-gray-750 transition-all duration-300"
+                 data-animation="fadeInUp"
                  data-delay="0.2">
-                <svg class="h-12 w-12 mx-auto mb-4" style="color: <?php echo e($primaryColor); ?>;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                <h3 class="font-semibold text-lg mb-2">Expert Service</h3>
-                <p class="text-gray-600 text-sm">
-                    Professional maintenance and repair services
-                </p>
-            </div>
-            <div class="rounded-lg border border-gray-200 bg-white shadow-sm p-6 text-center animate-on-scroll hover-lift hover-glow"
-                 data-animation="zoomIn"
-                 data-delay="0.3">
-                <svg class="h-12 w-12 mx-auto mb-4" style="color: <?php echo e($primaryColor); ?>;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-                <h3 class="font-semibold text-lg mb-2">Warranty</h3>
-                <p class="text-gray-600 text-sm">
-                    Comprehensive warranty and support packages
+                <div class="w-24 h-24 mx-auto mb-6 rounded-lg bg-orange-500 flex items-center justify-center">
+                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+                <h3 class="font-bold text-xl mb-3 text-white">Fast Delivery</h3>
+                <p class="text-gray-300 leading-relaxed">
+                    Quick delivery and professional installation services across Cambodia
                 </p>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Categories Section -->
+<!-- Categories Section - Clean Design -->
 <section class="py-20 bg-gray-50">
     <div class="container mx-auto px-4">
-        <div class="mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold mb-2" style="color: <?php echo e($primaryColor); ?>;">
-                Shop All Categories
+        <div class="text-center mb-12 animate-on-scroll" data-animation="fadeInDown">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4 text-gray-900">
+                Our Product Categories
             </h2>
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 stagger-children">
             <?php if (!empty($categories)): ?>
                 <?php foreach ($categories as $index => $category): ?>
                     <a href="<?php echo base_url('products.php?category=' . urlencode($category['slug'])); ?>" 
-                       class="category-item bg-white rounded-lg border border-gray-200 hover-lift p-4 flex items-center gap-3 animate-on-scroll group"
+                       class="category-item bg-white rounded-lg border border-gray-200 hover:border-orange-500 shadow-sm hover:shadow-lg p-4 flex flex-col items-center gap-3 animate-on-scroll group transition-all duration-300"
                        data-animation="fadeInUp"
                        data-delay="<?php echo ($index * 0.05); ?>">
                         <!-- Category Image/Icon -->
-                        <div class="category-image-wrapper flex-shrink-0 w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-md overflow-hidden flex items-center justify-center relative">
+                        <div class="category-image-wrapper flex-shrink-0 w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center relative group-hover:scale-110 transition-transform duration-300">
                             <?php
                             // Get category image (already pre-fetched in optimization above)
                             $categoryImage = $category['icon'] ?? null;
@@ -227,8 +280,8 @@ if (!$useHomepageBuilder) {
                             <?php endif; ?>
                         </div>
                         <!-- Category Label -->
-                        <div class="flex-1 min-w-0">
-                            <h3 class="text-sm md:text-base font-semibold text-gray-900 group-hover:text-primary transition-colors line-clamp-2" style="--hover-color: <?php echo e($primaryColor); ?>;">
+                        <div class="flex-1 min-w-0 text-center">
+                            <h3 class="text-sm md:text-base font-semibold text-gray-900 group-hover:text-orange-500 transition-colors line-clamp-2">
                                 <?php echo htmlspecialchars($category['name']); ?>
                             </h3>
                         </div>
@@ -238,14 +291,14 @@ if (!$useHomepageBuilder) {
                 <!-- Default categories if database is empty -->
                 <?php
                 $defaultCategories = [
-                    ['name' => 'Truck Scale', 'icon' => 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=200&q=80'],
-                    ['name' => 'Digital Scale', 'icon' => 'https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?auto=format&fit=crop&w=200&q=80'],
-                    ['name' => 'Racking System', 'icon' => 'https://images.unsplash.com/photo-1586864387967-d02ef85d93e8?auto=format&fit=crop&w=200&q=80'],
+                    ['name' => 'Forklifts', 'icon' => 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=200&q=80'],
+                    ['name' => 'Racking Systems', 'icon' => 'https://images.unsplash.com/photo-1586864387967-d02ef85d93e8?auto=format&fit=crop&w=200&q=80'],
+                    ['name' => 'Material Handling', 'icon' => 'https://images.unsplash.com/photo-1586864387967-d02ef85d93e8?auto=format&fit=crop&w=200&q=80'],
                     ['name' => 'Lifting Equipment', 'icon' => 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=200&q=80'],
-                    ['name' => 'Material Handling Equipment', 'icon' => 'https://images.unsplash.com/photo-1586864387967-d02ef85d93e8?auto=format&fit=crop&w=200&q=80'],
-                    ['name' => 'Load Cell', 'icon' => 'https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?auto=format&fit=crop&w=200&q=80'],
-                    ['name' => 'Lightning Protection System', 'icon' => 'https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?auto=format&fit=crop&w=200&q=80'],
-                    ['name' => 'Mobile Conveyor', 'icon' => 'https://images.unsplash.com/photo-1586864387967-d02ef85d93e8?auto=format&fit=crop&w=200&q=80'],
+                    ['name' => 'Weighing Scales', 'icon' => 'https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?auto=format&fit=crop&w=200&q=80'],
+                    ['name' => 'Conveyor Systems', 'icon' => 'https://images.unsplash.com/photo-1586864387967-d02ef85d93e8?auto=format&fit=crop&w=200&q=80'],
+                    ['name' => 'Storage Solutions', 'icon' => 'https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?auto=format&fit=crop&w=200&q=80'],
+                    ['name' => 'Safety Equipment', 'icon' => 'https://images.unsplash.com/photo-1586864387967-d02ef85d93e8?auto=format&fit=crop&w=200&q=80'],
                 ];
                 foreach ($defaultCategories as $index => $cat):
                 ?>
@@ -269,18 +322,19 @@ if (!$useHomepageBuilder) {
     </div>
 </section>
 
-<!-- Featured Products Section -->
+<!-- Featured Products Section - Clean White Cards Like Screenshot -->
 <?php if (!empty($products)): ?>
 <section class="py-20 bg-white">
     <div class="container mx-auto px-4">
         <div class="text-center mb-12 animate-on-scroll"
              data-animation="fadeInDown">
-            <h2 class="text-4xl font-bold text-[#0b3a63] mb-4 text-reveal">Featured Products</h2>
-            <p class="text-gray-600">Our most popular warehouse and factory equipment</p>
+            <h2 class="text-4xl md:text-5xl font-bold mb-4 text-gray-900">
+                Featured Products
+            </h2>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <?php foreach ($products as $index => $product): ?>
-                <div class="group rounded-xl border border-gray-200 bg-white shadow-sm hover-lift overflow-hidden animate-on-scroll flex flex-col image-hover-scale"
+                <div class="group bg-white rounded-lg border border-gray-200 shadow-md hover:shadow-xl overflow-hidden animate-on-scroll flex flex-col transition-all duration-300"
                      data-animation="fadeInUp"
                      data-delay="<?php echo ($index * 0.05); ?>">
                     <!-- Product Image -->
@@ -289,7 +343,7 @@ if (!$useHomepageBuilder) {
                             <img 
                                 src="<?php echo htmlspecialchars($product['heroImage']); ?>" 
                                 alt="<?php echo htmlspecialchars($product['name']); ?>" 
-                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                 loading="lazy"
                             >
                         <?php else: ?>
@@ -301,8 +355,8 @@ if (!$useHomepageBuilder) {
                         <?php endif; ?>
                     </div>
                     <!-- Product Content -->
-                    <div class="p-4 sm:p-5 flex flex-col flex-grow">
-                        <h3 class="text-lg sm:text-xl font-semibold mb-2 line-clamp-2 group-hover:text-[#1a5a8a] transition-colors" style="color: <?php echo e($primaryColor); ?>;">
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h3 class="text-xl font-bold mb-3 line-clamp-2 text-gray-900">
                             <?php echo htmlspecialchars($product['name']); ?>
                         </h3>
                         <?php if ($product['summary']): ?>
@@ -312,16 +366,13 @@ if (!$useHomepageBuilder) {
                         <?php endif; ?>
                         <?php if ($product['price']): ?>
                             <div class="mb-4">
-                                <div class="text-xl sm:text-2xl font-bold" style="color: <?php echo e($primaryColor); ?>;">
+                                <div class="text-2xl font-bold text-gray-900">
                                     <?php echo display_price($product['price'], '$'); ?>
                                 </div>
                             </div>
                         <?php endif; ?>
                         <a href="<?php echo base_url('product.php?slug=' . urlencode($product['slug'])); ?>" 
-                           class="block w-full px-4 py-2.5 text-center text-white rounded-lg font-medium transition-all hover:scale-105 transform shadow-md hover:shadow-lg"
-                           style="background-color: <?php echo e($primaryColor); ?>;"
-                           onmouseover="this.style.backgroundColor='<?php echo e($secondaryColor); ?>'"
-                           onmouseout="this.style.backgroundColor='<?php echo e($primaryColor); ?>'">
+                           class="block w-full px-6 py-3 text-center text-white rounded-lg font-semibold transition-all hover:scale-105 transform bg-orange-500 hover:bg-orange-600">
                             View Details
                         </a>
                     </div>
@@ -332,23 +383,26 @@ if (!$useHomepageBuilder) {
 </section>
 <?php endif; ?>
 
-<!-- CTA Section -->
-<section class="py-20 bg-[#0b3a63] text-white">
-    <div class="container mx-auto px-4 text-center animate-on-scroll"
-         data-animation="zoomIn">
-        <h2 class="text-4xl font-bold mb-4 text-reveal">Ready to Equip Your Warehouse or Factory?</h2>
-        <p class="text-xl text-gray-200 mb-8 max-w-2xl mx-auto animate-on-scroll"
-           data-animation="fadeInUp"
-           data-delay="0.2">
-            Contact our experts today for personalized recommendations and competitive pricing on all your industrial equipment needs
-        </p>
-        <div class="flex gap-4 justify-center stagger-children">
-            <a href="<?php echo base_url('quote.php'); ?>" class="px-6 py-3 bg-white text-[#0b3a63] rounded-md font-semibold hover:bg-gray-100 transition-colors btn-animate magnetic">
-                Get Free Quote
-            </a>
-            <a href="<?php echo base_url('contact.php'); ?>" class="px-6 py-3 border-2 border-white text-white rounded-md font-semibold hover:bg-white/10 transition-colors btn-animate magnetic">
-                Contact Us
-            </a>
+<!-- CTA Section - Dark Theme -->
+<section class="py-20 bg-gray-900 text-white">
+    <div class="container mx-auto px-4 text-center">
+        <div class="max-w-3xl mx-auto animate-on-scroll" data-animation="zoomIn">
+            <h2 class="text-4xl md:text-5xl font-bold mb-6 text-white">
+                Ready to Equip Your Warehouse or Factory?
+            </h2>
+            <p class="text-xl text-gray-300 mb-8 leading-relaxed">
+                Contact our experts today for personalized recommendations and competitive pricing
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a href="<?php echo base_url('quote.php'); ?>" 
+                   class="px-8 py-4 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-bold text-lg transition-all duration-300 hover:scale-105 transform inline-flex items-center gap-2">
+                    Get Free Quote
+                </a>
+                <a href="<?php echo base_url('contact.php'); ?>" 
+                   class="px-8 py-4 border-2 border-white text-white rounded-lg font-bold text-lg hover:bg-white/10 transition-all duration-300 hover:scale-105 transform inline-flex items-center gap-2">
+                    Contact Us
+                </a>
+            </div>
         </div>
     </div>
 </section>

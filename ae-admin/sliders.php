@@ -29,25 +29,27 @@ $pageTitle = 'Hero Slider';
 include __DIR__ . '/includes/header.php';
 ?>
 
-<div class="space-y-8">
-    <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+<div>
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #b0b0b0;">
         <div>
-            <p class="text-sm uppercase tracking-wide text-gray-500">Content</p>
-            <h1 class="text-3xl font-semibold text-[#0b3a63]">Hero Slider</h1>
-            <p class="text-sm text-gray-600">Manage homepage hero slider slides</p>
+            <h1 style="font-size: 22px; font-weight: 600; color: var(--mac-text); letter-spacing: -0.3px; margin: 0 0 4px 0;">Hero Slider</h1>
+            <p style="margin: 0; color: var(--mac-text-secondary); font-size: 12px;">Manage homepage hero slider slides</p>
         </div>
-        <button type="button" id="new-slider-btn" class="inline-flex items-center rounded-full bg-[#0b3a63] px-5 py-2 text-sm font-semibold text-white hover:bg-[#1a5a8a]">
-            + New Slide
+        <button type="button" id="new-slider-btn" class="admin-btn admin-btn-primary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M5 12h14"/>
+            </svg>
+            New Slide
         </button>
     </div>
 
-    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        <table class="w-full text-left text-sm">
-            <thead class="bg-gray-50 text-gray-700">
+    <div class="admin-card" style="padding: 0; overflow: hidden;">
+        <table class="admin-table">
+            <thead>
                 <tr>
-                    <th class="px-6 py-3 font-medium">Preview</th>
-                    <th class="px-6 py-3 font-medium">Title</th>
-                    <th class="px-6 py-3 font-medium">Priority</th>
+                    <th>Preview</th>
+                    <th>Title</th>
+                    <th>Priority</th>
                     <th class="px-6 py-3 font-medium">Status</th>
                     <th class="px-6 py-3 font-medium">Updated</th>
                     <th class="px-6 py-3 font-medium text-right">Actions</th>

@@ -45,279 +45,366 @@ $pageTitle = 'Database Sync';
 include __DIR__ . '/includes/header.php';
 ?>
 
-<div class="max-w-7xl mx-auto">
-    <div class="mb-6">
-        <p class="text-sm uppercase tracking-wide text-gray-500">Database Management</p>
-        <h1 class="text-3xl font-semibold text-[#0b3a63]">Database Sync</h1>
-        <p class="text-sm text-gray-600">Import/Export database between local development and cPanel production</p>
+<div class="max-w-7xl mx-auto space-y-6">
+    <!-- Modern Header -->
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div class="px-6 py-5 border-b border-gray-200">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-semibold text-gray-900">Database Sync</h1>
+                    <p class="text-sm text-gray-500 mt-0.5">Import/Export database between local development and cPanel production</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Configuration Card -->
-        <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">Configuration</h2>
-            <p class="text-sm text-gray-600 mb-6">Configure cPanel database connection settings</p>
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="px-6 py-4 bg-gradient-to-r from-gray-50 to-white border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-900">Configuration</h2>
+                <p class="text-xs text-gray-500 mt-1">Configure cPanel database connection settings</p>
+            </div>
+            <div class="p-6">
 
             <form id="config-form" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">cPanel Database Host</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">cPanel Database Host</label>
                     <input type="text" name="cpanel_host" value="<?php echo htmlspecialchars($cpanelConfig['host']); ?>" 
                            placeholder="localhost or cpanel_hostname" 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
-                    <p class="text-xs text-gray-500 mt-1">Usually "localhost" for cPanel databases</p>
+                           class="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+                    <p class="text-xs text-gray-500 mt-1.5">Usually "localhost" for cPanel databases</p>
                 </div>
 
+            <form id="config-form" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">cPanel Database Name</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">cPanel Database Name</label>
                     <input type="text" name="cpanel_database" value="<?php echo htmlspecialchars($cpanelConfig['database']); ?>" 
                            placeholder="your_cpanel_database" 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
+                           class="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">cPanel Database Username</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">cPanel Database Username</label>
                     <input type="text" name="cpanel_username" value="<?php echo htmlspecialchars($cpanelConfig['username']); ?>" 
                            placeholder="your_cpanel_db_user" 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
+                           class="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">cPanel Database Password</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">cPanel Database Password</label>
                     <input type="password" name="cpanel_password" value="<?php echo htmlspecialchars($cpanelConfig['password']); ?>" 
                            placeholder="••••••••" 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
-                    <p class="text-xs text-gray-500 mt-1">Stored securely in site options</p>
+                           class="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+                    <p class="text-xs text-gray-500 mt-1.5">Stored securely in site options</p>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">cPanel Database Port</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">cPanel Database Port</label>
                     <input type="number" name="cpanel_port" value="<?php echo htmlspecialchars($cpanelConfig['port']); ?>" 
                            placeholder="3306" 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
-                    <p class="text-xs text-gray-500 mt-1">Default: 3306 (MySQL/MariaDB)</p>
+                           class="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+                    <p class="text-xs text-gray-500 mt-1.5">Default: 3306 (MySQL/MariaDB)</p>
                 </div>
 
                 <div class="border-t border-gray-200 pt-4 mt-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Production Site URL</label>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Production Site URL</label>
                     <input type="url" name="production_url" value="<?php echo htmlspecialchars($service->get('db_sync_production_url', '')); ?>" 
                            placeholder="https://s3vgroup.com" 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
-                    <p class="text-xs text-gray-500 mt-1">Used to replace localhost URLs when pushing to cPanel</p>
+                           class="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+                    <p class="text-xs text-gray-500 mt-1.5">Used to replace localhost URLs when pushing to cPanel</p>
                 </div>
 
-                <div class="flex gap-3">
-                    <button type="submit" class="flex-1 px-4 py-2 bg-[#0b3a63] text-white rounded-md hover:bg-[#1a5a8a] transition-colors font-semibold">
+                <div class="flex gap-3 pt-2">
+                    <button type="submit" class="flex-1 px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-lg text-sm font-semibold hover:from-emerald-700 hover:to-emerald-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all shadow-md hover:shadow-lg">
                         Save Configuration
                     </button>
-                    <button type="button" id="test-connection-btn" class="flex-1 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors font-semibold">
+                    <button type="button" id="test-connection-btn" class="flex-1 px-6 py-2.5 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-all shadow-sm hover:shadow">
                         Test Connection
                     </button>
                 </div>
-                <div id="test-connection-status" class="mt-2 text-sm hidden"></div>
+                <div id="test-connection-status" class="mt-3 text-sm hidden"></div>
             </form>
+            </div>
         </div>
 
         <!-- Current Database Info -->
-        <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">Current Database</h2>
-            <p class="text-sm text-gray-600 mb-6">Your local development database connection</p>
-
-            <div class="space-y-3">
-                <div>
-                    <span class="text-xs font-medium text-gray-500">Host:</span>
-                    <p class="text-sm text-gray-900"><?php echo htmlspecialchars($currentDbConfig['host']); ?></p>
-                </div>
-                <div>
-                    <span class="text-xs font-medium text-gray-500">Database:</span>
-                    <p class="text-sm text-gray-900"><?php echo htmlspecialchars($currentDbConfig['database']); ?></p>
-                </div>
-                <div>
-                    <span class="text-xs font-medium text-gray-500">Username:</span>
-                    <p class="text-sm text-gray-900"><?php echo htmlspecialchars($currentDbConfig['username']); ?></p>
-                </div>
-                <div>
-                    <span class="text-xs font-medium text-gray-500">Port:</span>
-                    <p class="text-sm text-gray-900"><?php echo htmlspecialchars($currentDbConfig['port']); ?></p>
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="px-6 py-4 bg-gradient-to-r from-gray-50 to-white border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-900">Current Database</h2>
+                <p class="text-xs text-gray-500 mt-1">Your local development database connection</p>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4">
+                    <div class="pb-3 border-b border-gray-100">
+                        <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Host</span>
+                        <p class="text-sm font-semibold text-gray-900 mt-1"><?php echo htmlspecialchars($currentDbConfig['host']); ?></p>
+                    </div>
+                    <div class="pb-3 border-b border-gray-100">
+                        <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Database</span>
+                        <p class="text-sm font-semibold text-gray-900 mt-1"><?php echo htmlspecialchars($currentDbConfig['database']); ?></p>
+                    </div>
+                    <div class="pb-3 border-b border-gray-100">
+                        <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Username</span>
+                        <p class="text-sm font-semibold text-gray-900 mt-1"><?php echo htmlspecialchars($currentDbConfig['username']); ?></p>
+                    </div>
+                    <div>
+                        <span class="text-xs font-medium text-gray-500 uppercase tracking-wide">Port</span>
+                        <p class="text-sm font-semibold text-gray-900 mt-1"><?php echo htmlspecialchars($currentDbConfig['port']); ?></p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Sync Status Card -->
-    <div class="mt-6 bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4">Sync Status</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                <span class="text-xs font-medium text-gray-500">Last Pull from cPanel:</span>
-                <p id="last-pull-time" class="text-sm text-gray-900">
-                    <?php 
-                    $lastPull = $service->get('db_sync_last_pull', '');
-                    echo !empty($lastPull) ? $lastPull : 'Never';
-                    ?>
-                </p>
-            </div>
-            <div>
-                <span class="text-xs font-medium text-gray-500">Last Push to cPanel:</span>
-                <p id="last-push-time" class="text-sm text-gray-900">
-                    <?php 
-                    $lastPush = $service->get('db_sync_last_push', '');
-                    echo !empty($lastPush) ? $lastPush : 'Never';
-                    ?>
-                </p>
-            </div>
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 bg-gradient-to-r from-gray-50 to-white border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900">Sync Status</h2>
         </div>
-        <div id="sync-status-warning" class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md hidden">
-            <p class="text-xs text-yellow-800">
-                <strong>⚠️ Warning:</strong> You haven't pulled from cPanel recently. 
-                Make sure to pull latest data from production before pushing changes.
-            </p>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 border border-blue-200">
+                    <span class="text-xs font-medium text-blue-700 uppercase tracking-wide">Last Pull from cPanel</span>
+                    <p id="last-pull-time" class="text-lg font-semibold text-blue-900 mt-2">
+                        <?php 
+                        $lastPull = $service->get('db_sync_last_pull', '');
+                        echo !empty($lastPull) ? $lastPull : 'Never';
+                        ?>
+                    </p>
+                </div>
+                <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 border border-green-200">
+                    <span class="text-xs font-medium text-green-700 uppercase tracking-wide">Last Push to cPanel</span>
+                    <p id="last-push-time" class="text-lg font-semibold text-green-900 mt-2">
+                        <?php 
+                        $lastPush = $service->get('db_sync_last_push', '');
+                        echo !empty($lastPush) ? $lastPush : 'Never';
+                        ?>
+                    </p>
+                </div>
+            </div>
+            <div id="sync-status-warning" class="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg hidden">
+                <div class="flex items-start gap-3">
+                    <svg class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                    <p class="text-sm text-yellow-800">
+                        <strong>Warning:</strong> You haven't pulled from cPanel recently. 
+                        Make sure to pull latest data from production before pushing changes.
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Pull from cPanel Card -->
-    <div class="mt-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border-2 border-green-200 shadow-sm p-6">
-        <div class="flex items-center gap-3 mb-4">
-            <span class="text-3xl">⬇️</span>
-            <div>
-                <h2 class="text-xl font-semibold text-gray-900">Step 1: Pull from cPanel</h2>
-                <p class="text-sm text-gray-600">Get latest data from production server to your local database</p>
+    <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border-2 border-green-200 shadow-sm overflow-hidden">
+        <div class="px-6 py-5 bg-gradient-to-r from-green-100 to-emerald-100 border-b border-green-200">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-900">Step 1: Pull from cPanel</h2>
+                    <p class="text-sm text-gray-600 mt-0.5">Get latest data from production server to your local database</p>
+                </div>
             </div>
         </div>
-        
-        <div class="bg-white rounded-lg p-4 mb-4 border border-green-100">
-            <div class="space-y-3">
-                <label class="flex items-center">
-                    <input type="radio" name="pull-mode" value="full" checked class="mr-2">
-                    <div>
-                        <span class="text-sm font-medium text-gray-900">Full Pull</span>
-                        <p class="text-xs text-gray-500">Pull structure + all data (recommended)</p>
-                    </div>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="pull-mode" value="structure_only" class="mr-2">
-                    <div>
-                        <span class="text-sm font-medium text-gray-900">Structure Only</span>
-                        <p class="text-xs text-gray-500">Pull only table structure (no data)</p>
-                    </div>
-                </label>
+        <div class="p-6">
+            
+            <div class="bg-white rounded-lg p-4 mb-4 border border-green-100">
+                <div class="space-y-3">
+                    <label class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                        <input type="radio" name="pull-mode" value="full" checked class="mr-3 w-4 h-4 text-green-600 focus:ring-green-500">
+                        <div>
+                            <span class="text-sm font-semibold text-gray-900">Full Pull</span>
+                            <p class="text-xs text-gray-500 mt-0.5">Pull structure + all data (recommended)</p>
+                        </div>
+                    </label>
+                    <label class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                        <input type="radio" name="pull-mode" value="structure_only" class="mr-3 w-4 h-4 text-green-600 focus:ring-green-500">
+                        <div>
+                            <span class="text-sm font-semibold text-gray-900">Structure Only</span>
+                            <p class="text-xs text-gray-500 mt-0.5">Pull only table structure (no data)</p>
+                        </div>
+                    </label>
+                </div>
             </div>
-        </div>
 
-        <div class="flex items-center gap-4 mb-4">
-            <label class="flex items-center">
-                <input type="checkbox" id="pull-backup" checked class="mr-2">
-                <span class="text-sm text-gray-700">Create backup of local database before pull</span>
-            </label>
-        </div>
+            <div class="flex items-center gap-3 mb-4 p-3 bg-white rounded-lg border border-green-100">
+                <input type="checkbox" id="pull-backup" checked class="w-4 h-4 text-green-600 rounded focus:ring-green-500">
+                <label for="pull-backup" class="text-sm text-gray-700 cursor-pointer">Create backup of local database before pull</label>
+            </div>
 
-        <button type="button" id="pull-btn" class="w-full px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-md hover:from-green-700 hover:to-emerald-700 transition-all font-semibold text-lg shadow-lg">
-            ⬇️ Pull cPanel → Local Now
-        </button>
-        <div id="pull-status" class="mt-3 text-sm hidden"></div>
-        
-        <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-            <p class="text-xs text-blue-800">
-                <strong>ℹ️ Full Overwrite:</strong> This will <strong>completely overwrite</strong> your local database with data from cPanel production. 
-                All local tables will be dropped and recreated. Your local changes will be lost unless you have a backup.
-            </p>
+            <button type="button" id="pull-btn" class="w-full px-6 py-3.5 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all font-semibold text-base shadow-lg hover:shadow-xl">
+                <span class="flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/>
+                    </svg>
+                    Pull cPanel → Local Now
+                </span>
+            </button>
+            <div id="pull-status" class="mt-3 text-sm hidden"></div>
+            
+            <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div class="flex items-start gap-3">
+                    <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <p class="text-sm text-blue-800">
+                        <strong>Full Overwrite:</strong> This will <strong>completely overwrite</strong> your local database with data from cPanel production. 
+                        All local tables will be dropped and recreated. Your local changes will be lost unless you have a backup.
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Push to cPanel Card -->
-    <div class="mt-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border-2 border-blue-200 shadow-sm p-6">
-        <div class="flex items-center gap-3 mb-4">
-            <span class="text-3xl">⬆️</span>
-            <div>
-                <h2 class="text-xl font-semibold text-gray-900">Step 2: Push to cPanel</h2>
-                <p class="text-sm text-gray-600">Push your local database changes to cPanel production</p>
+    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-200 shadow-sm overflow-hidden">
+        <div class="px-6 py-5 bg-gradient-to-r from-blue-100 to-indigo-100 border-b border-blue-200">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-900">Step 2: Push to cPanel</h2>
+                    <p class="text-sm text-gray-600 mt-0.5">Push your local database changes to cPanel production</p>
+                </div>
             </div>
         </div>
-        
-        <div class="bg-white rounded-lg p-4 mb-4 border border-blue-100">
-            <div class="space-y-3">
-                <label class="flex items-center">
-                    <input type="radio" name="sync-mode" value="full" checked class="mr-2">
-                    <div>
-                        <span class="text-sm font-medium text-gray-900">Full Sync</span>
-                        <p class="text-xs text-gray-500">Sync structure + all data (recommended for development)</p>
-                    </div>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="sync-mode" value="structure_only" class="mr-2">
-                    <div>
-                        <span class="text-sm font-medium text-gray-900">Structure Only</span>
-                        <p class="text-xs text-gray-500">Sync only table structure (no data - safer for production)</p>
-                    </div>
-                </label>
+        <div class="p-6">
+            
+            <div class="bg-white rounded-lg p-4 mb-4 border border-blue-100">
+                <div class="space-y-3">
+                    <label class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                        <input type="radio" name="sync-mode" value="full" checked class="mr-3 w-4 h-4 text-blue-600 focus:ring-blue-500">
+                        <div>
+                            <span class="text-sm font-semibold text-gray-900">Full Sync</span>
+                            <p class="text-xs text-gray-500 mt-0.5">Sync structure + all data (recommended for development)</p>
+                        </div>
+                    </label>
+                    <label class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                        <input type="radio" name="sync-mode" value="structure_only" class="mr-3 w-4 h-4 text-blue-600 focus:ring-blue-500">
+                        <div>
+                            <span class="text-sm font-semibold text-gray-900">Structure Only</span>
+                            <p class="text-xs text-gray-500 mt-0.5">Sync only table structure (no data - safer for production)</p>
+                        </div>
+                    </label>
+                </div>
             </div>
-        </div>
 
-        <div class="flex items-center gap-4 mb-4">
-            <label class="flex items-center">
-                <input type="checkbox" id="auto-sync-backup" checked class="mr-2">
-                <span class="text-sm text-gray-700">Create backup before sync</span>
-            </label>
-        </div>
+            <div class="flex items-center gap-3 mb-4 p-3 bg-white rounded-lg border border-blue-100">
+                <input type="checkbox" id="auto-sync-backup" checked class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
+                <label for="auto-sync-backup" class="text-sm text-gray-700 cursor-pointer">Create backup before sync</label>
+            </div>
 
-        <button type="button" id="auto-sync-btn" class="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-md hover:from-blue-700 hover:to-indigo-700 transition-all font-semibold text-lg shadow-lg">
-            ⬆️ Push Local → cPanel Now
-        </button>
-        <div id="auto-sync-status" class="mt-3 text-sm hidden"></div>
-        
-        <div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-            <p class="text-xs text-yellow-800">
-                <strong>⚠️ Warning:</strong> This will overwrite the cPanel database with your local database. 
-                Make sure you have a backup and that your local database is up-to-date.
-            </p>
-        </div>
-        
-        <div class="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
-            <p class="text-xs text-blue-800">
-                <strong>ℹ️ Auto URL Replacement:</strong> All localhost URLs (localhost:8080, localhost:8000, etc.) 
-                will be automatically replaced with your production site URL when pushing to cPanel.
-            </p>
+            <button type="button" id="auto-sync-btn" class="w-full px-6 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all font-semibold text-base shadow-lg hover:shadow-xl">
+                <span class="flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                    </svg>
+                    Push Local → cPanel Now
+                </span>
+            </button>
+            <div id="auto-sync-status" class="mt-3 text-sm hidden"></div>
+            
+            <div class="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <div class="flex items-start gap-3">
+                    <svg class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                    <p class="text-sm text-yellow-800">
+                        <strong>Warning:</strong> This will overwrite the cPanel database with your local database. 
+                        Make sure you have a backup and that your local database is up-to-date.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="mt-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <div class="flex items-start gap-3">
+                    <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <p class="text-sm text-blue-800">
+                        <strong>Auto URL Replacement:</strong> All localhost URLs (localhost:8080, localhost:8000, etc.) 
+                        will be automatically replaced with your production site URL when pushing to cPanel.
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Comparison Report Card -->
-    <div class="mt-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border-2 border-purple-200 shadow-sm p-6">
-        <div class="flex items-center gap-3 mb-4">
-            <span class="text-3xl">📊</span>
-            <div>
-                <h2 class="text-xl font-semibold text-gray-900">Database Comparison Report</h2>
-                <p class="text-sm text-gray-600">Compare local and cPanel databases to see differences</p>
+    <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border-2 border-purple-200 shadow-sm overflow-hidden">
+        <div class="px-6 py-5 bg-gradient-to-r from-purple-100 to-pink-100 border-b border-purple-200">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-900">Database Comparison Report</h2>
+                    <p class="text-sm text-gray-600 mt-0.5">Compare local and cPanel databases to see differences</p>
+                </div>
             </div>
         </div>
-
-        <button type="button" id="compare-btn" class="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-md hover:from-purple-700 hover:to-pink-700 transition-all font-semibold text-lg shadow-lg mb-4">
-            📊 Generate Comparison Report
-        </button>
-        
-        <div id="compare-status" class="mb-4 text-sm hidden"></div>
-        
-        <!-- Report Display Area -->
-        <div id="comparison-report" class="hidden mt-4 space-y-4">
-            <!-- Summary -->
-            <div id="report-summary" class="bg-white rounded-lg p-4 border border-purple-100"></div>
+        <div class="p-6">
+            <button type="button" id="compare-btn" class="w-full px-6 py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all font-semibold text-base shadow-lg hover:shadow-xl mb-4">
+                <span class="flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                    </svg>
+                    Generate Comparison Report
+                </span>
+            </button>
             
-            <!-- Tables Comparison -->
-            <div id="report-tables" class="bg-white rounded-lg p-4 border border-purple-100"></div>
+            <div id="compare-status" class="mb-4 text-sm hidden"></div>
             
-            <!-- Data Comparison -->
-            <div id="report-data" class="bg-white rounded-lg p-4 border border-purple-100 max-h-96 overflow-y-auto"></div>
+            <!-- Report Display Area -->
+            <div id="comparison-report" class="hidden mt-4 space-y-4">
+                <!-- Summary -->
+                <div id="report-summary" class="bg-white rounded-lg p-4 border border-purple-100"></div>
+                
+                <!-- Tables Comparison -->
+                <div id="report-tables" class="bg-white rounded-lg p-4 border border-purple-100"></div>
+                
+                <!-- Data Comparison -->
+                <div id="report-data" class="bg-white rounded-lg p-4 border border-purple-100 max-h-96 overflow-y-auto"></div>
+            </div>
         </div>
     </div>
 
     <!-- Actions Card -->
-    <div class="mt-6 bg-white rounded-lg border border-gray-200 shadow-sm p-6">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4">Manual Operations</h2>
-        <p class="text-sm text-gray-600 mb-6">Export from local or import SQL file to cPanel</p>
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="px-6 py-4 bg-gradient-to-r from-gray-50 to-white border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900">Manual Operations</h2>
+            <p class="text-xs text-gray-500 mt-1">Export from local or import SQL file to cPanel</p>
+        </div>
+        <div class="p-6">
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Export Section -->
-            <div class="border border-gray-200 rounded-lg p-4">
-                <h3 class="text-lg font-semibold text-gray-900 mb-2">📤 Export Database</h3>
-                <p class="text-sm text-gray-600 mb-4">Export your local database to a SQL file</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Export Section -->
+                <div class="bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-xl p-5">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900">Export Database</h3>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-4">Export your local database to a SQL file</p>
                 
                 <div class="space-y-3">
                     <label class="flex items-center">
@@ -334,16 +421,23 @@ include __DIR__ . '/includes/header.php';
                     </label>
                 </div>
 
-                <button type="button" id="export-btn" class="mt-4 w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-semibold">
-                    Export Database
-                </button>
-                <div id="export-status" class="mt-2 text-sm hidden"></div>
-            </div>
+                    <button type="button" id="export-btn" class="mt-4 w-full px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all font-semibold shadow-md hover:shadow-lg">
+                        Export Database
+                    </button>
+                    <div id="export-status" class="mt-2 text-sm hidden"></div>
+                </div>
 
-            <!-- Import Section -->
-            <div class="border border-gray-200 rounded-lg p-4">
-                <h3 class="text-lg font-semibold text-gray-900 mb-2">📥 Import to cPanel</h3>
-                <p class="text-sm text-gray-600 mb-4">Import exported database to cPanel production</p>
+                <!-- Import Section -->
+                <div class="bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-xl p-5">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-green-100 to-green-50 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900">Import to cPanel</h3>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-4">Import exported database to cPanel production</p>
                 
                 <div class="space-y-3">
                     <div>
@@ -356,18 +450,24 @@ include __DIR__ . '/includes/header.php';
                     </label>
                 </div>
 
-                <button type="button" id="import-btn" class="mt-4 w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors font-semibold">
-                    Import to cPanel
-                </button>
-                <div id="import-status" class="mt-2 text-sm hidden"></div>
+                    <button type="button" id="import-btn" class="mt-4 w-full px-4 py-2.5 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 transition-all font-semibold shadow-md hover:shadow-lg">
+                        Import to cPanel
+                    </button>
+                    <div id="import-status" class="mt-2 text-sm hidden"></div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Status/Log Area -->
-    <div id="operation-log" class="mt-6 bg-gray-50 rounded-lg border border-gray-200 p-4 hidden">
-        <h3 class="text-sm font-semibold text-gray-900 mb-2">Operation Log</h3>
-        <div id="log-content" class="text-sm text-gray-700 font-mono whitespace-pre-wrap max-h-64 overflow-y-auto"></div>
+    <div id="operation-log" class="bg-gray-50 rounded-xl border border-gray-200 p-6 hidden">
+        <div class="flex items-center gap-3 mb-3">
+            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <h3 class="text-sm font-semibold text-gray-900">Operation Log</h3>
+        </div>
+        <div id="log-content" class="text-sm text-gray-700 font-mono whitespace-pre-wrap max-h-64 overflow-y-auto bg-white rounded-lg p-4 border border-gray-200"></div>
     </div>
 </div>
 

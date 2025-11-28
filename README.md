@@ -33,6 +33,8 @@ See `LIVE-SETUP-GUIDE.md` for complete setup instructions.
 ## 📚 Documentation
 
 - **README.md** (this file) - Project overview and quick start
+- **docs/backend-architecture-current.md** - Current backend architecture analysis
+- **docs/backend-architecture-new.md** - New Apple-like backend architecture design
 - **FEATURES-OVERVIEW.md** - Complete features list
 - **ADMIN-ORGANIZATION.md** - Admin panel structure
 - **DATABASE-MANAGER-GUIDE.md** - Database management tool guide
@@ -41,6 +43,89 @@ See `LIVE-SETUP-GUIDE.md` for complete setup instructions.
 - **IMAGE-OPTIMIZATION-GUIDE.md** - Image optimization reference
 - **AUTOMATIC-IMAGE-OPTIMIZATION.md** - Automatic image optimization guide
 - **PERFORMANCE-RECOMMENDATIONS.md** - Performance optimization guide
+
+## 🏗️ Backend Overview
+
+### Architecture
+
+The backend follows a **Clean Architecture / Layered Architecture** pattern with clear separation of concerns:
+
+- **HTTP Layer** (`app/Http/`) - Controllers, middleware, request validation, responses
+- **Application Layer** (`app/Application/`) - Application services that orchestrate use cases
+- **Domain Layer** (`app/Domain/`) - Business logic, repositories, domain exceptions
+- **Infrastructure Layer** (`app/Infrastructure/`) - Database implementations, validation, logging
+
+### Key Features
+
+- ✅ **Consistent API responses** - All endpoints return standardized JSON format
+- ✅ **Centralized error handling** - All exceptions handled consistently
+- ✅ **Request validation** - Clean validation with friendly error messages
+- ✅ **Structured logging** - Logging with levels and context
+- ✅ **Authentication middleware** - Secure session-based authentication
+- ✅ **Type safety** - Strict types throughout
+
+### API Response Format
+
+**Success:**
+```json
+{
+  "data": { ... },
+  "error": null,
+  "meta": {
+    "timestamp": "2025-01-27T10:00:00Z"
+  }
+}
+```
+
+**Error:**
+```json
+{
+  "data": null,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "The product name is required.",
+    "details": { ... }
+  },
+  "meta": {
+    "timestamp": "2025-01-27T10:00:00Z"
+  }
+}
+```
+
+### Environment Configuration
+
+Create a `.env` file (or use `env.example`):
+
+```env
+APP_ENV=production
+APP_DEBUG=false
+LOG_LEVEL=info
+DB_HOST=localhost
+DB_NAME=your_database
+DB_USER=your_user
+DB_PASS=your_password
+```
+
+### Running Tests
+
+```bash
+# Run all tests
+php vendor/bin/phpunit
+
+# Run specific test suite
+php vendor/bin/phpunit tests/Unit
+php vendor/bin/phpunit tests/Integration
+```
+
+### Adding a New Endpoint
+
+1. Create Request class (`app/Http/Requests/CreateXxxRequest.php`)
+2. Create Controller (`app/Http/Controllers/XxxController.php`)
+3. Create/Update Service (`app/Application/Services/XxxService.php`)
+4. Create/Update Repository (`app/Domain/Xxx/XxxRepository.php`)
+5. Add route in endpoint file
+
+See `docs/backend-architecture-new.md` for detailed architecture documentation.
 
 ## 🗄️ Database
 

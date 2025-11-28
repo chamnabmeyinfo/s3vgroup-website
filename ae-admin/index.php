@@ -216,92 +216,92 @@ include __DIR__ . '/includes/header.php';
 ?>
 
 <div>
-    <!-- macOS-like Header -->
-    <div class="mac-card" style="margin-bottom: 24px;">
-        <h1 style="font-size: 28px; font-weight: 600; margin: 0 0 8px 0; padding: 0; letter-spacing: -0.5px;">Dashboard</h1>
-        <p style="margin: 0; color: var(--mac-text-secondary); font-size: 15px;">Welcome back, <?php echo e($_SESSION['admin_email'] ?? 'Admin'); ?>! Here's an overview of your site.</p>
+    <!-- macOS Header -->
+    <div class="admin-card" style="margin-bottom: 20px;">
+        <h1 style="font-size: 22px; font-weight: 600; margin: 0 0 6px 0; padding: 0; letter-spacing: -0.3px; color: var(--mac-text);">Dashboard</h1>
+        <p style="margin: 0; color: var(--mac-text-secondary); font-size: 13px;">Welcome back, <?php echo e($_SESSION['admin_email'] ?? 'Admin'); ?>! Here's an overview of your site.</p>
     </div>
 
-    <!-- macOS-like Stats Cards -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px;">
+    <!-- macOS Stats Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px;">
         <?php foreach ($stats as $key => $stat): ?>
-            <a href="<?php echo e($stat['url']); ?>" class="mac-stat-card">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                    <div style="font-size: 36px; opacity: 0.8;"><?php echo e($stat['icon']); ?></div>
+            <a href="<?php echo e($stat['url']); ?>" style="display: block; background: #ffffff; border: 1px solid #b0b0b0; border-radius: 6px; padding: 16px; text-decoration: none; color: inherit; box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 1px 3px rgba(0, 0, 0, 0.12); transition: all 0.15s;" onmouseover="this.style.boxShadow='0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 2px 6px rgba(0, 0, 0, 0.15)'; this.style.transform='translateY(-1px)'" onmouseout="this.style.boxShadow='0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 1px 3px rgba(0, 0, 0, 0.12)'; this.style.transform='translateY(0)'">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                    <div style="font-size: 32px; opacity: 0.7;"><?php echo e($stat['icon']); ?></div>
                     <div style="text-align: right;">
-                        <div style="font-size: 32px; font-weight: 600; color: var(--mac-text); letter-spacing: -0.5px;"><?php echo e($stat['total']); ?></div>
+                        <div style="font-size: 28px; font-weight: 600; color: var(--mac-text); letter-spacing: -0.4px;"><?php echo e($stat['total']); ?></div>
                         <?php if (isset($stat['published'])): ?>
-                            <div style="font-size: 13px; color: var(--mac-text-secondary); margin-top: 2px;"><?php echo e($stat['published']); ?> published</div>
+                            <div style="font-size: 11px; color: var(--mac-text-secondary); margin-top: 2px;"><?php echo e($stat['published']); ?> published</div>
                         <?php elseif (isset($stat['active'])): ?>
-                            <div style="font-size: 13px; color: var(--mac-text-secondary); margin-top: 2px;"><?php echo e($stat['active']); ?> active</div>
+                            <div style="font-size: 11px; color: var(--mac-text-secondary); margin-top: 2px;"><?php echo e($stat['active']); ?> active</div>
                         <?php elseif (isset($stat['new'])): ?>
-                            <div style="font-size: 13px; color: var(--mac-warning); font-weight: 500; margin-top: 2px;"><?php echo e($stat['new']); ?> new</div>
+                            <div style="font-size: 11px; color: var(--mac-yellow); font-weight: 500; margin-top: 2px;"><?php echo e($stat['new']); ?> new</div>
                         <?php endif; ?>
                     </div>
                 </div>
-                <div style="font-size: 14px; font-weight: 500; color: var(--mac-text); letter-spacing: -0.1px;"><?php echo e($stat['label']); ?></div>
+                <div style="font-size: 13px; font-weight: 500; color: var(--mac-text); letter-spacing: -0.1px;"><?php echo e($stat['label']); ?></div>
             </a>
         <?php endforeach; ?>
     </div>
 
-    <!-- macOS-like Quick Actions -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 24px;">
+    <!-- macOS Quick Actions -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-bottom: 20px;">
         <!-- Catalog -->
-        <div class="mac-card">
-            <div class="mac-card-header">
-                <h2 class="mac-card-title">Catalog</h2>
+        <div class="admin-card">
+            <div style="border-bottom: 1px solid #b0b0b0; padding-bottom: 12px; margin-bottom: 12px;">
+                <h2 style="font-size: 15px; font-weight: 600; color: var(--mac-text); letter-spacing: -0.2px; margin: 0;">Catalog</h2>
             </div>
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-                <a href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/products.php" class="button button-link" style="justify-content: space-between; padding: 10px 0; border-radius: 8px;">
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                <a href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/products.php" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; text-decoration: none; color: var(--mac-text); font-size: 13px; border-radius: 4px; transition: background 0.15s;" onmouseover="this.style.background='rgba(0,122,255,0.08)'" onmouseout="this.style.background='transparent'">
                     <span>Manage Products</span>
-                    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="opacity: 0.5;"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
+                    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" style="opacity: 0.4;"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
                 </a>
-                <a href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/categories.php" class="button button-link" style="justify-content: space-between; padding: 10px 0; border-radius: 8px;">
+                <a href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/categories.php" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; text-decoration: none; color: var(--mac-text); font-size: 13px; border-radius: 4px; transition: background 0.15s;" onmouseover="this.style.background='rgba(0,122,255,0.08)'" onmouseout="this.style.background='transparent'">
                     <span>Manage Categories</span>
-                    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="opacity: 0.5;"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
+                    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" style="opacity: 0.4;"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
                 </a>
             </div>
         </div>
 
         <!-- Content -->
-        <div class="mac-card">
-            <div class="mac-card-header">
-                <h2 class="mac-card-title">Content</h2>
+        <div class="admin-card">
+            <div style="border-bottom: 1px solid #b0b0b0; padding-bottom: 12px; margin-bottom: 12px;">
+                <h2 style="font-size: 15px; font-weight: 600; color: var(--mac-text); letter-spacing: -0.2px; margin: 0;">Content</h2>
             </div>
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-                <a href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/pages.php" class="button button-link" style="justify-content: space-between; padding: 10px 0; border-radius: 8px;">
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                <a href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/pages.php" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; text-decoration: none; color: var(--mac-text); font-size: 13px; border-radius: 4px; transition: background 0.15s;" onmouseover="this.style.background='rgba(0,122,255,0.08)'" onmouseout="this.style.background='transparent'">
                     <span>All Pages</span>
-                    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="opacity: 0.5;"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
+                    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" style="opacity: 0.4;"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
                 </a>
-                <a href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/team.php" class="button button-link" style="justify-content: space-between; padding: 10px 0; border-radius: 8px;">
+                <a href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/team.php" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; text-decoration: none; color: var(--mac-text); font-size: 13px; border-radius: 4px; transition: background 0.15s;" onmouseover="this.style.background='rgba(0,122,255,0.08)'" onmouseout="this.style.background='transparent'">
                     <span>Team Members</span>
-                    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="opacity: 0.5;"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
+                    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" style="opacity: 0.4;"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
                 </a>
             </div>
         </div>
 
         <!-- Marketing -->
-        <div class="mac-card">
-            <div class="mac-card-header">
-                <h2 class="mac-card-title">Marketing</h2>
+        <div class="admin-card">
+            <div style="border-bottom: 1px solid #b0b0b0; padding-bottom: 12px; margin-bottom: 12px;">
+                <h2 style="font-size: 15px; font-weight: 600; color: var(--mac-text); letter-spacing: -0.2px; margin: 0;">Marketing</h2>
             </div>
-            <div style="display: flex; flex-direction: column; gap: 6px;">
-                <a href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/sliders.php" class="button button-link" style="justify-content: space-between; padding: 10px 0; border-radius: 8px;">
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                <a href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/sliders.php" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; text-decoration: none; color: var(--mac-text); font-size: 13px; border-radius: 4px; transition: background 0.15s;" onmouseover="this.style.background='rgba(0,122,255,0.08)'" onmouseout="this.style.background='transparent'">
                     <span>Hero Slider</span>
-                    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="opacity: 0.5;"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
+                    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" style="opacity: 0.4;"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
                 </a>
-                <a href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/testimonials.php" class="button button-link" style="justify-content: space-between; padding: 10px 0; border-radius: 8px;">
+                <a href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/testimonials.php" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; text-decoration: none; color: var(--mac-text); font-size: 13px; border-radius: 4px; transition: background 0.15s;" onmouseover="this.style.background='rgba(0,122,255,0.08)'" onmouseout="this.style.background='transparent'">
                     <span>Testimonials</span>
-                    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" style="opacity: 0.5;"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
+                    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" style="opacity: 0.4;"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- macOS-like Recent Activity -->
-    <div class="mac-card">
-        <div class="mac-card-header">
-            <h2 class="mac-card-title">Recent Quote Requests</h2>
+    <!-- macOS Recent Activity -->
+    <div class="admin-card">
+        <div style="border-bottom: 1px solid #b0b0b0; padding-bottom: 12px; margin-bottom: 12px;">
+            <h2 style="font-size: 15px; font-weight: 600; color: var(--mac-text); letter-spacing: -0.2px; margin: 0;">Recent Quote Requests</h2>
         </div>
         <?php
         // Get recent quotes using paginate method
@@ -346,8 +346,8 @@ include __DIR__ . '/includes/header.php';
                     <?php endforeach; ?>
                 </tbody>
             </table>
-            <div style="margin-top: 20px; text-align: center;">
-                <a href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/quotes.php" class="button button-link">View all quote requests</a>
+            <div style="margin-top: 16px; text-align: center;">
+                <a href="/<?php echo (is_dir(__DIR__ . '/../../ae-admin')) ? 'ae-admin' : 'wp-admin'; ?>/quotes.php" class="admin-btn admin-btn-secondary">View all quote requests</a>
             </div>
         <?php endif; ?>
     </div>

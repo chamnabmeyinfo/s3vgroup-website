@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Domain\Settings;
 
+use App\Domain\Exceptions\NotFoundException;
 use App\Support\Id;
 use PDO;
-use RuntimeException;
 
 final class SiteOptionRepository
 {
@@ -122,7 +122,7 @@ SQL;
         $existing = $this->findById($id);
 
         if (!$existing) {
-            throw new RuntimeException('Site option not found.');
+            throw new NotFoundException('Site option not found.');
         }
 
         $data = array_merge($existing, $this->normalize($attributes));

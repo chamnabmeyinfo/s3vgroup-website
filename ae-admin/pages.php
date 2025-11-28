@@ -31,90 +31,92 @@ $pageTitle = 'Pages';
 include __DIR__ . '/includes/header.php';
 ?>
 
-<div class="max-w-7xl mx-auto">
-        <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between mb-6">
-            <div>
-                <p class="text-sm uppercase tracking-wide text-gray-500">Content Management</p>
-                <h1 class="text-3xl font-semibold text-[#0b3a63]">Pages</h1>
-                <p class="text-sm text-gray-600">Manage all your website pages and design them with Visual Builder</p>
-            </div>
-            <div class="flex gap-3">
-                <a href="/admin/homepage-builder-v2.php" class="inline-flex items-center justify-center px-5 py-2 bg-purple-600 text-white rounded-md shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-600 transition-colors">
-                    <span class="mr-2">🎨</span>
-                    Design Homepage
-                </a>
-                <button type="button" id="new-page-btn" class="inline-flex items-center justify-center px-5 py-2 bg-[#0b3a63] text-white rounded-md shadow-sm hover:bg-[#1a5a8a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0b3a63] transition-colors">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                    New Page
-                </button>
-            </div>
+<div>
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #b0b0b0;">
+        <div>
+            <h1 style="font-size: 22px; font-weight: 600; color: var(--mac-text); letter-spacing: -0.3px; margin: 0 0 4px 0;">Pages</h1>
+            <p style="margin: 0; color: var(--mac-text-secondary); font-size: 12px;">Manage all your website pages and design them with Visual Builder</p>
         </div>
+        <div style="display: flex; gap: 8px;">
+            <a href="/admin/homepage-builder-v2.php" class="admin-btn admin-btn-secondary">
+                <span>🎨</span>
+                Design Homepage
+            </a>
+            <button type="button" id="new-page-btn" class="admin-btn admin-btn-primary">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M5 12h14"/>
+                </svg>
+                New Page
+            </button>
+        </div>
+    </div>
 
-    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
-        <table class="min-w-full text-left text-sm">
-            <thead class="bg-gray-50 text-gray-700">
+    <div class="admin-card" style="padding: 0; overflow: hidden;">
+        <table class="admin-table">
+            <thead>
                 <tr>
-                    <th class="px-6 py-3 font-medium">Title</th>
-                    <th class="px-6 py-3 font-medium">Slug</th>
-                    <th class="px-6 py-3 font-medium">Type</th>
-                    <th class="px-6 py-3 font-medium">Status</th>
-                    <th class="px-6 py-3 font-medium">Actions</th>
+                    <th>Title</th>
+                    <th>Slug</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200">
+            <tbody>
                 <?php if (empty($pages)): ?>
                     <tr>
-                        <td colspan="5" class="px-6 py-4 text-center text-gray-500">No pages found. Click "New Page" to create one.</td>
+                        <td colspan="5" style="padding: 20px; text-align: center; color: var(--mac-text-secondary); font-size: 13px;">No pages found. Click "New Page" to create one.</td>
                     </tr>
                 <?php else: ?>
                     <?php foreach ($pages as $page): ?>
                         <tr data-id="<?php echo e($page['id']); ?>">
-                            <td class="px-6 py-4 font-semibold"><?php echo e($page['title']); ?></td>
-                            <td class="px-6 py-4 text-gray-600">/<?php echo e($page['slug']); ?></td>
-                            <td class="px-6 py-4">
-                                <div class="flex flex-col gap-1">
-                                    <span class="px-2 py-1 rounded text-xs font-semibold bg-blue-100 text-blue-800">
+                            <td style="font-weight: 600;"><?php echo e($page['title']); ?></td>
+                            <td style="color: var(--mac-text-secondary);">/<?php echo e($page['slug']); ?></td>
+                            <td>
+                                <div style="display: flex; flex-direction: column; gap: 4px;">
+                                    <span class="admin-badge admin-badge-info" style="display: inline-block;">
                                         <?php echo e(ucfirst($page['page_type'])); ?>
                                     </span>
                                     <?php 
-                                    // Settings is already decoded by PageRepository::transform()
                                     $settings = is_array($page['settings']) ? $page['settings'] : json_decode($page['settings'] ?? '{}', true);
                                     if (!empty($settings['is_homepage']) && $settings['is_homepage']): 
                                     ?>
-                                        <span class="px-2 py-1 rounded text-xs font-semibold bg-yellow-100 text-yellow-800">
+                                        <span class="admin-badge admin-badge-warning" style="display: inline-block;">
                                             🏠 Homepage
                                         </span>
                                     <?php endif; ?>
                                     <?php if (!empty($page['template'])): ?>
-                                        <span class="px-2 py-1 rounded text-xs font-semibold bg-purple-100 text-purple-800">
+                                        <span class="admin-badge admin-badge-info" style="display: inline-block;">
                                             📋 <?php echo e(ucfirst(str_replace('-', ' ', $page['template']))); ?>
                                         </span>
                                     <?php endif; ?>
                                 </div>
                             </td>
-                            <td class="px-6 py-4">
-                                <span class="px-3 py-1 rounded-full text-xs font-semibold <?php
-                                    echo $page['status'] === 'PUBLISHED' ? 'bg-green-100 text-green-800' : 
-                                        ($page['status'] === 'DRAFT' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800');
+                            <td>
+                                <span class="admin-badge <?php
+                                    echo $page['status'] === 'PUBLISHED' ? 'admin-badge-success' : 
+                                        ($page['status'] === 'DRAFT' ? 'admin-badge-warning' : '');
                                 ?>">
                                     <?php echo e($page['status']); ?>
                                 </span>
                             </td>
-                            <td class="px-6 py-4 text-right">
-                                <div class="flex items-center gap-2 justify-end">
+                            <td style="text-align: right;">
+                                <div style="display: flex; align-items: center; gap: 6px; justify-content: flex-end;">
                                     <a href="/admin/homepage-builder-v2.php?page_id=<?php echo urlencode($page['id']); ?>" 
-                                       class="inline-flex items-center px-3 py-1.5 bg-purple-600 text-white rounded-md hover:bg-purple-700 font-medium text-xs transition-colors" 
+                                       class="admin-btn admin-btn-secondary" 
+                                       style="font-size: 11px; padding: 4px 12px;"
                                        title="Open Visual Builder">
-                                        🎨 Visual Builder
+                                        🎨 Builder
                                     </a>
                                     <a href="/page.php?slug=<?php echo urlencode($page['slug']); ?>" 
                                        target="_blank"
-                                       class="inline-flex items-center px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium text-xs transition-colors" 
+                                       class="admin-btn admin-btn-primary" 
+                                       style="font-size: 11px; padding: 4px 12px;"
                                        title="View page on frontend">
-                                        👁️ View
+                                        View
                                     </a>
-                                    <button type="button" class="edit-page-btn inline-flex items-center px-3 py-1.5 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 font-medium text-xs transition-colors" style="cursor: pointer; pointer-events: auto; z-index: 10;">Edit</button>
-                                    <button type="button" class="delete-page-btn inline-flex items-center px-3 py-1.5 border border-red-300 rounded-md text-red-600 hover:bg-red-50 font-medium text-xs transition-colors" style="cursor: pointer; pointer-events: auto; z-index: 10;">Delete</button>
+                                    <button type="button" class="edit-page-btn admin-btn admin-btn-secondary" style="font-size: 11px; padding: 4px 12px; cursor: pointer;">Edit</button>
+                                    <button type="button" class="delete-page-btn admin-btn admin-btn-danger" style="font-size: 11px; padding: 4px 12px; cursor: pointer;">Delete</button>
                                 </div>
                             </td>
                         </tr>
@@ -126,44 +128,47 @@ include __DIR__ . '/includes/header.php';
 </div>
 
 <!-- Page Modal -->
-<div id="page-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full px-4">
-    <div class="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white max-h-[90vh] overflow-y-auto">
-        <h3 class="text-xl font-semibold mb-4 text-gray-900" id="modal-title">New Page</h3>
+<div id="page-modal" class="admin-modal hidden">
+    <div class="admin-modal-content" style="max-width: 700px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #b0b0b0;">
+            <h3 style="font-size: 18px; font-weight: 600; color: var(--mac-text); letter-spacing: -0.3px; margin: 0;" id="modal-title">New Page</h3>
+            <button type="button" id="page-modal-close" style="background: none; border: none; color: var(--mac-text-secondary); cursor: pointer; font-size: 24px; line-height: 1; padding: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;" onmouseover="this.style.color='var(--mac-text)'" onmouseout="this.style.color='var(--mac-text-secondary)'">&times;</button>
+        </div>
         <form id="page-form">
             <input type="hidden" id="page-id" name="id">
             
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Page Title *</label>
-                    <input type="text" name="title" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+                <div class="admin-form-group">
+                    <label class="admin-form-label">Page Title *</label>
+                    <input type="text" name="title" required class="admin-form-input">
                 </div>
                 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">URL Slug *</label>
-                    <input type="text" name="slug" required placeholder="about-us" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
-                    <p class="text-xs text-gray-500 mt-1">URL-friendly version of the title (e.g., "about-us")</p>
+                <div class="admin-form-group">
+                    <label class="admin-form-label">URL Slug *</label>
+                    <input type="text" name="slug" required placeholder="about-us" class="admin-form-input">
+                    <p style="font-size: 11px; color: var(--mac-text-secondary); margin-top: 4px;">URL-friendly version of the title (e.g., "about-us")</p>
                 </div>
                 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                    <textarea name="description" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]"></textarea>
+                <div class="admin-form-group">
+                    <label class="admin-form-label">Description</label>
+                    <textarea name="description" rows="3" class="admin-form-textarea"></textarea>
                 </div>
                 
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Page Type</label>
-                        <select name="page_type" id="page-type-select" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="admin-form-group">
+                        <label class="admin-form-label">Page Type</label>
+                        <select name="page_type" id="page-type-select" class="admin-form-select">
                             <option value="page">📄 Page (Standard content page)</option>
                             <option value="post">📝 Post (Blog post/article)</option>
                             <option value="custom">⚙️ Custom (Special purpose page)</option>
                             <option value="template">📋 Template (Reusable page template)</option>
                         </select>
-                        <p class="text-xs text-gray-500 mt-1" id="page-type-desc">Standard content page for general use</p>
+                        <p style="font-size: 11px; color: var(--mac-text-secondary); margin-top: 4px;" id="page-type-desc">Standard content page for general use</p>
                     </div>
                     
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                        <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
+                    <div class="admin-form-group">
+                        <label class="admin-form-label">Status</label>
+                        <select name="status" class="admin-form-select">
                             <option value="DRAFT">📝 Draft (Hidden from public)</option>
                             <option value="PUBLISHED">✅ Published (Visible to public)</option>
                             <option value="ARCHIVED">📦 Archived (Hidden, kept for reference)</option>
@@ -171,10 +176,10 @@ include __DIR__ . '/includes/header.php';
                     </div>
                 </div>
                 
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Page Template</label>
-                        <select name="template" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="admin-form-group">
+                        <label class="admin-form-label">Page Template</label>
+                        <select name="template" class="admin-form-select">
                             <option value="">Default Template</option>
                             <option value="full-width">Full Width (No sidebar, full width content)</option>
                             <option value="sidebar-left">Sidebar Left (Content with left sidebar)</option>
@@ -185,40 +190,42 @@ include __DIR__ . '/includes/header.php';
                             <option value="contact">Contact Page (Contact form layout)</option>
                             <option value="about">About Page (About us layout)</option>
                         </select>
-                        <p class="text-xs text-gray-500 mt-1">Choose a layout template for this page</p>
+                        <p style="font-size: 11px; color: var(--mac-text-secondary); margin-top: 4px;">Choose a layout template for this page</p>
                     </div>
                     
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Priority</label>
-                        <input type="number" name="priority" value="0" min="-10" max="10" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
-                        <p class="text-xs text-gray-500 mt-1">Higher priority = appears first in listings (-10 to 10)</p>
+                    <div class="admin-form-group">
+                        <label class="admin-form-label">Priority</label>
+                        <input type="number" name="priority" value="0" min="-10" max="10" class="admin-form-input">
+                        <p style="font-size: 11px; color: var(--mac-text-secondary); margin-top: 4px;">Higher priority = appears first in listings (-10 to 10)</p>
                     </div>
                 </div>
                 
-                <div class="border-t pt-4 mt-4">
-                    <div class="flex items-center gap-2 mb-3">
-                        <input type="checkbox" name="is_homepage" id="is-homepage" value="1" class="w-4 h-4 text-[#0b3a63] border-gray-300 rounded focus:ring-[#0b3a63]">
-                        <label for="is-homepage" class="block text-sm font-medium text-gray-700 cursor-pointer">
+                <div style="border-top: 1px solid #b0b0b0; padding-top: 16px; margin-top: 16px;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                        <input type="checkbox" name="is_homepage" id="is-homepage" value="1">
+                        <label for="is-homepage" class="admin-form-label" style="margin: 0; cursor: pointer;">
                             🏠 Set as Homepage
                         </label>
                     </div>
-                    <p class="text-xs text-gray-500 ml-6">This page will be shown when visitors visit the root URL (/)</p>
+                    <p style="font-size: 11px; color: var(--mac-text-secondary); margin-left: 22px;">This page will be shown when visitors visit the root URL (/)</p>
                 </div>
                 
-                <div class="border-t pt-4 mt-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Meta Title (SEO)</label>
-                    <input type="text" name="meta_title" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]" placeholder="Leave empty to use page title">
+                <div style="border-top: 1px solid #b0b0b0; padding-top: 16px; margin-top: 16px;">
+                    <div class="admin-form-group">
+                        <label class="admin-form-label">Meta Title (SEO)</label>
+                        <input type="text" name="meta_title" class="admin-form-input" placeholder="Leave empty to use page title">
+                    </div>
                 </div>
                 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Meta Description (SEO)</label>
-                    <textarea name="meta_description" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]" placeholder="Brief description for search engines"></textarea>
+                <div class="admin-form-group">
+                    <label class="admin-form-label">Meta Description (SEO)</label>
+                    <textarea name="meta_description" rows="2" class="admin-form-textarea" placeholder="Brief description for search engines"></textarea>
                 </div>
             </div>
             
-            <div class="flex justify-end gap-3 mt-6 pt-4 border-t">
-                <button type="button" id="cancel-page-btn" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">Cancel</button>
-                <button type="submit" class="px-4 py-2 bg-[#0b3a63] text-white rounded-md text-sm font-medium hover:bg-[#1a5a8a]">Save Page</button>
+            <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; padding-top: 16px; border-top: 1px solid #b0b0b0;">
+                <button type="button" id="cancel-page-btn" class="admin-btn admin-btn-secondary">Cancel</button>
+                <button type="submit" class="admin-btn admin-btn-primary">Save Page</button>
             </div>
         </form>
     </div>

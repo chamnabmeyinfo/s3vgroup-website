@@ -54,6 +54,12 @@ if (file_exists(base_path('config/database.php'))) {
     }
 }
 
+// Initialize logger
+\App\Infrastructure\Logging\Logger::initialize(
+    null, // Use default log file
+    \App\Support\Env::get('LOG_LEVEL', 'INFO')
+);
+
 // Skip CacheControl for API endpoints to prevent header conflicts
 if (!defined('DISABLE_CACHE_CONTROL') && !str_starts_with($_SERVER['REQUEST_URI'] ?? '', '/api/')) {
     \App\Support\CacheControl::apply();

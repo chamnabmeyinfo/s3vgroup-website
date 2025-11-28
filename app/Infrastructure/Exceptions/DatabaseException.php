@@ -1,0 +1,22 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Infrastructure\Exceptions;
+
+/**
+ * Exception for database errors
+ */
+final class DatabaseException extends InfrastructureException
+{
+    protected string $errorCode = 'DATABASE_ERROR';
+
+    public function __construct(
+        string $message = 'A database error occurred.',
+        int $code = 0,
+        ?\Throwable $previous = null
+    ) {
+        parent::__construct($message, $code, $previous);
+    }
+}
+

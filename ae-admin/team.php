@@ -29,73 +29,75 @@ $pageTitle = 'Team Members';
 include __DIR__ . '/includes/header.php';
 ?>
 
-<div class="space-y-8">
-    <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+<div>
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #b0b0b0;">
         <div>
-            <p class="text-sm uppercase tracking-wide text-gray-500">Content</p>
-            <h1 class="text-3xl font-semibold text-[#0b3a63]">Team Members</h1>
-            <p class="text-sm text-gray-600">Manage your team members and their profiles</p>
+            <h1 style="font-size: 22px; font-weight: 600; color: var(--mac-text); letter-spacing: -0.3px; margin: 0 0 4px 0;">Team Members</h1>
+            <p style="margin: 0; color: var(--mac-text-secondary); font-size: 12px;">Manage your team members and their profiles</p>
         </div>
-        <button type="button" id="new-member-btn" class="inline-flex items-center rounded-full bg-[#0b3a63] px-5 py-2 text-sm font-semibold text-white hover:bg-[#1a5a8a]">
-            + New Team Member
+        <button type="button" id="new-member-btn" class="admin-btn admin-btn-primary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M5 12h14"/>
+            </svg>
+            New Team Member
         </button>
     </div>
 
-    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        <table class="w-full text-left text-sm">
-            <thead class="bg-gray-50 text-gray-700">
+    <div class="admin-card" style="padding: 0; overflow: hidden;">
+        <table class="admin-table">
+            <thead>
                 <tr>
-                    <th class="px-6 py-3 font-medium">Photo</th>
-                    <th class="px-6 py-3 font-medium">Name</th>
-                    <th class="px-6 py-3 font-medium">Title</th>
-                    <th class="px-6 py-3 font-medium">Priority</th>
-                    <th class="px-6 py-3 font-medium">Status</th>
-                    <th class="px-6 py-3 font-medium">Updated</th>
-                    <th class="px-6 py-3 font-medium text-right">Actions</th>
+                    <th>Photo</th>
+                    <th>Name</th>
+                    <th>Title</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Updated</th>
+                    <th style="text-align: right;">Actions</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200">
+            <tbody>
                 <?php if (empty($team)): ?>
                     <tr>
-                        <td colspan="7" class="px-6 py-8 text-center text-gray-500">
-                            No team members found. <button type="button" id="new-member-empty-btn" class="text-[#0b3a63] hover:underline">Add your first team member</button>
+                        <td colspan="7" style="padding: 20px; text-align: center; color: var(--mac-text-secondary); font-size: 13px;">
+                            No team members found. <button type="button" id="new-member-empty-btn" class="admin-btn admin-btn-primary" style="font-size: 11px; padding: 4px 12px; margin-left: 8px;">Add your first team member</button>
                         </td>
                     </tr>
                 <?php else: ?>
                     <?php foreach ($team as $member): ?>
                         <tr>
-                            <td class="px-6 py-4">
+                            <td>
                                 <?php if ($member['photo']): ?>
-                                    <img src="<?php echo e($member['photo']); ?>" alt="<?php echo e($member['name']); ?>" class="h-12 w-12 rounded-full object-cover">
+                                    <img src="<?php echo e($member['photo']); ?>" alt="<?php echo e($member['name']); ?>" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #b0b0b0;">
                                 <?php else: ?>
-                                    <div class="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 font-semibold text-sm">
+                                    <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(to bottom, #f0f0f0 0%, #e0e0e0 100%); display: flex; align-items: center; justify-content: center; color: var(--mac-text-secondary); font-weight: 600; font-size: 12px; border: 1px solid #b0b0b0;">
                                         <?php echo strtoupper(substr($member['name'], 0, 2)); ?>
                                     </div>
                                 <?php endif; ?>
                             </td>
-                            <td class="px-6 py-4 font-semibold"><?php echo e($member['name']); ?></td>
-                            <td class="px-6 py-4 text-gray-600"><?php echo e($member['title']); ?></td>
-                            <td class="px-6 py-4 text-gray-600"><?php echo e($member['priority']); ?></td>
-                            <td class="px-6 py-4">
-                                <span class="px-3 py-1 rounded-full text-xs font-semibold <?php 
-                                    echo $member['status'] === 'ACTIVE' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'; 
-                                ?>">
+                            <td style="font-weight: 600;"><?php echo e($member['name']); ?></td>
+                            <td style="color: var(--mac-text-secondary);"><?php echo e($member['title']); ?></td>
+                            <td style="color: var(--mac-text-secondary);"><?php echo e($member['priority']); ?></td>
+                            <td>
+                                <span class="admin-badge <?php echo $member['status'] === 'ACTIVE' ? 'admin-badge-success' : ''; ?>">
                                     <?php echo e($member['status']); ?>
                                 </span>
                             </td>
-                            <td class="px-6 py-4 text-gray-600"><?php echo date('M d, Y', strtotime($member['updatedAt'])); ?></td>
-                            <td class="px-6 py-4 text-right">
-                                <div class="flex items-center justify-end gap-3">
+                            <td style="color: var(--mac-text-secondary); font-size: 12px;"><?php echo date('M d, Y', strtotime($member['updatedAt'])); ?></td>
+                            <td style="text-align: right;">
+                                <div style="display: flex; align-items: center; gap: 6px; justify-content: flex-end;">
                                     <button
                                         type="button"
-                                        class="text-sm font-medium text-[#0b3a63] hover:underline team-edit-btn"
+                                        class="team-edit-btn admin-btn admin-btn-secondary"
+                                        style="font-size: 11px; padding: 4px 12px;"
                                         data-member="<?php echo htmlspecialchars(json_encode($member), ENT_QUOTES, 'UTF-8'); ?>"
                                     >
                                         Edit
                                     </button>
                                     <button
                                         type="button"
-                                        class="text-sm font-medium text-red-600 hover:text-red-800 team-delete-btn"
+                                        class="team-delete-btn admin-btn admin-btn-danger"
+                                        style="font-size: 11px; padding: 4px 12px;"
                                         data-id="<?php echo htmlspecialchars($member['id'], ENT_QUOTES, 'UTF-8'); ?>"
                                         data-name="<?php echo htmlspecialchars($member['name'], ENT_QUOTES, 'UTF-8'); ?>"
                                     >
@@ -112,161 +114,155 @@ include __DIR__ . '/includes/header.php';
 </div>
 
 <!-- Modal -->
-<div id="team-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
-    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onclick="hideTeamModal()"></div>
-        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
-            <form id="team-form">
-                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                    <div class="sm:flex sm:items-start">
-                        <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4" id="modal-title">New Team Member</h3>
-                            <div id="error-message" class="hidden mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded"></div>
-                            
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Name *</label>
-                                    <input type="text" name="name" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Title/Position *</label>
-                                    <input type="text" name="title" required placeholder="e.g., CEO, Operations Manager" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Department</label>
-                                    <input type="text" name="department" placeholder="e.g., Operations, Sales, Management" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Photo/Profile Picture</label>
-                                    <div class="flex items-center gap-3">
-                                        <input type="url" name="photo" placeholder="https://example.com/photo.jpg or upload" class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]" id="team-photo-input">
-                                        <input type="file" accept="image/*" class="hidden" id="team-photo-file" data-target="team-photo-input">
-                                        <button type="button" onclick="document.getElementById('team-photo-file').click()" class="px-4 py-2 bg-gray-100 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200 transition-colors">
-                                            Upload
-                                        </button>
-                                    </div>
-                                    <div id="team-photo-preview" class="mt-2"></div>
-                                    <p class="text-xs text-gray-500 mt-1">Recommended: Square image, 400x400px or larger</p>
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Bio/Description</label>
-                                    <textarea name="bio" rows="3" placeholder="Brief bio or description about the team member..." class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]"></textarea>
-                                </div>
-                                
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Expertise/Skills</label>
-                                    <textarea name="expertise" rows="2" placeholder="Areas of expertise, skills, certifications..." class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]"></textarea>
-                                </div>
-                                
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                                        <input type="email" name="email" placeholder="team@example.com" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
-                                    </div>
-                                    
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                                        <input type="tel" name="phone" placeholder="+855 12 345 678" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
-                                    </div>
-                                </div>
-                                
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                                        <input type="text" name="location" placeholder="e.g., Phnom Penh, Cambodia" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
-                                    </div>
-                                    
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Languages</label>
-                                        <input type="text" name="languages" placeholder="e.g., English, Khmer, Chinese" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
-                                    </div>
-                                </div>
-                                
-                                <div class="border-t pt-4 mt-4">
-                                    <h4 class="text-sm font-semibold text-gray-700 mb-3">Social Media & Links</h4>
-                                    
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">LinkedIn</label>
-                                            <input type="url" name="linkedin" placeholder="https://linkedin.com/in/username" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
-                                        </div>
-                                        
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Twitter/X</label>
-                                            <input type="url" name="twitter" placeholder="https://twitter.com/username" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
-                                        </div>
-                                        
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Facebook</label>
-                                            <input type="url" name="facebook" placeholder="https://facebook.com/username" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
-                                        </div>
+<div id="team-modal" class="admin-modal hidden">
+    <div class="admin-modal-content" style="max-width: 700px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #b0b0b0;">
+            <h3 style="font-size: 18px; font-weight: 600; color: var(--mac-text); letter-spacing: -0.3px; margin: 0;" id="modal-title">New Team Member</h3>
+            <button type="button" onclick="hideTeamModal()" style="background: none; border: none; color: var(--mac-text-secondary); cursor: pointer; font-size: 24px; line-height: 1; padding: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;" onmouseover="this.style.color='var(--mac-text)'" onmouseout="this.style.color='var(--mac-text-secondary)'">&times;</button>
+        </div>
+        <form id="team-form">
+            <div id="error-message" style="display: none; margin-bottom: 16px; padding: 10px; background: rgba(255, 59, 48, 0.1); border: 1px solid rgba(255, 59, 48, 0.3); border-radius: 4px; color: var(--mac-red); font-size: 12px;"></div>
+            
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+                <div class="admin-form-group">
+                    <label class="admin-form-label">Name *</label>
+                    <input type="text" name="name" required class="admin-form-input">
+                </div>
+                
+                <div class="admin-form-group">
+                    <label class="admin-form-label">Title/Position *</label>
+                    <input type="text" name="title" required placeholder="e.g., CEO, Operations Manager" class="admin-form-input">
+                </div>
+                
+                <div class="admin-form-group">
+                    <label class="admin-form-label">Department</label>
+                    <input type="text" name="department" placeholder="e.g., Operations, Sales, Management" class="admin-form-input">
+                </div>
+                
+                <div class="admin-form-group">
+                    <label class="admin-form-label">Photo/Profile Picture</label>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="url" name="photo" placeholder="https://example.com/photo.jpg or upload" class="admin-form-input" style="flex: 1;" id="team-photo-input">
+                        <input type="file" accept="image/*" class="hidden" id="team-photo-file" data-target="team-photo-input">
+                        <button type="button" onclick="document.getElementById('team-photo-file').click()" class="admin-btn admin-btn-secondary" style="white-space: nowrap;">Upload</button>
+                    </div>
+                    <div id="team-photo-preview" style="margin-top: 8px;"></div>
+                    <p style="font-size: 11px; color: var(--mac-text-secondary); margin-top: 4px;">Recommended: Square image, 400x400px or larger</p>
+                </div>
+                
+                <div class="admin-form-group">
+                    <label class="admin-form-label">Bio/Description</label>
+                    <textarea name="bio" rows="3" placeholder="Brief bio or description about the team member..." class="admin-form-textarea"></textarea>
+                </div>
+                
+                <div class="admin-form-group">
+                    <label class="admin-form-label">Expertise/Skills</label>
+                    <textarea name="expertise" rows="2" placeholder="Areas of expertise, skills, certifications..." class="admin-form-textarea"></textarea>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="admin-form-group">
+                        <label class="admin-form-label">Email</label>
+                        <input type="email" name="email" placeholder="team@example.com" class="admin-form-input">
+                    </div>
+                    
+                    <div class="admin-form-group">
+                        <label class="admin-form-label">Phone</label>
+                        <input type="tel" name="phone" placeholder="+855 12 345 678" class="admin-form-input">
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="admin-form-group">
+                        <label class="admin-form-label">Location</label>
+                        <input type="text" name="location" placeholder="e.g., Phnom Penh, Cambodia" class="admin-form-input">
+                    </div>
+                    
+                    <div class="admin-form-group">
+                        <label class="admin-form-label">Languages</label>
+                        <input type="text" name="languages" placeholder="e.g., English, Khmer, Chinese" class="admin-form-input">
+                    </div>
+                </div>
+                
+                <div style="border-top: 1px solid #b0b0b0; padding-top: 16px; margin-top: 16px;">
+                    <h4 style="font-size: 13px; font-weight: 600; color: var(--mac-text); margin-bottom: 12px;">Social Media & Links</h4>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="admin-form-group">
+                            <label class="admin-form-label">LinkedIn</label>
+                            <input type="url" name="linkedin" placeholder="https://linkedin.com/in/username" class="admin-form-input">
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label class="admin-form-label">Twitter/X</label>
+                            <input type="url" name="twitter" placeholder="https://twitter.com/username" class="admin-form-input">
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label class="admin-form-label">Facebook</label>
+                            <input type="url" name="facebook" placeholder="https://facebook.com/username" class="admin-form-input">
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label class="admin-form-label">Instagram</label>
+                            <input type="url" name="instagram" placeholder="https://instagram.com/username" class="admin-form-input">
+                        </div>
                                         
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700 mb-1">Instagram</label>
                                             <input type="url" name="instagram" placeholder="https://instagram.com/username" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
                                         </div>
                                         
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Website</label>
-                                            <input type="url" name="website" placeholder="https://example.com" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
-                                        </div>
-                                        
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">GitHub</label>
-                                            <input type="url" name="github" placeholder="https://github.com/username" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
-                                        </div>
-                                        
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">YouTube</label>
-                                            <input type="url" name="youtube" placeholder="https://youtube.com/@username" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
-                                        </div>
-                                        
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Telegram</label>
-                                            <input type="text" name="telegram" placeholder="@username" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
-                                        </div>
-                                        
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">WhatsApp</label>
-                                            <input type="text" name="whatsapp" placeholder="+855 12 345 678" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Priority</label>
-                                        <input type="number" name="priority" value="0" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
-                                        <p class="text-xs text-gray-500 mt-1">Higher appears first</p>
-                                    </div>
-                                    
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                                        <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[#0b3a63] focus:border-[#0b3a63]">
-                                            <option value="ACTIVE">Active</option>
-                                            <option value="INACTIVE">Inactive</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="admin-form-group">
+                            <label class="admin-form-label">Website</label>
+                            <input type="url" name="website" placeholder="https://example.com" class="admin-form-input">
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label class="admin-form-label">GitHub</label>
+                            <input type="url" name="github" placeholder="https://github.com/username" class="admin-form-input">
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label class="admin-form-label">YouTube</label>
+                            <input type="url" name="youtube" placeholder="https://youtube.com/@username" class="admin-form-input">
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label class="admin-form-label">Telegram</label>
+                            <input type="text" name="telegram" placeholder="@username" class="admin-form-input">
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label class="admin-form-label">WhatsApp</label>
+                            <input type="text" name="whatsapp" placeholder="+855 12 345 678" class="admin-form-input">
                         </div>
                     </div>
                 </div>
-                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button type="submit" id="submit-btn" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-[#0b3a63] text-base font-medium text-white hover:bg-[#1a5a8a] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0b3a63] sm:ml-3 sm:w-auto sm:text-sm">
-                        Save
-                    </button>
-                    <button type="button" onclick="hideTeamModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0b3a63] sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                        Cancel
-                    </button>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="admin-form-group">
+                        <label class="admin-form-label">Priority</label>
+                        <input type="number" name="priority" value="0" class="admin-form-input">
+                        <p style="font-size: 11px; color: var(--mac-text-secondary); margin-top: 4px;">Higher appears first</p>
+                    </div>
+                    
+                    <div class="admin-form-group">
+                        <label class="admin-form-label">Status</label>
+                        <select name="status" class="admin-form-select">
+                            <option value="ACTIVE">Active</option>
+                            <option value="INACTIVE">Inactive</option>
+                        </select>
+                    </div>
                 </div>
-                <input type="hidden" name="id" id="team-id">
-            </form>
-        </div>
+            </div>
+            
+            <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; padding-top: 16px; border-top: 1px solid #b0b0b0;">
+                <button type="button" onclick="hideTeamModal()" class="admin-btn admin-btn-secondary">Cancel</button>
+                <button type="submit" id="submit-btn" class="admin-btn admin-btn-primary">Save</button>
+            </div>
+            <input type="hidden" name="id" id="team-id">
+        </form>
     </div>
 </div>
 
@@ -302,7 +298,7 @@ include __DIR__ . '/includes/header.php';
             form.status.value = data.status || 'ACTIVE';
             
             if (data.photo) {
-                photoPreview.innerHTML = `<img src="${data.photo}" alt="Preview" class="h-24 w-24 rounded-full object-cover border-2 border-gray-300">`;
+                photoPreview.innerHTML = `<img src="${data.photo}" alt="Preview" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 1px solid #b0b0b0; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);">`;
             }
         }
         
@@ -324,7 +320,7 @@ include __DIR__ . '/includes/header.php';
         const input = document.getElementById('team-photo-input');
         
         // Show loading
-        photoPreview.innerHTML = '<p class="text-sm text-gray-500">Uploading...</p>';
+        photoPreview.innerHTML = '<p style="font-size: 12px; color: var(--mac-text-secondary);">Uploading...</p>';
 
         try {
             const formData = new FormData();
@@ -339,7 +335,7 @@ include __DIR__ . '/includes/header.php';
 
             if (result.status === 'success') {
                 input.value = result.data.url;
-                photoPreview.innerHTML = `<img src="${result.data.url}" alt="Preview" class="h-24 w-24 rounded-full object-cover border-2 border-gray-300">`;
+                photoPreview.innerHTML = `<img src="${result.data.url}" alt="Preview" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 1px solid #b0b0b0; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);">`;
             } else {
                 photoPreview.innerHTML = '';
                 alert('Upload failed: ' + (result.message || 'Unknown error'));

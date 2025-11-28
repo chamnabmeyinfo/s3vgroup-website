@@ -139,21 +139,35 @@ $pageTitle = 'Optional Features';
 include __DIR__ . '/includes/header.php';
 ?>
 
-<div class="space-y-6">
-    <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-        <div>
-            <p class="text-sm uppercase tracking-wide text-gray-500">Configuration</p>
-            <h1 class="text-3xl font-semibold text-[#0b3a63]">Optional Features</h1>
-            <p class="text-sm text-gray-600">Enable or disable additional website features</p>
+<div class="max-w-7xl mx-auto space-y-6">
+    <!-- Modern Header -->
+    <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
+        <div class="px-6 py-5 border-b border-gray-200">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-semibold text-gray-900">Optional Features</h1>
+                    <p class="text-sm text-gray-500 mt-0.5">Enable or disable additional website features</p>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <div class="flex items-start gap-3">
-            <div class="text-2xl">ℹ️</div>
-            <div>
-                <div class="font-semibold text-blue-900 mb-1">About Optional Features</div>
-                <div class="text-sm text-blue-800">
+    <!-- Info Card -->
+    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-5">
+        <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            </div>
+            <div class="flex-1">
+                <div class="font-semibold text-blue-900 mb-1.5">About Optional Features</div>
+                <div class="text-sm text-blue-800 leading-relaxed">
                     These features are available but not required for your website. Enable only the features you need.
                     Some features may require additional configuration or third-party services.
                 </div>
@@ -162,44 +176,58 @@ include __DIR__ . '/includes/header.php';
     </div>
 
     <?php foreach ($featuresByCategory as $category => $features): ?>
-        <div class="admin-card">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4"><?php echo e($category); ?></h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <?php foreach ($features as $feature): 
-                    $isEnabled = $enabledFeatures[$feature['key']] ?? false;
-                ?>
-                    <div class="border border-gray-200 rounded-lg p-4 hover:border-[#0b3a63] transition-colors">
-                        <div class="flex items-start justify-between mb-3">
-                            <div class="flex items-start gap-3">
-                                <div class="text-2xl"><?php echo $feature['icon']; ?></div>
-                                <div class="flex-1">
-                                    <div class="font-semibold text-gray-900"><?php echo e($feature['name']); ?></div>
-                                    <div class="text-sm text-gray-600 mt-1"><?php echo e($feature['description']); ?></div>
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div class="px-6 py-4 bg-gradient-to-r from-gray-50 to-white border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-900"><?php echo e($category); ?></h2>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <?php foreach ($features as $feature): 
+                        $isEnabled = $enabledFeatures[$feature['key']] ?? false;
+                    ?>
+                        <div class="bg-gradient-to-br from-gray-50 to-white border border-gray-200 rounded-xl p-5 hover:border-amber-300 hover:shadow-md transition-all <?php echo $isEnabled ? 'ring-2 ring-amber-200 border-amber-300' : ''; ?>">
+                            <div class="flex items-start gap-4 mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-100 to-amber-50 flex items-center justify-center flex-shrink-0 text-2xl">
+                                    <?php echo $feature['icon']; ?>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-semibold text-gray-900 mb-1"><?php echo e($feature['name']); ?></div>
+                                    <div class="text-sm text-gray-600 leading-relaxed"><?php echo e($feature['description']); ?></div>
                                 </div>
                             </div>
-                        </div>
-                        <form method="POST" class="mt-3">
-                            <input type="hidden" name="action" value="toggle">
-                            <input type="hidden" name="feature_key" value="<?php echo e($feature['key']); ?>">
-                            <input type="hidden" name="enabled" value="<?php echo $isEnabled ? '0' : '1'; ?>">
-                            <button type="submit" class="admin-btn <?php echo $isEnabled ? 'admin-btn-danger' : 'admin-btn-primary'; ?> w-full">
-                                <?php echo $isEnabled ? 'Disable' : 'Enable'; ?>
-                            </button>
-                        </form>
-                        <?php if ($isEnabled): ?>
-                            <div class="mt-2 text-xs text-green-600 font-medium">✓ Currently Enabled</div>
-                            <?php if ($feature['key'] === 'woocommerce_csv_import'): ?>
-                                <a href="/admin/woocommerce-import.php" class="block mt-2 text-center text-sm text-[#0b3a63] hover:underline font-medium">
-                                    → Go to Import Page
-                                </a>
-                            <?php elseif ($feature['key'] === 'wordpress_sql_import'): ?>
-                                <a href="/admin/wordpress-sql-import.php" class="block mt-2 text-center text-sm text-[#0b3a63] hover:underline font-medium">
-                                    → Go to Import Page
-                                </a>
+                            
+                            <?php if ($isEnabled): ?>
+                                <div class="mb-3 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                                    <svg class="w-3 h-3 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                    Currently Enabled
+                                </div>
                             <?php endif; ?>
-                        <?php endif; ?>
-                    </div>
-                <?php endforeach; ?>
+                            
+                            <form method="POST" class="mt-3">
+                                <input type="hidden" name="action" value="toggle">
+                                <input type="hidden" name="feature_key" value="<?php echo e($feature['key']); ?>">
+                                <input type="hidden" name="enabled" value="<?php echo $isEnabled ? '0' : '1'; ?>">
+                                <button type="submit" class="w-full px-4 py-2.5 rounded-lg text-sm font-semibold transition-all shadow-sm hover:shadow <?php echo $isEnabled ? 'bg-red-50 text-red-700 border border-red-200 hover:bg-red-100' : 'bg-gradient-to-r from-amber-600 to-amber-700 text-white hover:from-amber-700 hover:to-amber-800 shadow-md hover:shadow-lg'; ?>">
+                                    <?php echo $isEnabled ? 'Disable Feature' : 'Enable Feature'; ?>
+                                </button>
+                            </form>
+                            
+                            <?php if ($isEnabled): ?>
+                                <?php if ($feature['key'] === 'woocommerce_csv_import'): ?>
+                                    <a href="/admin/woocommerce-import.php" class="block mt-3 text-center text-sm text-amber-700 hover:text-amber-800 font-medium hover:underline">
+                                        → Go to Import Page
+                                    </a>
+                                <?php elseif ($feature['key'] === 'wordpress_sql_import'): ?>
+                                    <a href="/admin/wordpress-sql-import.php" class="block mt-3 text-center text-sm text-amber-700 hover:text-amber-800 font-medium hover:underline">
+                                        → Go to Import Page
+                                    </a>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
             </div>
         </div>
     <?php endforeach; ?>

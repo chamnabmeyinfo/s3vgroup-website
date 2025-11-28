@@ -135,7 +135,7 @@ $faviconUrl = $favicon ? fullImageUrl($favicon) : '';
         .bg-header { background-color: <?php echo e($headerBackground); ?>; }
     </style>
 </head>
-<body class="min-h-screen bg-gray-50 mobile-app">
+<body class="min-h-screen bg-white mobile-app">
     <!-- Mobile App Header -->
     <?php include __DIR__ . '/widgets/mobile-app-header.php'; ?>
     

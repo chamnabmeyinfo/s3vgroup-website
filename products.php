@@ -66,25 +66,117 @@ if (file_exists(__DIR__ . '/ae-includes/header.php')) {
         </p>
     </div>
 
-    <!-- Category Filter -->
+    <!-- Category Filter - Organized & Expandable -->
     <?php if (!empty($categories)): ?>
     <div class="mb-8 sm:mb-12">
-        <div class="flex flex-wrap gap-2 sm:gap-3 justify-center sm:justify-start">
-            <a href="/products.php" 
-               class="px-4 py-2 rounded-full text-sm font-medium transition-all hover:scale-105 transform <?php echo !$categorySlug ? 'text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'; ?>"
-               style="<?php echo !$categorySlug ? "background-color: {$primaryColor};" : ''; ?>">
-                All Categories
-            </a>
-            <?php foreach ($categories as $cat): ?>
-                <a href="/products.php?category=<?php echo urlencode($cat['slug']); ?>" 
-                   class="px-4 py-2 rounded-full text-sm font-medium transition-all hover:scale-105 transform <?php echo $categorySlug === $cat['slug'] ? 'text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'; ?>"
-                   style="<?php echo $categorySlug === $cat['slug'] ? "background-color: {$primaryColor};" : ''; ?>">
-                    <?php echo e($cat['name']); ?>
-                </a>
-            <?php endforeach; ?>
+        <div class="category-filter-wrapper bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <!-- Category Filter Header -->
+            <div class="category-filter-header flex items-center justify-between p-4 sm:p-5 border-b border-gray-200 bg-gray-50 cursor-pointer" onclick="toggleCategoryFilter()">
+                <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                    </svg>
+                    <h3 class="text-lg font-semibold" style="color: <?php echo e($primaryColor); ?>;">
+                        Filter by Category
+                        <span class="text-sm font-normal text-gray-500">(<?php echo count($categories) + 1; ?> total)</span>
+                    </h3>
+                </div>
+                <button class="category-filter-toggle flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors">
+                    <span class="text-sm font-medium hidden sm:inline">Show All</span>
+                    <svg class="w-5 h-5 transition-transform category-filter-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Category Filter Content -->
+            <div class="category-filter-content hidden overflow-hidden transition-all duration-300">
+                <div class="p-4 sm:p-5">
+                    <!-- Quick Filter: Show All -->
+                    <div class="mb-4 pb-4 border-b border-gray-200">
+                        <a href="/products.php" 
+                           class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all hover:scale-105 transform shadow-sm <?php echo !$categorySlug ? 'text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'; ?>"
+                           style="<?php echo !$categorySlug ? "background-color: {$primaryColor};" : ''; ?>">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                            </svg>
+                            All Categories
+                        </a>
+                    </div>
+                    
+                    <!-- Categories Grid - Organized -->
+                    <div class="category-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 sm:gap-3">
+                        <?php foreach ($categories as $cat): ?>
+                            <a href="/products.php?category=<?php echo urlencode($cat['slug']); ?>" 
+                               class="category-item group flex items-center justify-center px-3 py-2.5 rounded-lg text-sm font-medium transition-all hover:scale-105 transform shadow-sm text-center <?php echo $categorySlug === $cat['slug'] ? 'text-white shadow-md' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'; ?>"
+                               style="<?php echo $categorySlug === $cat['slug'] ? "background-color: {$primaryColor};" : ''; ?>">
+                                <span class="line-clamp-1"><?php echo e($cat['name']); ?></span>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Category Preview (Always Visible) -->
+            <div class="category-quick-preview p-4 sm:p-5 border-t border-gray-200 bg-gray-50">
+                <div class="flex flex-wrap gap-2 items-center">
+                    <span class="text-sm font-medium text-gray-600 mr-2 hidden sm:inline">Quick Filter:</span>
+                    <a href="/products.php" 
+                       class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all hover:scale-105 transform <?php echo !$categorySlug ? 'text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'; ?>"
+                       style="<?php echo !$categorySlug ? "background-color: {$primaryColor};" : ''; ?>">
+                        All
+                    </a>
+                    <?php 
+                    // Show first 8 categories as quick preview
+                    $previewCategories = array_slice($categories, 0, 8);
+                    foreach ($previewCategories as $cat): 
+                    ?>
+                        <a href="/products.php?category=<?php echo urlencode($cat['slug']); ?>" 
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all hover:scale-105 transform <?php echo $categorySlug === $cat['slug'] ? 'text-white shadow-sm' : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'; ?>"
+                           style="<?php echo $categorySlug === $cat['slug'] ? "background-color: {$primaryColor};" : ''; ?>">
+                            <span class="line-clamp-1"><?php echo e($cat['name']); ?></span>
+                        </a>
+                    <?php endforeach; ?>
+                    <?php if (count($categories) > 8): ?>
+                        <button onclick="toggleCategoryFilter()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-white text-gray-700 hover:bg-gray-100 border border-gray-200 transition-all hover:scale-105 transform">
+                            +<?php echo count($categories) - 8; ?> More
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                    <?php endif; ?>
+                </div>
+            </div>
         </div>
     </div>
     <?php endif; ?>
+    
+    <script>
+    function toggleCategoryFilter() {
+        const content = document.querySelector('.category-filter-content');
+        const icon = document.querySelector('.category-filter-icon');
+        const toggle = document.querySelector('.category-filter-toggle span');
+        
+        if (content.classList.contains('hidden')) {
+            content.classList.remove('hidden');
+            icon.style.transform = 'rotate(180deg)';
+            if (toggle) toggle.textContent = 'Hide';
+            // Scroll to category filter smoothly
+            document.querySelector('.category-filter-wrapper').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+            content.classList.add('hidden');
+            icon.style.transform = 'rotate(0deg)';
+            if (toggle) toggle.textContent = 'Show All';
+        }
+    }
+    
+    // Auto-expand if a category is selected
+    <?php if ($categorySlug): ?>
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleCategoryFilter();
+    });
+    <?php endif; ?>
+    </script>
 
     <!-- Products Grid -->
     <?php if (!empty($products)): ?>

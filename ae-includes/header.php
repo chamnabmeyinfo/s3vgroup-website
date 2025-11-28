@@ -180,16 +180,13 @@ $faviconUrl = $favicon ? fullImageUrl($favicon) : '';
         <div class="modern-header-container">
             <a href="<?php echo base_url('/'); ?>" class="modern-logo">
                 <?php if ($siteLogoUrl): ?>
-                    <img src="<?php echo e($siteLogoUrl); ?>" alt="<?php echo e($siteName); ?>">
+                    <img src="<?php echo e($siteLogoUrl); ?>" alt="<?php echo e($siteName); ?>" class="modern-logo-image">
                 <?php else: ?>
-                    <svg class="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
+                    <div class="modern-logo-text">
+                        <span class="modern-logo-text-top">GLOBAL</span>
+                        <span class="modern-logo-text-bottom">INDUSTRIAL SOLUTIONS</span>
+                    </div>
                 <?php endif; ?>
-                <div class="modern-logo-text">
-                    <span class="modern-logo-text-top">GLOBAL</span>
-                    <span class="modern-logo-text-bottom">INDUSTRIAL SOLUTIONS</span>
-                </div>
             </a>
 
             <nav class="modern-nav">
@@ -197,37 +194,51 @@ $faviconUrl = $favicon ? fullImageUrl($favicon) : '';
                 // Load Primary Menu
                 $location = 'primary';
                 $currentPath = $_SERVER['REQUEST_URI'] ?? '/';
+                $menuItems = [];
+                
                 if (file_exists(__DIR__ . '/widgets/dynamic-menu.php')) {
-                    $db = getDB();
-                    $repository = new \App\Domain\Menus\MenuRepository($db);
-                    $menuService = new \App\Application\Services\MenuService($repository);
-                    $primaryMenu = $menuService->getMenuByLocation('primary');
-                    if ($primaryMenu) {
-                        $menuItems = $menuService->getMenuWithItems($primaryMenu['id'])['items'] ?? [];
-                        foreach ($menuItems as $item) {
-                            $isActive = strpos($currentPath, parse_url($item['url'], PHP_URL_PATH)) !== false;
-                            ?>
-                            <a href="<?php echo e($item['url']); ?>" class="modern-nav-link <?php echo $isActive ? 'active' : ''; ?>">
-                                <?php echo htmlspecialchars($item['title']); ?>
-                            </a>
-                            <?php
+                    try {
+                        $db = getDB();
+                        $repository = new \App\Domain\Menus\MenuRepository($db);
+                        $menuService = new \App\Application\Services\MenuService($repository);
+                        $primaryMenu = $menuService->getMenuByLocation('primary');
+                        if ($primaryMenu) {
+                            $menuData = $menuService->getMenuWithItems($primaryMenu['id']);
+                            $menuItems = $menuData['items'] ?? [];
                         }
-                    } else {
-                        // Fallback menu
-                        ?>
-                        <a href="<?php echo base_url('/'); ?>" class="modern-nav-link <?php echo $currentPath === '/' ? 'active' : ''; ?>">Home</a>
-                        <a href="<?php echo base_url('products.php'); ?>" class="modern-nav-link <?php echo strpos($currentPath, 'products') !== false ? 'active' : ''; ?>">Products</a>
-                        <a href="<?php echo base_url('about.php'); ?>" class="modern-nav-link <?php echo strpos($currentPath, 'about') !== false ? 'active' : ''; ?>">About</a>
-                        <a href="<?php echo base_url('contact.php'); ?>" class="modern-nav-link <?php echo strpos($currentPath, 'contact') !== false ? 'active' : ''; ?>">Contact</a>
-                        <?php
+                    } catch (Exception $e) {
+                        error_log('Menu loading error: ' . $e->getMessage());
                     }
-                } else {
-                    // Fallback menu
+                }
+                
+                // Default menu items if no menu found
+                if (empty($menuItems)) {
+                    $menuItems = [
+                        ['title' => 'Home', 'url' => base_url('/')],
+                        ['title' => 'Products', 'url' => base_url('products.php')],
+                        ['title' => 'About Us', 'url' => base_url('about.php')],
+                        ['title' => 'Services', 'url' => base_url('team.php')],
+                        ['title' => 'Testimonials', 'url' => base_url('testimonials.php')],
+                        ['title' => 'Contact', 'url' => base_url('contact.php')]
+                    ];
+                }
+                
+                // Display menu items
+                foreach ($menuItems as $item) {
+                    $url = $item['url'] ?? '#';
+                    $title = $item['title'] ?? 'Menu Item';
+                    $isActive = false;
+                    
+                    if ($currentPath === '/' && $url === base_url('/')) {
+                        $isActive = true;
+                    } else if ($currentPath !== '/' && strpos($currentPath, parse_url($url, PHP_URL_PATH)) !== false) {
+                        $isActive = true;
+                    }
+                    
                     ?>
-                    <a href="<?php echo base_url('/'); ?>" class="modern-nav-link <?php echo $currentPath === '/' ? 'active' : ''; ?>">Home</a>
-                    <a href="<?php echo base_url('products.php'); ?>" class="modern-nav-link <?php echo strpos($currentPath, 'products') !== false ? 'active' : ''; ?>">Products</a>
-                    <a href="<?php echo base_url('about.php'); ?>" class="modern-nav-link <?php echo strpos($currentPath, 'about') !== false ? 'active' : ''; ?>">About</a>
-                    <a href="<?php echo base_url('contact.php'); ?>" class="modern-nav-link <?php echo strpos($currentPath, 'contact') !== false ? 'active' : ''; ?>">Contact</a>
+                    <a href="<?php echo e($url); ?>" class="modern-nav-link <?php echo $isActive ? 'active' : ''; ?>">
+                        <span><?php echo htmlspecialchars($title); ?></span>
+                    </a>
                     <?php
                 }
                 ?>
@@ -293,59 +304,35 @@ $faviconUrl = $favicon ? fullImageUrl($favicon) : '';
                         >
                     </div>
                 <?php endif; ?>
-                <nav style="display: flex; flex-direction: column; gap: var(--space-sm);">
+                <nav class="modern-mobile-nav">
                     <?php 
-                    // Load Primary Menu for Mobile
-                    $location = 'primary';
-                    if (file_exists(__DIR__ . '/widgets/dynamic-menu.php')) {
-                        $db = getDB();
-                        $repository = new \App\Domain\Menus\MenuRepository($db);
-                        $menuService = new \App\Application\Services\MenuService($repository);
-                        $primaryMenu = $menuService->getMenuByLocation('primary');
-                        if ($primaryMenu) {
-                            $mobileMenuItems = $menuService->getMenuWithItems($primaryMenu['id'])['items'] ?? [];
-                            foreach ($mobileMenuItems as $item) {
-                                $isActive = strpos($currentPath, parse_url($item['url'], PHP_URL_PATH)) !== false;
-                                ?>
-                                <a href="<?php echo e($item['url']); ?>" 
-                                   class="modern-nav-link <?php echo $isActive ? 'active' : ''; ?>"
-                                   style="padding: var(--space-md); border-radius: var(--radius-md);">
-                                    <?php echo htmlspecialchars($item['title']); ?>
-                                </a>
-                                <?php
-                                if (!empty($item['children'])) {
-                                    foreach ($item['children'] as $child) {
-                                        ?>
-                                        <a href="<?php echo e($child['url']); ?>" 
-                                           class="modern-nav-link"
-                                           style="padding: var(--space-sm) var(--space-xl); font-size: 0.875rem;">
-                                            <?php echo htmlspecialchars($child['title']); ?>
-                                        </a>
-                                        <?php
-                                    }
-                                }
-                            }
-                        } else {
-                            // Fallback
-                            ?>
-                            <a href="<?php echo base_url('products.php'); ?>" class="modern-nav-link" style="padding: var(--space-md);">Products</a>
-                            <a href="<?php echo base_url('about.php'); ?>" class="modern-nav-link" style="padding: var(--space-md);">About Us</a>
-                            <a href="<?php echo base_url('team.php'); ?>" class="modern-nav-link" style="padding: var(--space-md);">Our Team</a>
-                            <a href="<?php echo base_url('quote.php'); ?>" class="modern-cta-button" style="width: 100%; justify-content: center; margin-top: var(--space-sm);">Get Quote</a>
-                            <a href="<?php echo base_url('contact.php'); ?>" class="modern-nav-link" style="padding: var(--space-md);">Contact Us</a>
-                            <?php
+                    // Use same menu items as desktop
+                    foreach ($menuItems as $item) {
+                        $url = $item['url'] ?? '#';
+                        $title = $item['title'] ?? 'Menu Item';
+                        $isActive = false;
+                        
+                        if ($currentPath === '/' && $url === base_url('/')) {
+                            $isActive = true;
+                        } else if ($currentPath !== '/' && strpos($currentPath, parse_url($url, PHP_URL_PATH)) !== false) {
+                            $isActive = true;
                         }
-                    } else {
-                        // Fallback
                         ?>
-                        <a href="<?php echo base_url('products.php'); ?>" class="modern-nav-link" style="padding: var(--space-md);">Products</a>
-                        <a href="<?php echo base_url('about.php'); ?>" class="modern-nav-link" style="padding: var(--space-md);">About Us</a>
-                        <a href="<?php echo base_url('team.php'); ?>" class="modern-nav-link" style="padding: var(--space-md);">Our Team</a>
-                        <a href="<?php echo base_url('quote.php'); ?>" class="modern-cta-button" style="width: 100%; justify-content: center; margin-top: var(--space-sm);">Get Quote</a>
-                        <a href="<?php echo base_url('contact.php'); ?>" class="modern-nav-link" style="padding: var(--space-md);">Contact Us</a>
+                        <a href="<?php echo e($url); ?>" class="modern-mobile-nav-link <?php echo $isActive ? 'active' : ''; ?>">
+                            <span><?php echo htmlspecialchars($title); ?></span>
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </a>
                         <?php
                     }
                     ?>
+                    <a href="<?php echo base_url('quote.php'); ?>" class="modern-mobile-cta-button">
+                        <span>Get Free Quote</span>
+                        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                        </svg>
+                    </a>
                 </nav>
             </div>
         </div>

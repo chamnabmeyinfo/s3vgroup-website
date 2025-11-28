@@ -90,40 +90,50 @@ if ($useHomepageBuilder) {
 }
 
 if (!$useHomepageBuilder) {
-    // Use new design matching GLOBAL INDUSTRIAL SOLUTIONS
-    ?>
+    // Check if hero slider is enabled
+    $enableHeroSlider = option('enable_hero_slider', '1') === '1';
     
-    <!-- Modern Hero Section -->
-    <section class="modern-hero">
-        <div class="modern-hero-content">
-            <div class="modern-hero-badge">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                </svg>
-                <span>Industrial Excellence Since 2020</span>
-            </div>
-            <h1 class="modern-hero-title">
-                <?php echo e(option('hero_title', 'Transform Your Warehouse Operations')); ?>
-            </h1>
-            <p class="modern-hero-description">
-                <?php echo e(option('hero_subtitle', 'Discover cutting-edge industrial solutions designed to optimize your workflow, increase productivity, and drive business growth.')); ?>
-            </p>
-            <div class="modern-hero-actions">
-                <a href="<?php echo base_url('products.php'); ?>" class="modern-hero-button-primary">
-                    <span>Explore Products</span>
-                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+    if ($enableHeroSlider && file_exists(__DIR__ . '/ae-includes/widgets/hero-slider.php')) {
+        // Include modern hero slider
+        include __DIR__ . '/ae-includes/widgets/modern-hero-slider.php';
+    } else {
+        // Use static modern hero section
+        ?>
+        
+        <!-- Modern Hero Section -->
+        <section class="modern-hero">
+            <div class="modern-hero-content">
+                <div class="modern-hero-badge">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                     </svg>
-                </a>
-                <a href="<?php echo base_url('quote.php'); ?>" class="modern-hero-button-secondary">
-                    <span>Get Free Quote</span>
-                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
-                    </svg>
-                </a>
+                    <span>Industrial Excellence Since 2020</span>
+                </div>
+                <h1 class="modern-hero-title">
+                    <?php echo e(option('hero_title', 'Transform Your Warehouse Operations')); ?>
+                </h1>
+                <p class="modern-hero-description">
+                    <?php echo e(option('hero_subtitle', 'Discover cutting-edge industrial solutions designed to optimize your workflow, increase productivity, and drive business growth.')); ?>
+                </p>
+                <div class="modern-hero-actions">
+                    <a href="<?php echo base_url('products.php'); ?>" class="modern-hero-button-primary">
+                        <span>Explore Products</span>
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                        </svg>
+                    </a>
+                    <a href="<?php echo base_url('quote.php'); ?>" class="modern-hero-button-secondary">
+                        <span>Get Free Quote</span>
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                        </svg>
+                    </a>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+        <?php
+    }
+    ?>
 
     <!-- Products Section -->
     <section class="modern-section">

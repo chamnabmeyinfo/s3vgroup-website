@@ -120,28 +120,54 @@
     }
 
     // ============================================
-    // Animate on Scroll
+    // Animate on Scroll - Enhanced with Stagger
     // ============================================
     function initScrollAnimations() {
         const observerOptions = {
             threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
+            rootMargin: '0px 0px -80px 0px'
         };
 
         const observer = new IntersectionObserver(function(entries) {
-            entries.forEach(entry => {
+            entries.forEach((entry, index) => {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('animated');
-                    // Optional: Unobserve after animation to improve performance
-                    // observer.unobserve(entry.target);
+                    // Add staggered delay based on index
+                    const delay = index % 6 * 100;
+                    setTimeout(() => {
+                        entry.target.classList.add('animated');
+                    }, delay);
+                    
+                    // Unobserve after animation for performance
+                    observer.unobserve(entry.target);
                 }
             });
         }, observerOptions);
 
         // Observe all elements with animation class
-        document.querySelectorAll('.modern-animate-on-scroll').forEach(el => {
+        document.querySelectorAll('.modern-animate-on-scroll').forEach((el, index) => {
+            // Add data attribute for stagger effect
+            el.setAttribute('data-animation-index', index);
             observer.observe(el);
         });
+        
+                    // Add subtle parallax effect to hero section
+        const hero = document.querySelector('.modern-hero');
+        if (hero) {
+            let ticking = false;
+            window.addEventListener('scroll', function() {
+                if (!ticking) {
+                    window.requestAnimationFrame(function() {
+                        const scrolled = window.pageYOffset;
+                        if (scrolled < hero.offsetHeight) {
+                            const rate = scrolled * 0.3;
+                            hero.style.transform = `translateY(${rate}px)`;
+                        }
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
+        }
     }
 
     // ============================================

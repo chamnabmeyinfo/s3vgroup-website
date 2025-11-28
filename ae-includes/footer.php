@@ -25,16 +25,13 @@
             <div class="modern-footer-brand">
                 <div class="modern-footer-logo">
                     <?php if ($siteLogoUrl): ?>
-                        <img src="<?php echo e($siteLogoUrl); ?>" alt="<?php echo e($siteName); ?>">
+                        <img src="<?php echo e($siteLogoUrl); ?>" alt="<?php echo e($siteName); ?>" class="modern-footer-logo-image">
                     <?php else: ?>
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
+                        <div class="modern-footer-logo-text">
+                            <span class="modern-footer-logo-text-top">GLOBAL</span>
+                            <span class="modern-footer-logo-text-bottom">INDUSTRIAL SOLUTIONS</span>
+                        </div>
                     <?php endif; ?>
-                    <div class="modern-footer-logo-text">
-                        <span class="modern-footer-logo-text-top">GLOBAL</span>
-                        <span class="modern-footer-logo-text-bottom">INDUSTRIAL SOLUTIONS</span>
-                    </div>
                 </div>
                 <p class="modern-footer-description">
                     <?php echo e($siteConfig['description'] ?? 'Professional warehouse equipment solutions for your business needs.'); ?>

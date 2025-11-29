@@ -303,6 +303,26 @@ include __DIR__ . '/includes/header.php';
                 </div>
             </div>
 
+            <div class="bg-white rounded-lg p-4 mb-4 border border-blue-100">
+                <h3 class="text-sm font-semibold text-gray-900 mb-3">Data Mode</h3>
+                <div class="space-y-3">
+                    <label class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                        <input type="radio" name="data-mode" value="overwrite" checked class="mr-3 w-4 h-4 text-blue-600 focus:ring-blue-500">
+                        <div>
+                            <span class="text-sm font-semibold text-gray-900">Overwrite</span>
+                            <p class="text-xs text-gray-500 mt-0.5">Replace all data in cPanel with local data (cPanel will have exactly what local has)</p>
+                        </div>
+                    </label>
+                    <label class="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                        <input type="radio" name="data-mode" value="append" class="mr-3 w-4 h-4 text-blue-600 focus:ring-blue-500">
+                        <div>
+                            <span class="text-sm font-semibold text-gray-900">Append</span>
+                            <p class="text-xs text-gray-500 mt-0.5">Add/update data without deleting existing records (merges local + cPanel data)</p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
             <div class="flex items-center gap-3 mb-4 p-3 bg-white rounded-lg border border-blue-100">
                 <input type="checkbox" id="auto-sync-backup" checked class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
                 <label for="auto-sync-backup" class="text-sm text-gray-700 cursor-pointer">Create backup before sync</label>
@@ -799,15 +819,29 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
+        // Get data mode
+        const dataMode = document.querySelector('input[name="data-mode"]:checked').value;
+        
         // Confirm before syncing
-        const confirmed = confirm(
-            '⚠️ WARNING: This will overwrite your cPanel database with your local database!\n\n' +
-            'This action cannot be undone. Make sure:\n' +
-            '1. You have pulled latest data from cPanel\n' +
-            '2. You have a backup of cPanel database\n' +
-            '3. You want to proceed with the push\n\n' +
-            'Continue with push?'
-        );
+        let confirmMessage = '';
+        if (dataMode === 'overwrite') {
+            confirmMessage = '⚠️ WARNING: This will OVERWRITE your cPanel database with your local database!\n\n' +
+                'cPanel will have EXACTLY what local has (all existing cPanel data will be deleted).\n\n' +
+                'This action cannot be undone. Make sure:\n' +
+                '1. You have pulled latest data from cPanel\n' +
+                '2. You have a backup of cPanel database\n' +
+                '3. You want to proceed with the push\n\n' +
+                'Continue with push?';
+        } else {
+            confirmMessage = '⚠️ WARNING: This will APPEND/MERGE your local database with cPanel database!\n\n' +
+                'Local data will be added/updated in cPanel (existing cPanel data will be preserved and updated).\n\n' +
+                'Make sure:\n' +
+                '1. You have a backup of cPanel database\n' +
+                '2. You want to proceed with the append\n\n' +
+                'Continue with push?';
+        }
+        
+        const confirmed = confirm(confirmMessage);
 
         if (!confirmed) {
             return;
@@ -822,6 +856,7 @@ document.addEventListener('DOMContentLoaded', function() {
         logContent.textContent = 'Starting automatic sync from local to cPanel...\n';
 
         const syncMode = document.querySelector('input[name="sync-mode"]:checked').value;
+        const dataMode = document.querySelector('input[name="data-mode"]:checked').value;
         const createBackup = document.getElementById('auto-sync-backup').checked;
 
         try {
@@ -830,6 +865,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     sync_mode: syncMode,
+                    data_mode: dataMode,
                     create_backup: createBackup,
                 }),
             });
@@ -855,6 +891,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     logContent.textContent += '✅ Push completed successfully!\n';
                     logContent.textContent += `   - Executed: ${result.data.executed} statements\n`;
                     logContent.textContent += `   - Mode: ${result.data.sync_mode === 'full' ? 'Full Push' : 'Structure Only'}\n`;
+                    logContent.textContent += `   - Data Mode: ${result.data.data_mode === 'overwrite' ? 'Overwrite (cPanel has exactly what local has)' : 'Append (merged with existing data)'}\n`;
                     if (result.data.errors > 0) {
                         logContent.textContent += `   - Errors: ${result.data.errors}\n`;
                     }

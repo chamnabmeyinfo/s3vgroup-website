@@ -51,11 +51,13 @@ try {
     $payload = json_decode(file_get_contents('php://input'), true) ?? [];
     $createBackup = $payload['create_backup'] ?? true;
     $syncMode = $payload['sync_mode'] ?? 'full'; // 'full' or 'structure_only'
+    $dataMode = $payload['data_mode'] ?? 'overwrite'; // 'overwrite' or 'append'
 
     // Initialize operation log
     $operationLog = [];
     $operationLog[] = ['step' => 1, 'status' => 'info', 'message' => 'Starting push operation from local to cPanel...'];
     $operationLog[] = ['step' => 1, 'status' => 'info', 'message' => 'Mode: ' . ($syncMode === 'full' ? 'Full Push (structure + data)' : 'Structure Only')];
+    $operationLog[] = ['step' => 1, 'status' => 'info', 'message' => 'Data Mode: ' . ($dataMode === 'overwrite' ? 'Overwrite (cPanel will have exactly what local has)' : 'Append (merge local + cPanel data)')];
 
     // Step 1: Export from local database
     $operationLog[] = ['step' => 2, 'status' => 'info', 'message' => 'Fetching table list from local database...'];
@@ -149,14 +151,30 @@ try {
     foreach ($tables as $table) {
         $tableCount++;
         try {
-            // Always include structure
-            $output[] = "DROP TABLE IF EXISTS `{$table}`;";
-            
-            $createTableResult = $localDb->query("SHOW CREATE TABLE `{$table}`");
-            $createTable = $createTableResult ? $createTableResult->fetch(PDO::FETCH_ASSOC) : null;
-            if ($createTable && isset($createTable['Create Table'])) {
-                $output[] = $createTable['Create Table'] . ";";
-                $output[] = "";
+            // Include structure based on data mode
+            if ($dataMode === 'overwrite') {
+                // Overwrite mode: Drop and recreate tables
+                $output[] = "DROP TABLE IF EXISTS `{$table}`;";
+                
+                $createTableResult = $localDb->query("SHOW CREATE TABLE `{$table}`");
+                $createTable = $createTableResult ? $createTableResult->fetch(PDO::FETCH_ASSOC) : null;
+                if ($createTable && isset($createTable['Create Table'])) {
+                    $output[] = $createTable['Create Table'] . ";";
+                    $output[] = "";
+                }
+            } else {
+                // Append mode: Only create table if it doesn't exist
+                $output[] = "CREATE TABLE IF NOT EXISTS `{$table}` LIKE `{$table}`;";
+                
+                $createTableResult = $localDb->query("SHOW CREATE TABLE `{$table}`");
+                $createTable = $createTableResult ? $createTableResult->fetch(PDO::FETCH_ASSOC) : null;
+                if ($createTable && isset($createTable['Create Table'])) {
+                    // Replace CREATE TABLE with CREATE TABLE IF NOT EXISTS
+                    $createTableSql = $createTable['Create Table'];
+                    $createTableSql = preg_replace('/^CREATE TABLE/', 'CREATE TABLE IF NOT EXISTS', $createTableSql);
+                    $output[] = $createTableSql . ";";
+                    $output[] = "";
+                }
             }
 
             // Include data if full sync
@@ -214,8 +232,57 @@ try {
                         
                         // Use multi-row INSERT for efficiency
                         if (!empty($valueGroups)) {
-                            $output[] = "INSERT INTO `{$table}` ({$columnList}) VALUES";
-                            $output[] = implode(",\n", $valueGroups) . ";";
+                            if ($dataMode === 'overwrite') {
+                                // Overwrite mode: Simple INSERT (table was dropped, so no conflicts)
+                                $output[] = "INSERT INTO `{$table}` ({$columnList}) VALUES";
+                                $output[] = implode(",\n", $valueGroups) . ";";
+                            } else {
+                                // Append mode: Use INSERT ... ON DUPLICATE KEY UPDATE
+                                // First, get primary key or unique columns
+                                $primaryKey = null;
+                                $uniqueKeys = [];
+                                try {
+                                    $keyInfo = $localDb->query("SHOW KEYS FROM `{$table}` WHERE Key_name = 'PRIMARY' OR Non_unique = 0");
+                                    if ($keyInfo) {
+                                        $keys = $keyInfo->fetchAll(PDO::FETCH_ASSOC);
+                                        foreach ($keys as $key) {
+                                            if ($key['Key_name'] === 'PRIMARY') {
+                                                $primaryKey = $key['Column_name'];
+                                            } else {
+                                                $uniqueKeys[] = $key['Column_name'];
+                                            }
+                                        }
+                                    }
+                                } catch (\PDOException $e) {
+                                    // Continue without key info
+                                }
+                                
+                                // Build ON DUPLICATE KEY UPDATE clause
+                                $updateClause = [];
+                                if ($primaryKey || !empty($uniqueKeys)) {
+                                    // Update all columns except the key
+                                    foreach ($columns as $col) {
+                                        if ($col !== $primaryKey && !in_array($col, $uniqueKeys)) {
+                                            $updateClause[] = "`{$col}` = VALUES(`{$col}`)";
+                                        }
+                                    }
+                                } else {
+                                    // No primary key - update all columns
+                                    foreach ($columns as $col) {
+                                        $updateClause[] = "`{$col}` = VALUES(`{$col}`)";
+                                    }
+                                }
+                                
+                                if (!empty($updateClause)) {
+                                    $output[] = "INSERT INTO `{$table}` ({$columnList}) VALUES";
+                                    $output[] = implode(",\n", $valueGroups);
+                                    $output[] = "ON DUPLICATE KEY UPDATE " . implode(", ", $updateClause) . ";";
+                                } else {
+                                    // Fallback to simple INSERT if no update clause
+                                    $output[] = "INSERT IGNORE INTO `{$table}` ({$columnList}) VALUES";
+                                    $output[] = implode(",\n", $valueGroups) . ";";
+                                }
+                            }
                             $output[] = "";
                         }
                         
@@ -239,6 +306,7 @@ try {
     $output[] = "";
     
     $exportMessage = '✓ Exported ' . $tableCount . ' tables' . ($syncMode === 'full' ? ' with ' . number_format($rowCount) . ' rows' : ' (structure only)');
+    $exportMessage .= ' [' . ($dataMode === 'overwrite' ? 'Overwrite' : 'Append') . ' mode]';
     if ($urlReplacements > 0) {
         $exportMessage .= ' (replaced ' . $urlReplacements . ' localhost URLs with production URL)';
     }
@@ -513,6 +581,7 @@ try {
     ob_end_clean();
 
     $message = "Push completed successfully! Executed {$executed} statements.";
+    $message .= " Mode: " . ($dataMode === 'overwrite' ? 'Overwrite' : 'Append');
     if (!empty($errors)) {
         $message .= " " . count($errors) . " errors occurred (check logs for details).";
         error_log("Database sync errors: " . implode("\n", $errors));
@@ -529,6 +598,7 @@ try {
         'total_statements' => count($statements),
         'errors' => count($errors),
         'sync_mode' => $syncMode,
+        'data_mode' => $dataMode,
         'tables_synced' => $tableCount,
         'rows_synced' => $rowCount,
         'url_replacements' => $urlReplacements,

@@ -1,0 +1,544 @@
+/**
+ * Homepage UX/UI Enhancements
+ * Modern, engaging, and user-friendly improvements
+ */
+
+/* ============================================
+   HERO SECTION ENHANCEMENTS
+   ============================================ */
+
+.modern-hero {
+    position: relative;
+    min-height: clamp(500px, 70vh, 800px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, 
+        var(--color-primary, #0b3a63) 0%, 
+        var(--color-primary-light, #1a5a8a) 50%,
+        var(--color-primary-dark, #082a4a) 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 15s ease infinite;
+    overflow: hidden;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.modern-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 50%, rgba(250, 79, 38, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(245, 158, 11, 0.1) 0%, transparent 50%);
+    animation: float 20s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.modern-hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: var(--container-xl, 1280px);
+    margin: 0 auto;
+    padding: var(--space-2xl, 2rem);
+    text-align: center;
+    color: var(--color-white, #ffffff);
+    animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modern-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm, 0.5rem);
+    padding: var(--space-sm, 0.5rem) var(--space-lg, 1rem);
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-full, 9999px);
+    font-size: clamp(0.875rem, 1.5vw, 1rem);
+    font-weight: 600;
+    margin-bottom: var(--space-xl, 1.5rem);
+    animation: fadeInDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+    transition: all var(--transition-base, 300ms);
+}
+
+.modern-hero-badge:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.modern-hero-badge svg {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.modern-hero-title {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: var(--space-lg, 1rem);
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+    letter-spacing: -0.02em;
+}
+
+.modern-hero-description {
+    font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+    line-height: 1.6;
+    max-width: 700px;
+    margin: 0 auto var(--space-2xl, 2rem);
+    opacity: 0.95;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+}
+
+.modern-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md, 1rem);
+    justify-content: center;
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+}
+
+.modern-hero-button-primary,
+.modern-hero-button-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm, 0.5rem);
+    padding: var(--space-md, 0.75rem) var(--space-xl, 1.5rem);
+    font-size: clamp(1rem, 1.5vw, 1.125rem);
+    font-weight: 600;
+    border-radius: var(--radius-lg, 0.5rem);
+    transition: all var(--transition-base, 300ms);
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.modern-hero-button-primary {
+    background: var(--color-accent, #fa4f26);
+    color: var(--color-white, #ffffff);
+    box-shadow: 0 4px 20px rgba(250, 79, 38, 0.4);
+}
+
+.modern-hero-button-primary::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.modern-hero-button-primary:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 30px rgba(250, 79, 38, 0.6);
+}
+
+.modern-hero-button-primary:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.modern-hero-button-secondary {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    color: var(--color-white, #ffffff);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.modern-hero-button-secondary:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+.modern-hero-button-primary svg,
+.modern-hero-button-secondary svg {
+    transition: transform var(--transition-base, 300ms);
+}
+
+.modern-hero-button-primary:hover svg,
+.modern-hero-button-secondary:hover svg {
+    transform: translateX(4px);
+}
+
+/* ============================================
+   PRODUCT CATEGORIES GRID ENHANCEMENTS
+   ============================================ */
+
+.modern-section {
+    padding: clamp(3rem, 8vw, 6rem) var(--space-xl, 1.5rem);
+    position: relative;
+}
+
+.modern-section-alt {
+    background: linear-gradient(to bottom, 
+        var(--color-gray-50, #f9fafb) 0%, 
+        var(--color-white, #ffffff) 100%);
+}
+
+.modern-section-header {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto var(--space-3xl, 3rem);
+}
+
+.modern-section-badge {
+    display: inline-block;
+    padding: var(--space-xs, 0.375rem) var(--space-md, 0.75rem);
+    background: linear-gradient(135deg, 
+        var(--color-primary, #0b3a63), 
+        var(--color-primary-light, #1a5a8a));
+    color: var(--color-white, #ffffff);
+    border-radius: var(--radius-full, 9999px);
+    font-size: clamp(0.75rem, 1.2vw, 0.875rem);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-md, 1rem);
+}
+
+.modern-section-title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: var(--space-md, 1rem);
+    color: var(--color-gray-900, #111827);
+    letter-spacing: -0.02em;
+}
+
+.modern-section-description {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    line-height: 1.6;
+    color: var(--color-gray-600, #4b5563);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.modern-grid {
+    display: grid;
+    gap: var(--space-xl, 1.5rem);
+    max-width: var(--container-2xl, 1400px);
+    margin: 0 auto;
+}
+
+.modern-grid-3 {
+    grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+}
+
+.modern-grid-2 {
+    grid-template-columns: repeat(auto-fit, minmax(min(400px, 100%), 1fr));
+}
+
+.modern-card {
+    background: var(--color-white, #ffffff);
+    border-radius: var(--radius-xl, 1rem);
+    overflow: hidden;
+    box-shadow: var(--shadow-md, 0 4px 6px rgba(0, 0, 0, 0.1));
+    transition: all var(--transition-smooth, 600ms);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.modern-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+        rgba(11, 58, 99, 0.05) 0%, 
+        rgba(250, 79, 38, 0.05) 100%);
+    opacity: 0;
+    transition: opacity var(--transition-base, 300ms);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.modern-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: var(--shadow-2xl, 0 25px 50px rgba(0, 0, 0, 0.15));
+}
+
+.modern-card:hover::before {
+    opacity: 1;
+}
+
+.modern-card-image {
+    width: 100%;
+    height: clamp(200px, 30vw, 280px);
+    object-fit: cover;
+    transition: transform var(--transition-smooth, 600ms);
+    position: relative;
+    z-index: 0;
+}
+
+.modern-card:hover .modern-card-image {
+    transform: scale(1.1) rotate(1deg);
+}
+
+.modern-card-content {
+    padding: var(--space-lg, 1.5rem);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 2;
+}
+
+.modern-card-title {
+    font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+    font-weight: 700;
+    margin-bottom: var(--space-sm, 0.5rem);
+    color: var(--color-gray-900, #111827);
+    line-height: 1.3;
+}
+
+.modern-card-description {
+    font-size: clamp(0.875rem, 1.5vw, 1rem);
+    line-height: 1.6;
+    color: var(--color-gray-600, #4b5563);
+    margin-bottom: var(--space-md, 1rem);
+    flex: 1;
+}
+
+.modern-card-footer {
+    margin-top: auto;
+}
+
+.modern-card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs, 0.375rem);
+    color: var(--color-primary, #0b3a63);
+    font-weight: 600;
+    text-decoration: none;
+    transition: all var(--transition-base, 300ms);
+    padding: var(--space-xs, 0.375rem) 0;
+}
+
+.modern-card-link:hover {
+    color: var(--color-accent, #fa4f26);
+    gap: var(--space-sm, 0.5rem);
+}
+
+.modern-card-link svg {
+    transition: transform var(--transition-base, 300ms);
+}
+
+.modern-card-link:hover svg {
+    transform: translateX(4px);
+}
+
+/* Image Loading States */
+.modern-card-image {
+    background: linear-gradient(
+        90deg,
+        var(--color-gray-100, #f3f4f6) 0%,
+        var(--color-gray-200, #e5e7eb) 50%,
+        var(--color-gray-100, #f3f4f6) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.modern-card-image[loading="lazy"] {
+    animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.modern-card-image:not([src=""]) {
+    animation: none;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* ============================================
+   FEATURED PRODUCTS ENHANCEMENTS
+   ============================================ */
+
+.modern-card.featured-product {
+    position: relative;
+}
+
+.modern-card.featured-product::after {
+    content: 'Featured';
+    position: absolute;
+    top: var(--space-md, 1rem);
+    right: var(--space-md, 1rem);
+    padding: var(--space-xs, 0.375rem) var(--space-md, 0.75rem);
+    background: var(--color-accent, #fa4f26);
+    color: var(--color-white, #ffffff);
+    border-radius: var(--radius-full, 9999px);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    z-index: 3;
+    box-shadow: 0 4px 12px rgba(250, 79, 38, 0.4);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+/* ============================================
+   SERVICES SECTION ENHANCEMENTS
+   ============================================ */
+
+.modern-card.service-card {
+    text-align: center;
+    padding: var(--space-xl, 1.5rem);
+}
+
+.modern-card.service-card .modern-card-content {
+    padding: 0;
+}
+
+.service-icon-wrapper {
+    width: clamp(64px, 8vw, 80px);
+    height: clamp(64px, 8vw, 80px);
+    margin: 0 auto var(--space-lg, 1.5rem);
+    background: linear-gradient(135deg, 
+        var(--color-primary, #0b3a63), 
+        var(--color-primary-light, #1a5a8a));
+    border-radius: var(--radius-xl, 1rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-base, 300ms);
+    box-shadow: 0 4px 20px rgba(11, 58, 99, 0.2);
+}
+
+.modern-card.service-card:hover .service-icon-wrapper {
+    transform: translateY(-4px) rotate(5deg) scale(1.1);
+    box-shadow: 0 8px 30px rgba(11, 58, 99, 0.3);
+}
+
+.service-icon-wrapper svg {
+    width: clamp(32px, 4vw, 40px);
+    height: clamp(32px, 4vw, 40px);
+    color: var(--color-white, #ffffff);
+}
+
+/* ============================================
+   SCROLL ANIMATIONS
+   ============================================ */
+
+.modern-animate-on-scroll {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modern-animate-on-scroll.animated {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Staggered animations for grid items */
+.modern-grid > .modern-animate-on-scroll:nth-child(1) { transition-delay: 0.1s; }
+.modern-grid > .modern-animate-on-scroll:nth-child(2) { transition-delay: 0.2s; }
+.modern-grid > .modern-animate-on-scroll:nth-child(3) { transition-delay: 0.3s; }
+.modern-grid > .modern-animate-on-scroll:nth-child(4) { transition-delay: 0.4s; }
+.modern-grid > .modern-animate-on-scroll:nth-child(5) { transition-delay: 0.5s; }
+.modern-grid > .modern-animate-on-scroll:nth-child(6) { transition-delay: 0.6s; }
+
+/* ============================================
+   RESPONSIVE ENHANCEMENTS
+   ============================================ */
+
+@media (max-width: 768px) {
+    .modern-hero {
+        min-height: clamp(400px, 60vh, 600px);
+    }
+    
+    .modern-hero-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .modern-hero-button-primary,
+    .modern-hero-button-secondary {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .modern-grid-3,
+    .modern-grid-2 {
+        grid-template-columns: 1fr;
+    }
+    
+    .modern-section {
+        padding: clamp(2rem, 6vw, 4rem) var(--space-md, 1rem);
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .modern-grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ============================================
+   ACCESSIBILITY ENHANCEMENTS
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    .modern-hero,
+    .modern-card,
+    .modern-animate-on-scroll,
+    .modern-hero-badge svg {
+        animation: none !important;
+        transition: none !important;
+    }
+    
+    .modern-card:hover {
+        transform: none;
+    }
+}
+
+/* Focus states for keyboard navigation */
+.modern-hero-button-primary:focus,
+.modern-hero-button-secondary:focus,
+.modern-card-link:focus {
+    outline: 3px solid var(--color-accent, #fa4f26);
+    outline-offset: 2px;
+}
+
+/* ============================================
+   PERFORMANCE OPTIMIZATIONS
+   ============================================ */
+
+.modern-card-image {
+    will-change: transform;
+}
+
+.modern-card {
+    will-change: transform;
+}
+
+/* Use GPU acceleration for smooth animations */
+.modern-hero,
+.modern-card,
+.modern-hero-button-primary,
+.modern-hero-button-secondary {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+

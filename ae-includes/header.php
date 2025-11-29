@@ -77,6 +77,10 @@ $faviconUrl = $favicon ? fullImageUrl($favicon) : '';
     <link rel="stylesheet" href="<?php echo asset('ae-includes/css/modern-frontend.css'); ?>?v=<?php echo $assetVersion; ?>">
     <link rel="stylesheet" href="<?php echo asset('ae-includes/css/mobile-app-responsive.css'); ?>?v=<?php echo $assetVersion; ?>">
     <link rel="stylesheet" href="<?php echo asset('ae-includes/css/category-filter.css'); ?>?v=<?php echo $assetVersion; ?>">
+    <?php if (basename($_SERVER['PHP_SELF']) === 'index.php' || (isset($_SERVER['REQUEST_URI']) && parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) === '/')): ?>
+    <link rel="stylesheet" href="<?php echo asset('ae-includes/css/homepage-ux-enhancements.css'); ?>?v=<?php echo $assetVersion; ?>">
+    <link rel="stylesheet" href="<?php echo asset('ae-includes/css/homepage-redesign.css'); ?>?v=<?php echo $assetVersion; ?>">
+    <?php endif; ?>
     <script src="<?php echo asset('ae-includes/js/category-images.js'); ?>?v=<?php echo $assetVersion; ?>" defer></script>
     <script src="<?php echo asset('ae-includes/js/mobile-app.js'); ?>?v=<?php echo $assetVersion; ?>" defer></script>
     <?php

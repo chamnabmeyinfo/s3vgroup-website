@@ -26,8 +26,26 @@ if (file_exists(__DIR__ . '/ae-includes/functions.php')) {
 $db = getDB();
 $categorySlug = $_GET['category'] ?? null;
 
-// Fetch only published products (ProductRepository->paginate() already filters by PUBLISHED status)
-$products = getAllProducts($db, $categorySlug);
+// Fetch ALL published products (no limit to show all published products)
+// Use ProductRepository->all() with status filter to get all published products
+try {
+    $repository = new \App\Domain\Catalog\ProductRepository($db);
+    $filters = ['status' => 'PUBLISHED'];
+    
+    // If category filter is provided, get category ID first
+    if ($categorySlug) {
+        $categoryRepository = new \App\Domain\Catalog\CategoryRepository($db);
+        $category = $categoryRepository->findBySlug($categorySlug);
+        if ($category) {
+            $filters['categoryId'] = $category['id'];
+        }
+    }
+    
+    $products = $repository->all($filters);
+} catch (\Exception $e) {
+    error_log("Error fetching all products: " . $e->getMessage());
+    $products = [];
+}
 
 // Safety check: Ensure only published products are displayed (defense in depth)
 $products = array_filter($products, function($product) {

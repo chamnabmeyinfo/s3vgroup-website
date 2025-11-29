@@ -1420,16 +1420,7 @@ body {
     white-space: nowrap;
 }
 
-.admin-nav-item:nth-child(1) { animation-delay: 0.05s; }
-.admin-nav-item:nth-child(2) { animation-delay: 0.1s; }
-.admin-nav-item:nth-child(3) { animation-delay: 0.15s; }
-.admin-nav-item:nth-child(4) { animation-delay: 0.2s; }
-.admin-nav-item:nth-child(5) { animation-delay: 0.25s; }
-.admin-nav-item:nth-child(6) { animation-delay: 0.3s; }
-.admin-nav-item:nth-child(7) { animation-delay: 0.35s; }
-.admin-nav-item:nth-child(8) { animation-delay: 0.4s; }
-.admin-nav-item:nth-child(9) { animation-delay: 0.45s; }
-.admin-nav-item:nth-child(10) { animation-delay: 0.5s; }
+/* Staggered nav item animations removed */
 
 .admin-nav-item::before {
     content: '';
@@ -1511,7 +1502,7 @@ body {
     backdrop-filter: var(--backdrop-blur);
     -webkit-backdrop-filter: var(--backdrop-blur);
     transition: all var(--anim-normal, 0.4s) var(--anim-ease, cubic-bezier(0.25, 0.46, 0.45, 0.94));
-    animation: fadeInDown var(--anim-normal, 0.4s) var(--anim-ease, cubic-bezier(0.25, 0.46, 0.45, 0.94)) 0.2s backwards;
+    /* FadeInDown animation removed */
     will-change: transform, box-shadow, left;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
@@ -1553,7 +1544,7 @@ body.sidebar-collapsed .admin-topbar {
     color: var(--theme-text, #1e293b);
     transform: translateY(-3px) scale(1.05);
     box-shadow: var(--theme-shadow-card, var(--admin-shadow));
-    animation: pulse var(--anim-slow, 0.5s) ease-in-out;
+    /* Pulse animation removed */
 }
 
 .admin-user-menu {
@@ -1592,7 +1583,7 @@ body.sidebar-collapsed .admin-topbar {
     min-height: calc(100vh - 72px);
     background: var(--theme-surface, #f8fafc);
     transition: all var(--anim-normal, 0.4s) var(--anim-ease, cubic-bezier(0.25, 0.46, 0.45, 0.94));
-    animation: fadeIn var(--anim-slow, 0.6s) var(--anim-ease, cubic-bezier(0.25, 0.46, 0.45, 0.94)) 0.3s backwards;
+    /* FadeIn animation removed */
     will-change: background-color, margin-left, width;
     width: calc(100% - 280px);
     max-width: 100%;
@@ -1609,11 +1600,7 @@ body.sidebar-collapsed .admin-content-wrapper {
     transition: all var(--anim-normal, 0.4s) var(--anim-ease, cubic-bezier(0.25, 0.46, 0.45, 0.94));
 }
 
-.admin-content-wrapper > *:nth-child(1) { animation-delay: 0.1s; }
-.admin-content-wrapper > *:nth-child(2) { animation-delay: 0.15s; }
-.admin-content-wrapper > *:nth-child(3) { animation-delay: 0.2s; }
-.admin-content-wrapper > *:nth-child(4) { animation-delay: 0.25s; }
-.admin-content-wrapper > *:nth-child(5) { animation-delay: 0.3s; }
+/* Staggered content animations removed */
 
 /* Scrollbar - Theme-Aware */
 .admin-sidebar::-webkit-scrollbar {
@@ -1703,7 +1690,7 @@ body.sidebar-collapsed .admin-content-wrapper {
 }
 
 /* ============================================
-   ENHANCED MODERN ANIMATIONS
+   ANIMATIONS - MINIMAL (Fun animations removed)
    ============================================ */
 
 /* Page Load Animation */
@@ -1747,7 +1734,7 @@ body {
     transition: all var(--anim-normal, 0.4s) var(--anim-ease, cubic-bezier(0.25, 0.46, 0.45, 0.94));
 }
 
-/* Enhanced Card Animations */
+/* Card Animations - Minimal */
 .admin-card {
     position: relative;
     overflow: hidden;
@@ -1797,7 +1784,7 @@ body {
 .admin-btn:active::after {
     width: 300px;
     height: 300px;
-    animation: ripple var(--anim-fast, 0.15s) ease-out;
+    /* Ripple animation removed */
 }
 
 /* Enhanced Sidebar Brand Animation */
@@ -2451,19 +2438,15 @@ body[data-theme="macbook"] pre {
 /* Enhanced Statistics Cards */
 .stat-card {
     transition: all var(--anim-normal, 0.3s) var(--anim-ease);
-    animation: fadeInUp var(--anim-normal, 0.3s) var(--anim-ease) backwards;
+    /* FadeInUp animation removed */
 }
 
-.stat-card:nth-child(1) { animation-delay: 0.1s; }
-.stat-card:nth-child(2) { animation-delay: 0.15s; }
-.stat-card:nth-child(3) { animation-delay: 0.2s; }
-.stat-card:nth-child(4) { animation-delay: 0.25s; }
-.stat-card:nth-child(5) { animation-delay: 0.3s; }
+/* Staggered stat card animations removed */
 
 .stat-card:hover {
     transform: translateY(-6px) scale(1.03);
     box-shadow: var(--theme-shadow-elevated, var(--admin-shadow-lg));
-    animation: float var(--anim-slow, 0.5s) ease-in-out infinite;
+    /* Float animation removed */
 }
 
 /* ============================================

@@ -459,8 +459,7 @@
                 document.body.classList.toggle('dark-mode');
                 localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
                 
-                // Trigger confetti on mode change
-                triggerConfetti();
+                // Confetti removed
             });
         })();
 

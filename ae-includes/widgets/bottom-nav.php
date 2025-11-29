@@ -201,3 +201,11 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<?php
+} catch (Throwable $e) {
+    // Silently fail - log error but don't break the page
+    error_log('Bottom nav widget error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+    // Output nothing if there's an error
+}
+?>
+

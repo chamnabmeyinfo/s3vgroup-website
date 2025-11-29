@@ -299,10 +299,10 @@
     <?php 
     try {
         if (file_exists(__DIR__ . '/widgets/bottom-nav.php')) {
-            include __DIR__ . '/widgets/bottom-nav.php';
+            @include __DIR__ . '/widgets/bottom-nav.php';
         }
-    } catch (Exception $e) {
-        error_log('Bottom nav error: ' . $e->getMessage());
+    } catch (Throwable $e) {
+        error_log('Bottom nav include error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
         // Silently fail - don't break the page
     }
     ?>

@@ -9,10 +9,18 @@ use InvalidArgumentException;
 
 final class UserThemePreferenceService
 {
+    /** @var UserThemePreferenceRepository */
+    private $preferenceRepository;
+
+    /** @var ThemeRepository */
+    private $themeRepository;
+
     public function __construct(
-        private readonly UserThemePreferenceRepository $preferenceRepository,
-        private readonly ThemeRepository $themeRepository
+        UserThemePreferenceRepository $preferenceRepository,
+        ThemeRepository $themeRepository
     ) {
+        $this->preferenceRepository = $preferenceRepository;
+        $this->themeRepository = $themeRepository;
     }
 
     /**

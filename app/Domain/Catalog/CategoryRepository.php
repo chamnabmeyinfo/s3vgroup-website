@@ -11,8 +11,12 @@ use RuntimeException;
 
 final class CategoryRepository
 {
-    public function __construct(private readonly PDO $pdo)
+    /** @var PDO */
+    private $pdo;
+
+    public function __construct(PDO $pdo)
     {
+        $this->pdo = $pdo;
     }
 
     public function all(): array

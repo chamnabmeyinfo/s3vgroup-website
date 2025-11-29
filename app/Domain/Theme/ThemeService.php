@@ -11,8 +11,12 @@ use InvalidArgumentException;
 
 final class ThemeService
 {
-    public function __construct(private readonly ThemeRepository $repository)
+    /** @var ThemeRepository */
+    private $repository;
+
+    public function __construct(ThemeRepository $repository)
     {
+        $this->repository = $repository;
     }
 
     /**

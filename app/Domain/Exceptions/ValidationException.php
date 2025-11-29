@@ -12,14 +12,20 @@ final class ValidationException extends DomainException
     protected string $errorCode = 'VALIDATION_ERROR';
 
     /**
+     * @var array<string, string[]>
+     */
+    private $errors;
+
+    /**
      * @param array<string, string[]> $errors Field errors
      */
     public function __construct(
         string $message = 'Validation failed.',
-        private readonly array $errors = [],
+        array $errors = [],
         int $code = 0,
         ?\Throwable $previous = null
     ) {
+        $this->errors = $errors;
         parent::__construct($message, $code, $previous);
     }
 

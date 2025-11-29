@@ -10,8 +10,12 @@ use PDO;
 
 final class SiteOptionRepository
 {
-    public function __construct(private readonly PDO $pdo)
+    /** @var PDO */
+    private $pdo;
+
+    public function __construct(PDO $pdo)
     {
+        $this->pdo = $pdo;
     }
 
     public function all(): array
@@ -206,12 +210,17 @@ SQL;
             return null;
         }
 
-        return match ($type) {
-            'number'  => is_numeric($value) ? (str_contains($value, '.') ? (float) $value : (int) $value) : 0,
-            'boolean' => json_decode($value, true) ?? filter_var($value, FILTER_VALIDATE_BOOLEAN),
-            'json'    => json_decode($value, true),
-            default   => $value,
-        };
+        switch ($type) {
+            case 'number':
+                return is_numeric($value) ? (strpos($value, '.') !== false ? (float) $value : (int) $value) : 0;
+            case 'boolean':
+                $decoded = json_decode($value, true);
+                return $decoded !== null ? $decoded : filter_var($value, FILTER_VALIDATE_BOOLEAN);
+            case 'json':
+                return json_decode($value, true);
+            default:
+                return $value;
+        }
     }
 }
 

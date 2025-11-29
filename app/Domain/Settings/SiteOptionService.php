@@ -17,8 +17,12 @@ final class SiteOptionService
         'text', 'textarea', 'number', 'boolean', 'json', 'color', 'image', 'url',
     ];
 
-    public function __construct(private readonly SiteOptionRepository $repository)
+    /** @var SiteOptionRepository */
+    private $repository;
+
+    public function __construct(SiteOptionRepository $repository)
     {
+        $this->repository = $repository;
     }
 
     public function getAll(): array

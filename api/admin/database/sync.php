@@ -695,7 +695,7 @@ function processValueForSync($value, $column, $columnInfo, $pdo, $localUrls, $pr
 }
 
 /**
- * Verify that data was synced correctly by comparing row counts
+ * Verify that data was synced correctly by comparing row counts and sample data
  */
 function verifyDataSync(PDO $localDb, PDO $cpanelDb, array $tables): array
 {
@@ -704,12 +704,13 @@ function verifyDataSync(PDO $localDb, PDO $cpanelDb, array $tables): array
         'issues' => [],
         'verified_tables' => 0,
         'verified_rows' => 0,
+        'detailed_comparison' => [],
     ];
     
     foreach ($tables as $table) {
         try {
             // Check if table exists
-            $cpanelTables = $cpanelDb->query("SHOW TABLES LIKE '{$table}'")->fetchAll(PDO::FETCH_COLUMN);
+            $cpanelTables = $cpanelDb->query("SHOW TABLES LIKE '{$table}`")->fetchAll(PDO::FETCH_COLUMN);
             if (empty($cpanelTables)) {
                 $results['issues'][] = "Table `{$table}` does not exist in cPanel";
                 $results['success'] = false;
@@ -720,13 +721,50 @@ function verifyDataSync(PDO $localDb, PDO $cpanelDb, array $tables): array
             $localCount = (int) $localDb->query("SELECT COUNT(*) FROM `{$table}`")->fetchColumn();
             $cpanelCount = (int) $cpanelDb->query("SELECT COUNT(*) FROM `{$table}`")->fetchColumn();
             
+            $tableInfo = [
+                'table' => $table,
+                'local_rows' => $localCount,
+                'cpanel_rows' => $cpanelCount,
+                'match' => $localCount === $cpanelCount,
+            ];
+            
             if ($localCount !== $cpanelCount) {
-                $results['issues'][] = "Table `{$table}`: Row count mismatch (Local: {$localCount}, cPanel: {$cpanelCount})";
+                $results['issues'][] = "Table `{$table}`: Row count mismatch (Local: {$localCount}, cPanel: {$cpanelCount}, Difference: " . ($localCount - $cpanelCount) . ")";
                 $results['success'] = false;
+                $tableInfo['difference'] = $localCount - $cpanelCount;
             } else {
                 $results['verified_tables']++;
                 $results['verified_rows'] += $localCount;
             }
+            
+            // For important tables, do sample data comparison
+            if (in_array($table, ['products', 'categories', 'site_options', 'themes', 'team_members', 'testimonials'])) {
+                // Get a few sample records to compare
+                $localSample = $localDb->query("SELECT * FROM `{$table}` ORDER BY updatedAt DESC LIMIT 3")->fetchAll(PDO::FETCH_ASSOC);
+                $cpanelSample = $cpanelDb->query("SELECT * FROM `{$table}` ORDER BY updatedAt DESC LIMIT 3")->fetchAll(PDO::FETCH_ASSOC);
+                
+                $tableInfo['local_sample'] = count($localSample);
+                $tableInfo['cpanel_sample'] = count($cpanelSample);
+                
+                // Compare first record if exists
+                if (!empty($localSample) && !empty($cpanelSample)) {
+                    $localFirst = $localSample[0];
+                    $cpanelFirst = $cpanelSample[0];
+                    
+                    // Check key fields
+                    $keyFields = ['id', 'name', 'slug', 'status'];
+                    foreach ($keyFields as $field) {
+                        if (isset($localFirst[$field]) && isset($cpanelFirst[$field])) {
+                            if ($localFirst[$field] !== $cpanelFirst[$field]) {
+                                $tableInfo['data_mismatch'] = "Field `{$field}` differs in first record";
+                            }
+                        }
+                    }
+                }
+            }
+            
+            $results['detailed_comparison'][] = $tableInfo;
+            
         } catch (\PDOException $e) {
             $results['issues'][] = "Table `{$table}`: Verification error - " . $e->getMessage();
             $results['success'] = false;

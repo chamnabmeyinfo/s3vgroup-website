@@ -364,30 +364,40 @@ include __DIR__ . '/includes/header.php';
         </div>
     </div>
 
-    <!-- Comparison Report Card -->
+    <!-- Verification & Comparison Card -->
     <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border-2 border-purple-200 shadow-sm overflow-hidden">
         <div class="px-6 py-5 bg-gradient-to-r from-purple-100 to-pink-100 border-b border-purple-200">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </div>
                 <div>
-                    <h2 class="text-xl font-semibold text-gray-900">Database Comparison Report</h2>
-                    <p class="text-sm text-gray-600 mt-0.5">Compare local and cPanel databases to see differences</p>
+                    <h2 class="text-xl font-semibold text-gray-900">Verify Sync & Comparison</h2>
+                    <p class="text-sm text-gray-600 mt-0.5">Verify that cPanel has exactly what local has</p>
                 </div>
             </div>
         </div>
         <div class="p-6">
-            <button type="button" id="compare-btn" class="w-full px-6 py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all font-semibold text-base shadow-lg hover:shadow-xl mb-4">
-                <span class="flex items-center justify-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                    </svg>
-                    Generate Comparison Report
-                </span>
-            </button>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <button type="button" id="verify-sync-btn" class="px-6 py-3.5 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all font-semibold text-base shadow-lg hover:shadow-xl">
+                    <span class="flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Verify Sync Status
+                    </span>
+                </button>
+                <button type="button" id="compare-btn" class="px-6 py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all font-semibold text-base shadow-lg hover:shadow-xl">
+                    <span class="flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                        Detailed Comparison
+                    </span>
+                </button>
+            </div>
             
             <div id="compare-status" class="mb-4 text-sm hidden"></div>
             
@@ -935,6 +945,115 @@ document.addEventListener('DOMContentLoaded', function() {
         } finally {
             syncBtn.disabled = false;
             syncBtn.textContent = '⬆️ Push Local → cPanel Now';
+        }
+    });
+
+    // Verify sync status
+    document.getElementById('verify-sync-btn').addEventListener('click', async () => {
+        const verifyBtn = document.getElementById('verify-sync-btn');
+        const statusDiv = document.getElementById('compare-status');
+        const reportDiv = document.getElementById('comparison-report');
+        const summaryDiv = document.getElementById('report-summary');
+        const tablesDiv = document.getElementById('report-tables');
+        const dataDiv = document.getElementById('report-data');
+
+        verifyBtn.disabled = true;
+        verifyBtn.textContent = '🔍 Verifying...';
+        statusDiv.classList.remove('hidden');
+        statusDiv.textContent = 'Verifying sync status...';
+        statusDiv.className = 'mb-4 text-sm text-blue-600';
+        reportDiv.classList.add('hidden');
+
+        try {
+            const response = await fetch('/api/admin/database/verify-sync.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                const data = result.data;
+                statusDiv.textContent = data.exact_match 
+                    ? '✅ Databases match exactly! cPanel has exactly what local has.' 
+                    : '⚠️ ' + data.comparison.issues.length + ' issues found';
+                statusDiv.className = data.exact_match 
+                    ? 'mb-4 text-sm text-green-600 font-semibold' 
+                    : 'mb-4 text-sm text-yellow-600 font-semibold';
+                reportDiv.classList.remove('hidden');
+
+                // Display Summary
+                const summary = data.comparison.summary;
+                summaryDiv.innerHTML = `
+                    <h3 class="text-lg font-semibold text-gray-900 mb-3">📊 Verification Summary</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="text-center p-3 ${data.exact_match ? 'bg-green-50' : 'bg-blue-50'} rounded">
+                            <div class="text-2xl font-bold ${data.exact_match ? 'text-green-600' : 'text-blue-600'}">${summary.local_tables}</div>
+                            <div class="text-xs text-gray-600">Local Tables</div>
+                        </div>
+                        <div class="text-center p-3 ${data.exact_match ? 'bg-green-50' : 'bg-green-50'} rounded">
+                            <div class="text-2xl font-bold ${data.exact_match ? 'text-green-600' : 'text-green-600'}">${summary.cpanel_tables}</div>
+                            <div class="text-xs text-gray-600">cPanel Tables</div>
+                        </div>
+                        <div class="text-center p-3 ${data.exact_match ? 'bg-green-50' : 'bg-purple-50'} rounded">
+                            <div class="text-2xl font-bold ${data.exact_match ? 'text-green-600' : 'text-purple-600'}">${summary.common_tables}</div>
+                            <div class="text-xs text-gray-600">Common Tables</div>
+                        </div>
+                        <div class="text-center p-3 ${data.exact_match ? 'bg-green-50' : 'bg-red-50'} rounded">
+                            <div class="text-2xl font-bold ${data.exact_match ? 'text-green-600' : 'text-red-600'}">${data.comparison.issues.length}</div>
+                            <div class="text-xs text-gray-600">Issues Found</div>
+                        </div>
+                    </div>
+                    ${data.exact_match ? '<div class="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg"><p class="text-green-800 font-semibold">✅ Perfect Match! cPanel has exactly what local has.</p></div>' : ''}
+                `;
+
+                // Display Issues
+                if (data.comparison.issues.length > 0) {
+                    tablesDiv.innerHTML = `
+                        <h3 class="text-lg font-semibold text-gray-900 mb-3">⚠️ Issues Found</h3>
+                        <div class="space-y-2">
+                            ${data.comparison.issues.map(issue => `
+                                <div class="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                    <p class="text-sm text-yellow-800">${issue}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                } else {
+                    tablesDiv.innerHTML = '<p class="text-sm text-gray-600">✓ No issues found</p>';
+                }
+
+                // Display Table Details
+                if (data.comparison.tables.length > 0) {
+                    let tablesHtml = '<h3 class="text-lg font-semibold text-gray-900 mb-3">📋 Table Details</h3>';
+                    tablesHtml += '<div class="overflow-x-auto"><table class="min-w-full divide-y divide-gray-200"><thead class="bg-gray-50"><tr><th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Table</th><th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Local Rows</th><th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">cPanel Rows</th><th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th></tr></thead><tbody class="bg-white divide-y divide-gray-200">';
+                    
+                    data.comparison.tables.forEach(table => {
+                        const statusClass = table.match ? 'text-green-600' : 'text-red-600';
+                        const statusIcon = table.match ? '✓' : '✗';
+                        tablesHtml += `
+                            <tr>
+                                <td class="px-4 py-3 text-sm font-medium text-gray-900">${table.table}</td>
+                                <td class="px-4 py-3 text-sm text-gray-700">${table.local_rows.toLocaleString()}</td>
+                                <td class="px-4 py-3 text-sm text-gray-700">${table.cpanel_rows.toLocaleString()}</td>
+                                <td class="px-4 py-3 text-sm ${statusClass} font-semibold">${statusIcon} ${table.match ? 'Match' : 'Mismatch'}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    tablesHtml += '</tbody></table></div>';
+                    dataDiv.innerHTML = tablesHtml;
+                }
+
+            } else {
+                throw new Error(result.message || 'Verification failed');
+            }
+        } catch (error) {
+            statusDiv.textContent = '❌ Verification failed: ' + error.message;
+            statusDiv.className = 'mb-4 text-sm text-red-600 font-semibold';
+        } finally {
+            verifyBtn.disabled = false;
+            verifyBtn.textContent = '🔍 Verify Sync Status';
         }
     });
 

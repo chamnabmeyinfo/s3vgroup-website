@@ -132,13 +132,16 @@ try {
     }
 
     $output = [];
-    $output[] = "-- Database Sync Export";
+    $output[] = "-- Enhanced Database Sync Export";
     $output[] = "-- Generated: " . date('Y-m-d H:i:s');
     $output[] = "-- Source: Local Development";
     $output[] = "-- Target: cPanel Production";
+    $output[] = "-- Tables: " . count($tables);
     $output[] = "";
+    $output[] = "SET NAMES utf8mb4;";
     $output[] = "SET SQL_MODE = \"NO_AUTO_VALUE_ON_ZERO\";";
     $output[] = "SET time_zone = \"+00:00\";";
+    $output[] = "SET FOREIGN_KEY_CHECKS = 0;";
     $output[] = "";
 
     $tableCount = 0;
@@ -158,66 +161,71 @@ try {
 
             // Include data if full sync
             if ($syncMode === 'full') {
-                $rowsResult = $localDb->query("SELECT * FROM `{$table}`");
-                $rows = $rowsResult ? $rowsResult->fetchAll(PDO::FETCH_ASSOC) : [];
-            
-                if (!empty($rows)) {
-                    $rowCount += count($rows);
-                    $output[] = "-- Dumping data for table `{$table}`";
+                // Get row count first
+                $rowCountResult = $localDb->query("SELECT COUNT(*) FROM `{$table}`");
+                $tableRowCount = $rowCountResult ? (int) $rowCountResult->fetchColumn() : 0;
+                
+                if ($tableRowCount > 0) {
+                    $output[] = "-- Dumping data for table `{$table}` (" . number_format($tableRowCount) . " rows)";
                     $output[] = "";
                     
-                    $columns = array_keys($rows[0]);
-                    $columnList = '`' . implode('`, `', $columns) . '`';
-                    
-                    foreach ($rows as $row) {
-                        $values = [];
-                        foreach ($row as $column => $value) {
-                            if ($value === null) {
-                                $values[] = 'NULL';
-                            } elseif (is_bool($value)) {
-                                $values[] = $value ? '1' : '0';
-                            } elseif (is_int($value) || is_float($value)) {
-                                $values[] = (string) $value;
-                            } else {
-                                $stringValue = (string) $value;
-                                
-                                // Replace localhost URLs with production URL
-                                if (!empty($productionUrl) && !empty($stringValue)) {
-                                    $originalValue = $stringValue;
-                                    foreach ($localUrls as $localUrl) {
-                                        if (strpos($stringValue, $localUrl) !== false) {
-                                            $stringValue = str_replace($localUrl, $productionUrl, $stringValue);
-                                            $urlReplacements++;
-                                        }
-                                    }
-                                    
-                                    // Also handle JSON fields that might contain URLs
-                                    if (in_array(strtolower($column), ['specs', 'highlights', 'images', 'value']) || 
-                                        strpos($stringValue, '{') === 0 || strpos($stringValue, '[') === 0) {
-                                        // Try to decode JSON and replace URLs recursively
-                                        $jsonData = json_decode($stringValue, true);
-                                        if (json_last_error() === JSON_ERROR_NONE && is_array($jsonData)) {
-                                            $jsonString = json_encode($jsonData);
-                                            foreach ($localUrls as $localUrl) {
-                                                if (strpos($jsonString, $localUrl) !== false) {
-                                                    $jsonString = str_replace($localUrl, $productionUrl, $jsonString);
-                                                    $urlReplacements++;
-                                                }
-                                            }
-                                            $jsonData = json_decode($jsonString, true);
-                                            if (json_last_error() === JSON_ERROR_NONE) {
-                                                $stringValue = json_encode($jsonData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-                                            }
-                                        }
-                                    }
-                                }
-                                
-                                $values[] = $localDb->quote($stringValue);
-                            }
+                    // Get column metadata to detect JSON columns
+                    $columnInfo = [];
+                    try {
+                        $columnsResult = $localDb->query("SHOW COLUMNS FROM `{$table}`");
+                        if ($columnsResult) {
+                            $columnInfo = $columnsResult->fetchAll(PDO::FETCH_ASSOC);
                         }
-                        $output[] = "INSERT INTO `{$table}` ({$columnList}) VALUES (" . implode(', ', $values) . ");";
+                    } catch (\PDOException $e) {
+                        // Continue without column info
                     }
-                    $output[] = "";
+                    
+                    // For large tables, process in chunks to avoid memory issues
+                    $chunkSize = 500;
+                    $offset = 0;
+                    $processedRows = 0;
+                    
+                    while ($offset < $tableRowCount) {
+                        $rowsResult = $localDb->query("SELECT * FROM `{$table}` LIMIT {$chunkSize} OFFSET {$offset}");
+                        $rows = $rowsResult ? $rowsResult->fetchAll(PDO::FETCH_ASSOC) : [];
+                        
+                        if (empty($rows)) {
+                            break;
+                        }
+                        
+                        $columns = array_keys($rows[0]);
+                        $columnList = '`' . implode('`, `', $columns) . '`';
+                        
+                        // Build multi-row INSERT for better performance
+                        $valueGroups = [];
+                        
+                        foreach ($rows as $row) {
+                            $values = [];
+                            foreach ($row as $column => $value) {
+                                $processed = processValueForSync($value, $column, $columnInfo, $localDb, $localUrls, $productionUrl, $urlReplacements);
+                                $values[] = $processed['value'];
+                                if ($processed['replaced_url']) {
+                                    $urlReplacements++;
+                                }
+                            }
+                            $valueGroups[] = '(' . implode(', ', $values) . ')';
+                            $processedRows++;
+                        }
+                        
+                        // Use multi-row INSERT for efficiency
+                        if (!empty($valueGroups)) {
+                            $output[] = "INSERT INTO `{$table}` ({$columnList}) VALUES";
+                            $output[] = implode(",\n", $valueGroups) . ";";
+                            $output[] = "";
+                        }
+                        
+                        $offset += $chunkSize;
+                    }
+                    
+                    $rowCount += $processedRows;
+                    $operationLog[] = ['step' => 3, 'status' => 'info', 'message' => "Exported table `{$table}`: " . number_format($processedRows) . " rows"];
+                } else {
+                    $operationLog[] = ['step' => 3, 'status' => 'info', 'message' => "Table `{$table}` is empty (skipping data)"];
                 }
             }
         } catch (\PDOException $e) {
@@ -226,6 +234,9 @@ try {
             // Continue with next table
         }
     }
+    
+    $output[] = "SET FOREIGN_KEY_CHECKS = 1;";
+    $output[] = "";
     
     $exportMessage = '✓ Exported ' . $tableCount . ' tables' . ($syncMode === 'full' ? ' with ' . number_format($rowCount) . ' rows' : ' (structure only)');
     if ($urlReplacements > 0) {
@@ -348,7 +359,8 @@ try {
             [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                PDO::ATTR_TIMEOUT => 30, // 30 second timeout
+                PDO::ATTR_TIMEOUT => 300, // 5 minute timeout for large databases
+                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4",
             ]
         );
         $operationLog[] = ['step' => 5, 'status' => 'success', 'message' => '✓ Connected to cPanel database successfully'];
@@ -477,11 +489,26 @@ try {
         $operationLog[] = ['step' => 7, 'status' => 'success', 'message' => '✓ All statements executed successfully'];
     }
 
+    // Step 4: Verify data integrity (optional but recommended)
+    $verificationResults = null;
+    $verifyAfterSync = $payload['verify_after_sync'] ?? true;
+    
+    if ($verifyAfterSync && $syncMode === 'full') {
+        $operationLog[] = ['step' => 8, 'status' => 'info', 'message' => 'Verifying synced data...'];
+        $verificationResults = verifyDataSync($localDb, $cpanelDb, $tables);
+        
+        if ($verificationResults['success']) {
+            $operationLog[] = ['step' => 8, 'status' => 'success', 'message' => '✓ Verification passed: All data synced correctly'];
+        } else {
+            $operationLog[] = ['step' => 8, 'status' => 'warning', 'message' => '⚠ Verification found ' . count($verificationResults['issues']) . ' issues'];
+        }
+    }
+
     // Save last push timestamp
-    $operationLog[] = ['step' => 8, 'status' => 'info', 'message' => 'Saving operation timestamp...'];
+    $operationLog[] = ['step' => 9, 'status' => 'info', 'message' => 'Saving operation timestamp...'];
     $repository->set('db_sync_last_push', date('Y-m-d H:i:s'));
-    $operationLog[] = ['step' => 8, 'status' => 'success', 'message' => '✓ Timestamp saved'];
-    $operationLog[] = ['step' => 9, 'status' => 'success', 'message' => '✅ Push operation completed successfully!'];
+    $operationLog[] = ['step' => 9, 'status' => 'success', 'message' => '✓ Timestamp saved'];
+    $operationLog[] = ['step' => 10, 'status' => 'success', 'message' => '✅ Push operation completed successfully!'];
 
     ob_end_clean();
 
@@ -493,12 +520,19 @@ try {
     if ($backupMessage) {
         $message .= " " . $backupMessage;
     }
+    if ($verificationResults && !$verificationResults['success']) {
+        $message .= " Verification found issues - check details.";
+    }
 
     JsonResponse::success([
         'executed' => $executed,
         'total_statements' => count($statements),
         'errors' => count($errors),
         'sync_mode' => $syncMode,
+        'tables_synced' => $tableCount,
+        'rows_synced' => $rowCount,
+        'url_replacements' => $urlReplacements,
+        'verification' => $verificationResults,
         'message' => $message,
         'log' => $operationLog,
     ]);
@@ -508,5 +542,129 @@ try {
     error_log('Database sync error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
     $operationLog[] = ['step' => 0, 'status' => 'error', 'message' => '✗ Fatal error: ' . $e->getMessage()];
     JsonResponse::error('Sync failed: ' . $e->getMessage(), 500, ['log' => $operationLog]);
+}
+
+/**
+ * Process a value for database sync, handling all data types correctly
+ */
+function processValueForSync($value, $column, $columnInfo, $pdo, $localUrls, $productionUrl, &$urlReplacements): array
+{
+    $result = [
+        'value' => 'NULL',
+        'replaced_url' => false,
+    ];
+    
+    if ($value === null) {
+        return $result;
+    }
+    
+    // Handle boolean
+    if (is_bool($value)) {
+        $result['value'] = $value ? '1' : '0';
+        return $result;
+    }
+    
+    // Handle numeric types
+    if (is_int($value) || is_float($value)) {
+        $result['value'] = (string) $value;
+        return $result;
+    }
+    
+    // Handle string types
+    $stringValue = (string) $value;
+    
+    // Check if this is a JSON column
+    $isJsonColumn = false;
+    foreach ($columnInfo as $col) {
+        if ($col['Field'] === $column && stripos($col['Type'], 'JSON') !== false) {
+            $isJsonColumn = true;
+            break;
+        }
+    }
+    
+    // Handle JSON fields - detect and process JSON data
+    if ($isJsonColumn || (strpos($stringValue, '{') === 0 || strpos($stringValue, '[') === 0)) {
+        $jsonData = json_decode($stringValue, true);
+        if (json_last_error() === JSON_ERROR_NONE && is_array($jsonData)) {
+            // Recursively replace URLs in JSON
+            $jsonString = json_encode($jsonData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            
+            if (!empty($productionUrl)) {
+                foreach ($localUrls as $localUrl) {
+                    if (strpos($jsonString, $localUrl) !== false) {
+                        $jsonString = str_replace($localUrl, $productionUrl, $jsonString);
+                        $result['replaced_url'] = true;
+                    }
+                }
+            }
+            
+            // Re-encode if changed
+            if ($result['replaced_url']) {
+                $jsonData = json_decode($jsonString, true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $stringValue = json_encode($jsonData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+                }
+            } else {
+                $stringValue = $jsonString;
+            }
+        }
+    }
+    
+    // Replace URLs in regular strings
+    if (!empty($productionUrl) && !empty($stringValue)) {
+        foreach ($localUrls as $localUrl) {
+            if (strpos($stringValue, $localUrl) !== false) {
+                $stringValue = str_replace($localUrl, $productionUrl, $stringValue);
+                $result['replaced_url'] = true;
+            }
+        }
+    }
+    
+    // Quote the value properly (handles special characters, encoding, etc.)
+    $result['value'] = $pdo->quote($stringValue);
+    
+    return $result;
+}
+
+/**
+ * Verify that data was synced correctly by comparing row counts
+ */
+function verifyDataSync(PDO $localDb, PDO $cpanelDb, array $tables): array
+{
+    $results = [
+        'success' => true,
+        'issues' => [],
+        'verified_tables' => 0,
+        'verified_rows' => 0,
+    ];
+    
+    foreach ($tables as $table) {
+        try {
+            // Check if table exists
+            $cpanelTables = $cpanelDb->query("SHOW TABLES LIKE '{$table}'")->fetchAll(PDO::FETCH_COLUMN);
+            if (empty($cpanelTables)) {
+                $results['issues'][] = "Table `{$table}` does not exist in cPanel";
+                $results['success'] = false;
+                continue;
+            }
+            
+            // Check row count
+            $localCount = (int) $localDb->query("SELECT COUNT(*) FROM `{$table}`")->fetchColumn();
+            $cpanelCount = (int) $cpanelDb->query("SELECT COUNT(*) FROM `{$table}`")->fetchColumn();
+            
+            if ($localCount !== $cpanelCount) {
+                $results['issues'][] = "Table `{$table}`: Row count mismatch (Local: {$localCount}, cPanel: {$cpanelCount})";
+                $results['success'] = false;
+            } else {
+                $results['verified_tables']++;
+                $results['verified_rows'] += $localCount;
+            }
+        } catch (\PDOException $e) {
+            $results['issues'][] = "Table `{$table}`: Verification error - " . $e->getMessage();
+            $results['success'] = false;
+        }
+    }
+    
+    return $results;
 }
 

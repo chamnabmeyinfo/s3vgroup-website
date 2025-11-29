@@ -4,15 +4,40 @@
  * App-like bottom navigation menu for mobile devices
  */
 
+// Ensure bootstrap is loaded
 if (!function_exists('base_url')) {
-    require_once __DIR__ . '/../../bootstrap/app.php';
+    if (file_exists(__DIR__ . '/../../bootstrap/app.php')) {
+        require_once __DIR__ . '/../../bootstrap/app.php';
+    } elseif (file_exists(__DIR__ . '/../../ae-load.php')) {
+        require_once __DIR__ . '/../../ae-load.php';
+    }
+}
+
+// Ensure helper functions exist
+if (!function_exists('e')) {
+    function e($string) {
+        return htmlspecialchars($string ?? '', ENT_QUOTES, 'UTF-8');
+    }
+}
+
+if (!function_exists('base_url')) {
+    function base_url($path = '') {
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $base = rtrim(str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']), '/');
+        return $protocol . $host . $base . ($path ? '/' . ltrim($path, '/') : '');
+    }
 }
 
 $currentPath = $_SERVER['REQUEST_URI'] ?? '/';
 $currentPath = parse_url($currentPath, PHP_URL_PATH);
 
-// Get primary color for active state
-$primaryColor = option('primary_color', '#0b3a63');
+// Get primary color for active state with fallback
+try {
+    $primaryColor = function_exists('option') ? option('primary_color', '#0b3a63') : '#0b3a63';
+} catch (Exception $e) {
+    $primaryColor = '#0b3a63';
+}
 
 // Determine active page
 function isActive($path, $currentPath) {

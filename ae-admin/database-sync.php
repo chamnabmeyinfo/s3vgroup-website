@@ -856,7 +856,6 @@ document.addEventListener('DOMContentLoaded', function() {
         logContent.textContent = 'Starting automatic sync from local to cPanel...\n';
 
         const syncMode = document.querySelector('input[name="sync-mode"]:checked').value;
-        const dataMode = document.querySelector('input[name="data-mode"]:checked').value;
         const createBackup = document.getElementById('auto-sync-backup').checked;
 
         try {

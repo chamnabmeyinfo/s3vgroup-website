@@ -45,6 +45,13 @@ test-*.php
 import-database.php
 create-env-file.php
 setup-live-site.php
+check-errors.php
+diagnose-production.php
+HOTFIX-e-function.php
+fix-500-error.php
+create-database-config.php
+create-site-config.php
+cleanup-project.php
 
 # Database exports (contain sensitive data)
 database-*.sql

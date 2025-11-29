@@ -8,7 +8,26 @@ ini_set('log_errors', 1);
 require_once __DIR__ . '/ae-load.php';
 
 require_once __DIR__ . '/config/database.php';
-require_once __DIR__ . '/config/site.php';
+
+// Load site config with fallback
+if (file_exists(__DIR__ . '/config/site.php')) {
+    require_once __DIR__ . '/config/site.php';
+} else {
+    // Fallback if site.php doesn't exist
+    $siteConfig = [
+        'name' => 'S3V Group',
+        'description' => 'Professional warehouse equipment solutions',
+        'url' => (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost'),
+        'contact' => [
+            'phone' => '',
+            'email' => '',
+            'address' => '',
+            'hours' => '',
+        ],
+        'social' => [],
+    ];
+}
+
 require_once __DIR__ . '/ae-includes/functions.php';
 
 $pageTitle = 'Home';

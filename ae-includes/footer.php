@@ -1,6 +1,14 @@
     </main>
 
     <?php
+    // Define helper functions first - before anything else
+    if (!function_exists('e')) {
+        function e($string) {
+            if ($string === null || $string === false) return '';
+            return htmlspecialchars((string)$string, ENT_QUOTES, 'UTF-8');
+        }
+    }
+    
     // Safe loading with error handling
     try {
         if (file_exists(__DIR__ . '/../bootstrap/app.php')) {

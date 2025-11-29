@@ -4,6 +4,8 @@
  * App-like bottom navigation menu for mobile devices
  */
 
+// Wrap everything in try-catch to prevent fatal errors
+try {
 // Ensure helper functions exist with proper error handling
 if (!function_exists('e')) {
     function e($string) {
@@ -208,4 +210,3 @@ document.addEventListener('DOMContentLoaded', function() {
     // Output nothing if there's an error
 }
 ?>
-

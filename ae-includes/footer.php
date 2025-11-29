@@ -295,19 +295,12 @@
         <script><?php echo $customJSFooter; ?></script>
     <?php endif; ?>
     
-    <!-- Mobile Bottom Navigation - Temporarily disabled to fix 500 error -->
+    <!-- Mobile Bottom Navigation -->
     <?php 
-    // Temporarily disabled - re-enable after debugging
-    /*
-    try {
-        if (file_exists(__DIR__ . '/widgets/bottom-nav.php')) {
-            @include __DIR__ . '/widgets/bottom-nav.php';
-        }
-    } catch (Throwable $e) {
-        error_log('Bottom nav include error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
-        // Silently fail - don't break the page
+    // Use safe version that won't cause errors
+    if (file_exists(__DIR__ . '/widgets/bottom-nav-safe.php')) {
+        @include __DIR__ . '/widgets/bottom-nav-safe.php';
     }
-    */
     ?>
 </body>
 </html>

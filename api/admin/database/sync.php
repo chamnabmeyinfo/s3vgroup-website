@@ -164,8 +164,6 @@ try {
                 }
             } else {
                 // Append mode: Only create table if it doesn't exist
-                $output[] = "CREATE TABLE IF NOT EXISTS `{$table}` LIKE `{$table}`;";
-                
                 $createTableResult = $localDb->query("SHOW CREATE TABLE `{$table}`");
                 $createTable = $createTableResult ? $createTableResult->fetch(PDO::FETCH_ASSOC) : null;
                 if ($createTable && isset($createTable['Create Table'])) {

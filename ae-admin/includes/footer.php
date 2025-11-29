@@ -805,16 +805,8 @@
             }, 10000);
         })();
 
-        // Enhanced Success Actions with Confetti
-        const originalFetch = window.fetch;
-        window.fetch = function(...args) {
-            return originalFetch.apply(this, args).then(response => {
-                if (response.ok && args[0]?.method && ['POST', 'PUT', 'PATCH'].includes(args[0].method)) {
-                    setTimeout(() => triggerConfetti(), 100);
-                }
-                return response;
-            });
-        };
+        // Success Actions - Confetti removed
+        // No special effects on success actions
 
         // ============================================
         // ULTRA ADVANCED FEATURES

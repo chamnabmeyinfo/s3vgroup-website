@@ -1390,7 +1390,7 @@ body {
     border-radius: 0 var(--theme-radius-md, 0.5rem) var(--theme-radius-md, 0.5rem) 0;
     position: relative;
     font-family: var(--theme-font-family, inherit);
-    animation: fadeInLeft var(--anim-normal, 0.4s) var(--anim-ease, cubic-bezier(0.25, 0.46, 0.45, 0.94)) backwards;
+    /* FadeInLeft animation removed */
     will-change: transform, background-color, box-shadow;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
@@ -1596,7 +1596,7 @@ body.sidebar-collapsed .admin-content-wrapper {
 }
 
 .admin-content-wrapper > * {
-    animation: fadeInUp var(--anim-normal, 0.4s) var(--anim-ease, cubic-bezier(0.25, 0.46, 0.45, 0.94)) backwards;
+    /* FadeInUp animation removed */
     transition: all var(--anim-normal, 0.4s) var(--anim-ease, cubic-bezier(0.25, 0.46, 0.45, 0.94));
 }
 
@@ -1705,33 +1705,20 @@ body.sidebar-collapsed .admin-content-wrapper {
     }
 }
 
-body {
-    animation: pageLoad var(--anim-slow, 0.6s) var(--anim-ease, cubic-bezier(0.25, 0.46, 0.45, 0.94));
-}
+/* Page load animation removed */
 
 /* Staggered List Animations */
 .admin-table tbody tr {
-    animation: fadeInUp var(--anim-normal, 0.4s) var(--anim-ease, cubic-bezier(0.25, 0.46, 0.45, 0.94)) backwards;
+    /* FadeInUp animation removed */
     transition: all var(--anim-normal, 0.4s) var(--anim-ease, cubic-bezier(0.25, 0.46, 0.45, 0.94));
     will-change: transform, box-shadow, background-color;
 }
 
-.admin-table tbody tr:nth-child(1) { animation-delay: 0.05s; }
-.admin-table tbody tr:nth-child(2) { animation-delay: 0.1s; }
-.admin-table tbody tr:nth-child(3) { animation-delay: 0.15s; }
-.admin-table tbody tr:nth-child(4) { animation-delay: 0.2s; }
-.admin-table tbody tr:nth-child(5) { animation-delay: 0.25s; }
-.admin-table tbody tr:nth-child(6) { animation-delay: 0.3s; }
-.admin-table tbody tr:nth-child(7) { animation-delay: 0.35s; }
-.admin-table tbody tr:nth-child(8) { animation-delay: 0.4s; }
-.admin-table tbody tr:nth-child(9) { animation-delay: 0.45s; }
-.admin-table tbody tr:nth-child(10) { animation-delay: 0.5s; }
+/* Staggered table row animations removed */
 
 .admin-table tbody tr:hover {
-    transform: translateX(4px) scale(1.01);
-    box-shadow: var(--theme-shadow-subtle, 0 2px 8px rgba(0, 0, 0, 0.08));
     background: var(--theme-surface, rgba(241, 245, 249, 0.5));
-    transition: all var(--anim-normal, 0.4s) var(--anim-ease, cubic-bezier(0.25, 0.46, 0.45, 0.94));
+    transition: background-color 0.2s ease;
 }
 
 /* Card Animations - Minimal */
@@ -1756,10 +1743,9 @@ body {
 }
 
 .admin-card:hover {
-    transform: translateY(-4px) scale(1.01);
     box-shadow: var(--theme-shadow-elevated, var(--admin-shadow-lg));
     border-color: var(--theme-primary, rgba(59, 130, 246, 0.3));
-    transition: all var(--anim-normal, 0.4s) var(--anim-ease, cubic-bezier(0.25, 0.46, 0.45, 0.94));
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 /* Enhanced Button Ripple Effect */
@@ -1840,23 +1826,22 @@ a:active, button:active, [role="button"]:active {
 
 /* Enhanced Badge Animations */
 .admin-badge {
-    animation: scaleIn var(--anim-fast, 0.15s) var(--anim-bounce, cubic-bezier(0.68, -0.55, 0.265, 1.55));
+    /* ScaleIn animation removed */
     transition: all var(--anim-fast, 0.15s) var(--anim-ease);
 }
 
 .admin-badge:hover {
-    transform: scale(1.1) rotate(2deg);
-    animation: pulse var(--anim-slow, 0.5s) ease-in-out infinite;
+    /* Hover animation removed */
 }
 
 /* Enhanced Modal Animations */
 .admin-modal-content {
-    animation: zoomIn var(--anim-normal, 0.3s) var(--anim-bounce, cubic-bezier(0.68, -0.55, 0.265, 1.55));
+    /* ZoomIn animation removed */
 }
 
 /* Enhanced Toast Animations */
 .toast {
-    animation: slideInRight var(--anim-normal, 0.3s) var(--anim-bounce, cubic-bezier(0.68, -0.55, 0.265, 1.55));
+    /* SlideInRight animation removed */
 }
 
 .toast:hover {
@@ -2879,7 +2864,7 @@ body[data-theme="macbook"] pre {
 
 .quick-actions-btn:hover::after {
     opacity: 1;
-    animation: pulse 1.5s infinite;
+    /* Pulse animation removed */
 }
 
 /* Command Palette */
@@ -3346,7 +3331,7 @@ body.focus-mode .admin-content-wrapper {
     height: 8px;
     background: var(--theme-success, #10b981);
     border-radius: 50%;
-    animation: pulse 2s infinite;
+    /* Pulse animation removed */
 }
 
 .activity-text {
@@ -3747,7 +3732,7 @@ body.sidebar-collapsed .sidebar-resizer {
     font-size: 0.625rem;
     font-weight: 700;
     border: 2px solid var(--theme-bg, #ffffff);
-    animation: pulse 2s infinite;
+    /* Pulse animation removed */
 }
 
 .notification-badge:empty {

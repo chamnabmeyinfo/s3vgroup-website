@@ -506,8 +506,7 @@
         <!-- Main Content -->
         <main class="admin-content-wrapper" id="main-content">
             <div class="toast-container" id="toast-container"></div>
-            <div class="particle-container" id="particle-container"></div>
-            <div class="confetti-container" id="confetti-container"></div>
+            <!-- Animation containers removed -->
             <div class="context-menu" id="context-menu"></div>
             <div class="auto-save-indicator" id="auto-save-indicator">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

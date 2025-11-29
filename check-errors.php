@@ -41,6 +41,11 @@ foreach ($files as $file) {
 // Test footer include
 echo "<h2>Testing Footer Include:</h2>";
 try {
+    // Load functions.php FIRST before including footer.php
+    if (file_exists('ae-includes/functions.php')) {
+        require_once 'ae-includes/functions.php';
+    }
+    
     ob_start();
     $error = false;
     set_error_handler(function($errno, $errstr) use (&$error) {

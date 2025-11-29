@@ -1,25 +1,15 @@
     </main>
 
     <?php
-    // CRITICAL: Define e() function FIRST before any usage
-    if (!function_exists('e')) {
-        function e($string) {
-            if ($string === null || $string === false) {
-                return '';
-            }
-            return htmlspecialchars((string)$string, ENT_QUOTES, 'UTF-8');
-        }
-    }
-    
     // Safe loading with error handling
     try {
+        // Load functions.php FIRST to ensure e() function is available
+        if (file_exists(__DIR__ . '/functions.php')) {
+            require_once __DIR__ . '/functions.php';
+        }
+        
         if (file_exists(__DIR__ . '/../bootstrap/app.php')) {
             require_once __DIR__ . '/../bootstrap/app.php';
-        }
-        if (!function_exists('fullImageUrl')) {
-            if (file_exists(__DIR__ . '/functions.php')) {
-                require_once __DIR__ . '/functions.php';
-            }
         }
         
         // Safe option() calls with fallbacks

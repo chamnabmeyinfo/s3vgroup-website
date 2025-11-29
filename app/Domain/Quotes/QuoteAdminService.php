@@ -8,8 +8,12 @@ use InvalidArgumentException;
 
 final class QuoteAdminService
 {
-    public function __construct(private readonly QuoteRequestRepository $repository)
+    /** @var QuoteRequestRepository */
+    private $repository;
+
+    public function __construct(QuoteRequestRepository $repository)
     {
+        $this->repository = $repository;
     }
 
     public function list(array $filters = [], int $limit = 25, int $offset = 0): array

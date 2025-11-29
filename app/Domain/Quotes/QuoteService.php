@@ -8,8 +8,12 @@ use InvalidArgumentException;
 
 final class QuoteService
 {
-    public function __construct(private readonly QuoteRequestRepository $repository)
+    /** @var QuoteRequestRepository */
+    private $repository;
+
+    public function __construct(QuoteRequestRepository $repository)
     {
+        $this->repository = $repository;
     }
 
     public function submit(array $payload): array

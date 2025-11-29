@@ -6,10 +6,18 @@ namespace App\Domain\Catalog;
 
 final class CatalogService
 {
+    /** @var CategoryRepository */
+    private $categories;
+
+    /** @var ProductRepository */
+    private $products;
+
     public function __construct(
-        private readonly CategoryRepository $categories,
-        private readonly ProductRepository $products
+        CategoryRepository $categories,
+        ProductRepository $products
     ) {
+        $this->categories = $categories;
+        $this->products = $products;
     }
 
     public function featured(int $limit = 6): array

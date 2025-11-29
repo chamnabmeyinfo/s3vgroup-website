@@ -9,8 +9,12 @@ use InvalidArgumentException;
 
 final class CategoryService
 {
-    public function __construct(private readonly CategoryRepository $repository)
+    /** @var CategoryRepository */
+    private $repository;
+
+    public function __construct(CategoryRepository $repository)
     {
+        $this->repository = $repository;
     }
 
     public function create(array $payload): array

@@ -8,8 +8,12 @@ use PDO;
 
 abstract class Migration
 {
-    public function __construct(private readonly string $name)
+    /** @var string */
+    private $name;
+
+    public function __construct(string $name)
     {
+        $this->name = $name;
     }
 
     public function getName(): string

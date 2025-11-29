@@ -14,11 +14,23 @@ final class PluginManager
 {
     private array $loadedPlugins = [];
 
+    /** @var PDO */
+    private $pdo;
+
+    /** @var PluginRegistry */
+    private $registry;
+
+    /** @var HookSystem */
+    private $hooks;
+
     public function __construct(
-        private readonly PDO $pdo,
-        private readonly PluginRegistry $registry,
-        private readonly HookSystem $hooks
+        PDO $pdo,
+        PluginRegistry $registry,
+        HookSystem $hooks
     ) {
+        $this->pdo = $pdo;
+        $this->registry = $registry;
+        $this->hooks = $hooks;
     }
 
     /**

@@ -12,11 +12,23 @@ use App\Http\Requests\UpdateThemeRequest;
 
 final class ThemeController extends Controller
 {
+    /** @var ThemeRepository */
+    private $repository;
+
+    /** @var ThemeService */
+    private $service;
+
+    /** @var UserThemePreferenceService|null */
+    private $preferenceService;
+
     public function __construct(
-        private readonly ThemeRepository $repository,
-        private readonly ThemeService $service,
-        private readonly ?UserThemePreferenceService $preferenceService = null
+        ThemeRepository $repository,
+        ThemeService $service,
+        ?UserThemePreferenceService $preferenceService = null
     ) {
+        $this->repository = $repository;
+        $this->service = $service;
+        $this->preferenceService = $preferenceService;
     }
 
     /**

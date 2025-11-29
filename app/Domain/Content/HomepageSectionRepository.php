@@ -10,8 +10,12 @@ use RuntimeException;
 
 final class HomepageSectionRepository
 {
-    public function __construct(private readonly PDO $pdo)
+    /** @var PDO */
+    private $pdo;
+
+    public function __construct(PDO $pdo)
     {
+        $this->pdo = $pdo;
     }
 
     public function all(?string $pageId = null): array

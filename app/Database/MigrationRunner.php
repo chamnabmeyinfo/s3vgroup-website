@@ -11,10 +11,18 @@ final class MigrationRunner
 {
     private const TABLE = 'migrations';
 
+    /** @var PDO */
+    private $pdo;
+
+    /** @var string */
+    private $directory;
+
     public function __construct(
-        private readonly PDO $pdo,
-        private readonly string $directory
+        PDO $pdo,
+        string $directory
     ) {
+        $this->pdo = $pdo;
+        $this->directory = $directory;
         $this->ensureDirectory();
         $this->createMigrationsTable();
     }

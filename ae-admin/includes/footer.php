@@ -480,31 +480,10 @@
             }
         })();
 
-        // Confetti Animation
+        // Confetti Animation - Completely Removed
         function triggerConfetti() {
-            const container = document.getElementById('confetti-container');
-            const colors = [
-                'var(--theme-primary, #3b82f6)',
-                'var(--theme-accent, #7C3AED)',
-                'var(--theme-secondary, #10B981)',
-                'var(--theme-tertiary, #F59E0B)',
-                'var(--theme-success, #10b981)',
-                'var(--theme-error, #dc2626)'
-            ];
-
-            for (let i = 0; i < 50; i++) {
-                setTimeout(() => {
-                    const confetti = document.createElement('div');
-                    confetti.className = 'confetti';
-                    confetti.style.left = Math.random() * 100 + '%';
-                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
-                    confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
-                    container.appendChild(confetti);
-
-                    setTimeout(() => confetti.remove(), 5000);
-                }, i * 20);
-            }
+            // Function disabled - no confetti/boom effects
+            return;
         }
 
         // Context Menu

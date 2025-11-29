@@ -70,9 +70,9 @@ switch (Request::method()) {
                 'scope' => $scope,
             ]);
 
-            // Clear theme cache
+            // Clear theme cache for this user (ensures immediate effect)
             require_once __DIR__ . '/../../../ae-admin/includes/theme-loader.php';
-            ThemeLoader::clearCache();
+            ThemeLoader::clearCache($userId); // Clear user-specific cache
 
             // Get full theme data
             $theme = $repository->findById($preference['theme_id']);

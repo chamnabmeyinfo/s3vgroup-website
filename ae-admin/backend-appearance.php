@@ -269,9 +269,9 @@ async function activateTheme(themeId, themeSlug) {
         if (data.status === 'success') {
             // Show success message
             showToast('Theme activated successfully! Reloading...', 'success');
-            // Reload page after short delay
+            // Reload page with cache-busting parameter to ensure fresh theme load
             setTimeout(() => {
-                window.location.reload();
+                window.location.href = window.location.pathname + '?theme_refresh=' + Date.now();
             }, 800);
         } else {
             const errorMsg = data.error?.message || data.message || 'Unknown error';
@@ -326,7 +326,7 @@ async function deactivateTheme(themeId) {
                 if (data.status === 'success') {
                     showToast('Switched to default theme.', 'success');
                     setTimeout(() => {
-                        window.location.reload();
+                        window.location.href = window.location.pathname + '?theme_refresh=' + Date.now();
                     }, 800);
                 } else {
                     showToast('Failed to switch theme: ' + (data.error?.message || 'Unknown error'), 'error');

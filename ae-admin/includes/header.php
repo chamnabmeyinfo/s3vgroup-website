@@ -36,11 +36,21 @@
             error_log('Database connection error in header: ' . $e->getMessage());
         }
         
+        // Clear cache if theme was just changed (check for cache-busting parameter)
+        if (isset($_GET['theme_refresh']) || isset($_GET['_t'])) {
+            $userId = $_SESSION['admin_user_id'] ?? $_SESSION['user_id'] ?? 'admin_default';
+            ThemeLoader::clearCache($userId);
+        }
+        
         // Get active theme first
         $activeTheme = ThemeLoader::getActiveTheme($db);
         
-        // Generate and output CSS variables
-        echo ThemeLoader::generateCSSVariables($activeTheme);
+        // Generate and output CSS variables with cache-busting
+        $themeVersion = isset($activeTheme['updatedAt']) ? strtotime($activeTheme['updatedAt']) : time();
+        $cssVariables = ThemeLoader::generateCSSVariables($activeTheme);
+        // Add version comment for cache-busting
+        $cssVariables = str_replace('<style id="theme-variables">', '<style id="theme-variables" data-theme-version="' . $themeVersion . '">', $cssVariables);
+        echo $cssVariables;
         
         // Get theme slug for body attribute
         $themeSlug = ThemeLoader::getThemeSlug($activeTheme);

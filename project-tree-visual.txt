@@ -1,0 +1,100 @@
+Folder PATH listing for volume Window 11
+Volume serial number is C0C1-B00F
+C:.
+|   .gitignore
+|   .htaccess
+|   404.php
+|   about.php
+|   ae-config.php
+|   ae-load.php
+|   ARCHITECTURE-QUICK-REFERENCE.md
+|   CHANGE-PHP-VERSION-GUIDE.md
+|   CODE-STATISTICS.md
+|   CODEBASE-STRUCTURE.md
+|   contact.php
+|   DEEP-CLEANUP-SUMMARY.md
+|   DEPLOYMENT-CHECKLIST.md
+|   directory-structure.txt
+|   DOCUMENTATION-CLEANUP-SUMMARY.md
+|   env.example
+|   FEATURES-OVERVIEW.md
+|   import-database.php
+|   index.php
+|   MIND-MAP-TOOLS-GUIDE.md
+|   package-lock.json
+|   package.json
+|   page.php
+|   PERFORMANCE-ANALYSIS.md
+|   phpunit.xml
+|   PLUGIN-SYSTEM-ARCHITECTURE.md
+|   product.php
+|   products.php
+|   PROJECT-TRACKING.md
+|   project-tree-visual.txt
+|   quote.php
+|   README.md
+|   start-local-server.ps1
+|   tailwind.config.js
+|   team.php
+|   testimonials.php
+|   wp-config.php
+|   wp-load.php
+|   
++---.cursor
+|       debug.log
+|       worktrees.json
+|       
++---.github
+|   |   dependabot.yml
+|   |   PULL_REQUEST_TEMPLATE.md
+|   |   
+|   +---ISSUE_TEMPLATE
+|   |       bug_report.md
+|   |       feature_request.md
+|   |       
+|   \---workflows
+|           ci.yml
+|           deploy.yml
+|           
++---admin
+|       index.php
+|       
++---ae-admin
+|   |   .gitkeep
+|   |   backend-appearance.php
+|   |   categories.php
+|   |   ceo-message.php
+|   |   company-story.php
+|   |   database-sync.php
+|   |   faqs.php
+|   |   homepage-builder-v2.php
+|   |   index.php
+|   |   login.php
+|   |   logout.php
+|   |   media-library.php
+|   |   menus.php
+|   |   newsletter.php
+|   |   optional-features.php
+|   |   options.php
+|   |   page-builder.php
+|   |   pages.php
+|   |   plugins.php
+|   |   products.php
+|   |   quotes.php
+|   |   reviews.php
+|   |   seo-tools.php
+|   |   sliders.php
+|   |   team.php
+|   |   testimonials.php
+|   |   theme-customize.php
+|   |   theme-preview.php
+|   |   
+|   +---includes
+|   |       admin-styles.css
+|   |       footer.php
+|   |       header.php
+|   |       homepage-section-canvas.php
+|   |       homepage-section-item.php
+|   |       theme-loader.php
+|   |       
+|   \---js

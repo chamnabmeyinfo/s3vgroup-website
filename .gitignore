@@ -49,9 +49,19 @@ check-errors.php
 diagnose-production.php
 HOTFIX-e-function.php
 fix-500-error.php
+fix-*.php
 create-database-config.php
 create-site-config.php
+create-*-config.php
 cleanup-project.php
+
+# Temporary fix scripts
+HOTFIX-*.php
+
+# One-time setup scripts
+*.bat
+*.sh
+*.patch
 
 # Database exports (contain sensitive data)
 database-*.sql

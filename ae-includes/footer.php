@@ -242,12 +242,6 @@
         </div>
     </footer>
     
-    <?php 
-    // Disabled loading-screen widget to prevent errors
-    // if (file_exists(__DIR__ . '/widgets/loading-screen.php')) {
-    //     @include __DIR__ . '/widgets/loading-screen.php';
-    // }
-    ?>
     <?php
     // Use AssetVersion for proper cache busting (better than time())
     $assetVersion = class_exists('App\Support\AssetVersion') ? \App\Support\AssetVersion::get() : date('Ymd');
@@ -388,6 +382,5 @@
         <script><?php echo $customJSFooter; ?></script>
     <?php endif; ?>
     
-    <!-- Mobile Bottom Navigation - Permanently Disabled -->
 </body>
 </html>

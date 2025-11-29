@@ -151,43 +151,6 @@ $faviconUrl = $favicon ? fullImageUrl($favicon) : '';
     </style>
 </head>
 <body class="min-h-screen bg-white mobile-app">
-    <!-- Mobile App Header - DISABLED to prevent errors -->
-    <?php 
-    // DISABLED: Mobile app header widget - causes 500 errors
-    // if (file_exists(__DIR__ . '/widgets/mobile-app-header.php')) {
-    //     @include __DIR__ . '/widgets/mobile-app-header.php';
-    // }
-    ?>
-    
-    <!-- Secondary Menu Top Bar - DISABLED to prevent errors -->
-    <?php 
-    // DISABLED: Secondary menu widget - causes 500 errors
-    // if (file_exists(__DIR__ . '/widgets/secondary-menu.php')) {
-    //     if (!function_exists('getDB')) {
-    //         require_once __DIR__ . '/../config/database.php';
-    //     }
-    //     if (class_exists('App\Domain\Menus\MenuRepository')) {
-    //         $db = getDB();
-    //         $repository = new \App\Domain\Menus\MenuRepository($db);
-    //         $menuService = new \App\Application\Services\MenuService($repository);
-    //         $secondaryMenu = $menuService->getMenuByLocation('secondary');
-    //         if ($secondaryMenu) {
-    //             ?>
-    //             <div class="bg-gray-800 text-white py-2 text-sm border-b border-gray-700 theme-secondary-bar">
-    //                 <div class="container mx-auto px-4">
-    //                     <div class="flex items-center justify-between">
-    //                         <?php 
-    //                         $location = 'secondary';
-    //                         include __DIR__ . '/widgets/secondary-menu.php'; 
-    //                         ?>
-    //                     </div>
-    //                 </div>
-    //             </div>
-    //             <?php
-    //         }
-    //     }
-    // }
-    ?>
     
     <!-- Modern Header -->
     <header class="modern-header" id="modern-header">

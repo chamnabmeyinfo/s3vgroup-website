@@ -110,8 +110,8 @@ echo "\n✅ Verifying essential files...\n";
 $essentialFiles = [
     'config/database.php',
     'bootstrap/app.php',
-    'includes/header.php',
-    'includes/footer.php',
+    'ae-includes/header.php',
+    'ae-includes/footer.php',
     'products.php',
     'index.php',
 ];

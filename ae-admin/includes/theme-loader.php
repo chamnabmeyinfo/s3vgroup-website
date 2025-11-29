@@ -7,17 +7,25 @@
  */
 
 class ThemeLoader {
-    private static $themeCache = null;
-    private static $configCache = null;
+    private static $themeCache = [];
+    private static $configCache = [];
     
     /**
      * Get the active theme for backend admin
      * Uses caching to avoid multiple database queries
+     * Cache is user-specific to ensure theme changes apply immediately
      */
     public static function getActiveTheme($db = null) {
-        // Return cached theme if available
-        if (self::$themeCache !== null) {
-            return self::$themeCache;
+        // Get user ID for cache key (user-specific cache)
+        $userId = 'admin_default';
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            $userId = $_SESSION['admin_user_id'] ?? $_SESSION['user_id'] ?? 'admin_default';
+        }
+        
+        // Return cached theme if available for this user
+        $cacheKey = $userId . '_backend_admin';
+        if (isset(self::$themeCache[$cacheKey])) {
+            return self::$themeCache[$cacheKey];
         }
         
         // Default theme values (fallback)
@@ -84,13 +92,13 @@ class ThemeLoader {
                 $theme = $defaultTheme;
             }
             
-            // Cache the result
-            self::$themeCache = $theme;
+            // Cache the result (user-specific)
+            self::$themeCache[$cacheKey] = $theme;
             return $theme;
             
         } catch (\Throwable $e) {
             error_log('Theme loading error: ' . $e->getMessage());
-            self::$themeCache = $defaultTheme;
+            self::$themeCache[$cacheKey] = $defaultTheme;
             return $defaultTheme;
         }
     }
@@ -99,9 +107,16 @@ class ThemeLoader {
      * Get parsed theme configuration
      */
     public static function getThemeConfig($theme = null) {
-        // Return cached config if available
-        if (self::$configCache !== null && $theme === null) {
-            return self::$configCache;
+        // Get user ID for cache key (user-specific cache)
+        $userId = 'admin_default';
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            $userId = $_SESSION['admin_user_id'] ?? $_SESSION['user_id'] ?? 'admin_default';
+        }
+        $cacheKey = $userId . '_backend_admin';
+        
+        // Return cached config if available for this user
+        if (isset(self::$configCache[$cacheKey]) && $theme === null) {
+            return self::$configCache[$cacheKey];
         }
         
         if (!$theme) {
@@ -137,9 +152,9 @@ class ThemeLoader {
             'shadows' => array_merge($defaultConfig['shadows'], $config['shadows'] ?? [])
         ];
         
-        // Cache the result
+        // Cache the result (user-specific)
         if ($theme === null) {
-            self::$configCache = $mergedConfig;
+            self::$configCache[$cacheKey] = $mergedConfig;
         }
         
         return $mergedConfig;
@@ -341,10 +356,19 @@ class ThemeLoader {
     
     /**
      * Clear cache (useful after theme changes)
+     * Can clear specific user cache or all cache
      */
-    public static function clearCache() {
-        self::$themeCache = null;
-        self::$configCache = null;
+    public static function clearCache($userId = null) {
+        if ($userId === null) {
+            // Clear all cache
+            self::$themeCache = [];
+            self::$configCache = [];
+        } else {
+            // Clear specific user cache
+            $cacheKey = $userId . '_backend_admin';
+            unset(self::$themeCache[$cacheKey]);
+            unset(self::$configCache[$cacheKey]);
+        }
     }
 }
 

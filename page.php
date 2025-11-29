@@ -96,7 +96,7 @@ if (file_exists(__DIR__ . '/ae-includes/header.php')) {
     <!-- Render page sections -->
     <?php
     foreach ($sections as $section) {
-        include __DIR__ . '/includes/widgets/page-section-renderer.php';
+        include __DIR__ . '/ae-includes/widgets/page-section-renderer.php';
     }
     ?>
 <?php endif; ?>

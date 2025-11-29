@@ -1,8 +1,14 @@
 <?php
-// Enable error reporting for debugging (remove in production)
-error_reporting(E_ALL);
-ini_set('display_errors', 0); // Don't show errors to users, log them instead
-ini_set('log_errors', 1);
+// Error reporting - production optimized
+// Only enable full error reporting in development
+if (getenv('APP_ENV') === 'development' || getenv('APP_DEBUG') === 'true') {
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+} else {
+    error_reporting(0); // Disable in production for better performance
+    ini_set('display_errors', 0);
+}
+ini_set('log_errors', 1); // Always log errors
 
 // Load Ant Elite bootstrap (ae-load.php)
 require_once __DIR__ . '/ae-load.php';
@@ -112,7 +118,7 @@ if (!$useHomepageBuilder) {
     // Check if hero slider is enabled
     $enableHeroSlider = option('enable_hero_slider', '1') === '1';
     
-    if ($enableHeroSlider && file_exists(__DIR__ . '/ae-includes/widgets/hero-slider.php')) {
+    if ($enableHeroSlider && file_exists(__DIR__ . '/ae-includes/widgets/modern-hero-slider.php')) {
         // Include modern hero slider
         include __DIR__ . '/ae-includes/widgets/modern-hero-slider.php';
     } else {

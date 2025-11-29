@@ -176,8 +176,8 @@ $faviconUrl = $favicon ? fullImageUrl($favicon) : '';
                     <div class="container mx-auto px-4">
                         <div class="flex items-center justify-between">
                             <?php 
-                            $location = 'secondary';
                             // DISABLED: Secondary menu widget - causes 500 errors
+                            // $location = 'secondary';
                             // include __DIR__ . '/widgets/secondary-menu.php'; 
                             ?>
                         </div>

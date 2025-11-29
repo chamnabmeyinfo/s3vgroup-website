@@ -71,6 +71,12 @@ if (file_exists(AEPATH . 'ae-includes/helpers.php')) {
 \App\Support\Env::load(AEPATH . '.env');
 \App\Support\Env::load(AEPATH . 'env.example');
 
+// CRITICAL: Load functions.php FIRST to ensure e() function is always available
+// This must be loaded before any page includes header.php or footer.php
+if (file_exists(AEPATH . 'ae-includes/functions.php')) {
+    require_once AEPATH . 'ae-includes/functions.php';
+}
+
 // Load Ant Elite functions (check ae- first, then wp- as fallback)
 if (file_exists(AEPATH . 'ae-includes/wp-functions.php')) {
     require_once AEPATH . 'ae-includes/wp-functions.php';

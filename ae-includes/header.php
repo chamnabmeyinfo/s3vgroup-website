@@ -151,8 +151,13 @@ $faviconUrl = $favicon ? fullImageUrl($favicon) : '';
     </style>
 </head>
 <body class="min-h-screen bg-white mobile-app">
-    <!-- Mobile App Header -->
-    <?php include __DIR__ . '/widgets/mobile-app-header.php'; ?>
+    <!-- Mobile App Header - DISABLED to prevent errors -->
+    <?php 
+    // DISABLED: Mobile app header widget - causes 500 errors
+    // if (file_exists(__DIR__ . '/widgets/mobile-app-header.php')) {
+    //     @include __DIR__ . '/widgets/mobile-app-header.php';
+    // }
+    ?>
     
     <!-- Secondary Menu Top Bar (Optional) -->
     <?php 

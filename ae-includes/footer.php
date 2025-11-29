@@ -295,8 +295,10 @@
         <script><?php echo $customJSFooter; ?></script>
     <?php endif; ?>
     
-    <!-- Mobile Bottom Navigation -->
+    <!-- Mobile Bottom Navigation - Temporarily disabled to fix 500 error -->
     <?php 
+    // Temporarily disabled - re-enable after debugging
+    /*
     try {
         if (file_exists(__DIR__ . '/widgets/bottom-nav.php')) {
             @include __DIR__ . '/widgets/bottom-nav.php';
@@ -305,6 +307,7 @@
         error_log('Bottom nav include error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
         // Silently fail - don't break the page
     }
+    */
     ?>
 </body>
 </html>

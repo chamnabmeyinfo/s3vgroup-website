@@ -1,13 +1,57 @@
     </main>
 
     <?php
-    require_once __DIR__ . '/../bootstrap/app.php';
-    if (!function_exists('fullImageUrl')) {
-        require_once __DIR__ . '/functions.php';
+    // Safe loading with error handling
+    try {
+        if (file_exists(__DIR__ . '/../bootstrap/app.php')) {
+            require_once __DIR__ . '/../bootstrap/app.php';
+        }
+        if (!function_exists('fullImageUrl')) {
+            if (file_exists(__DIR__ . '/functions.php')) {
+                require_once __DIR__ . '/functions.php';
+            }
+        }
+        
+        // Safe option() calls with fallbacks
+        $primaryColor = '#086D3B';
+        if (function_exists('option')) {
+            try {
+                $primaryColor = option('primary_color', '#086D3B');
+                if (empty($primaryColor)) $primaryColor = '#086D3B';
+            } catch (Exception $e) {
+                error_log('Footer: Could not get primary_color: ' . $e->getMessage());
+            }
+        }
+        
+        $footerBg = $primaryColor;
+        if (function_exists('option')) {
+            try {
+                $footerBg = option('footer_background', $primaryColor);
+                if (empty($footerBg)) $footerBg = $primaryColor;
+            } catch (Exception $e) {
+                error_log('Footer: Could not get footer_background: ' . $e->getMessage());
+            }
+        }
+        
+        $siteName = 'S3V Group';
+        if (function_exists('option')) {
+            try {
+                $siteName = option('site_name', 'S3V Group');
+                if (empty($siteName)) $siteName = 'S3V Group';
+            } catch (Exception $e) {
+                error_log('Footer: Could not get site_name: ' . $e->getMessage());
+            }
+        }
+        
+        if (empty($siteName) && isset($siteConfig['name'])) {
+            $siteName = $siteConfig['name'];
+        }
+    } catch (Throwable $e) {
+        error_log('Footer initialization error: ' . $e->getMessage());
+        $primaryColor = '#086D3B';
+        $footerBg = '#086D3B';
+        $siteName = 'S3V Group';
     }
-    $primaryColor = option('primary_color', '#086D3B');
-    $footerBg = option('footer_background', $primaryColor);
-    $siteName = option('site_name', $siteConfig['name'] ?? 'S3V Group');
     $siteLogo = option('site_logo', '');
     $siteLogoUrl = $siteLogo ? fullImageUrl($siteLogo) : '';
     $contactEmail = option('contact_email', $siteConfig['contact']['email'] ?? '');

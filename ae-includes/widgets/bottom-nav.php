@@ -110,8 +110,17 @@ $navItems = [
         'action' => 'toggleMobileMenu'
     ]
 ];
+// End try block content - output HTML outside try-catch
 ?>
-
+}<?php
+// Close try block before HTML output
+} catch (Throwable $e) {
+    // Silently fail - log error but don't break the page
+    error_log('Bottom nav widget error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+    // Exit if there's an error - don't output anything
+    return;
+}
+?>
 <!-- Mobile Bottom Navigation -->
 <nav class="app-bottom-nav mobile-only" id="app-bottom-nav">
     <?php foreach ($navItems as $item): ?>

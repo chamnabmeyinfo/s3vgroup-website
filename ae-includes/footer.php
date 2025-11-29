@@ -1,10 +1,12 @@
     </main>
 
     <?php
-    // Define helper functions first - before anything else
+    // CRITICAL: Define e() function FIRST before any usage
     if (!function_exists('e')) {
         function e($string) {
-            if ($string === null || $string === false) return '';
+            if ($string === null || $string === false) {
+                return '';
+            }
             return htmlspecialchars((string)$string, ENT_QUOTES, 'UTF-8');
         }
     }

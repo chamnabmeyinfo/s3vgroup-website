@@ -4,39 +4,49 @@
  * App-like bottom navigation menu for mobile devices
  */
 
-// Ensure bootstrap is loaded
-if (!function_exists('base_url')) {
-    if (file_exists(__DIR__ . '/../../bootstrap/app.php')) {
-        require_once __DIR__ . '/../../bootstrap/app.php';
-    } elseif (file_exists(__DIR__ . '/../../ae-load.php')) {
-        require_once __DIR__ . '/../../ae-load.php';
-    }
-}
-
-// Ensure helper functions exist
+// Ensure helper functions exist with proper error handling
 if (!function_exists('e')) {
     function e($string) {
-        return htmlspecialchars($string ?? '', ENT_QUOTES, 'UTF-8');
+        if ($string === null || $string === false) {
+            return '';
+        }
+        return htmlspecialchars((string)$string, ENT_QUOTES, 'UTF-8');
     }
 }
 
 if (!function_exists('base_url')) {
     function base_url($path = '') {
-        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
-        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-        $base = rtrim(str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']), '/');
-        return $protocol . $host . $base . ($path ? '/' . ltrim($path, '/') : '');
+        if (defined('BASE_URL')) {
+            $base = rtrim(BASE_URL, '/');
+        } else {
+            $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || 
+                        (!empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443)) ? 'https://' : 'http://';
+            $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+            $scriptDir = dirname($_SERVER['SCRIPT_NAME'] ?? '');
+            $base = $protocol . $host . ($scriptDir !== '/' ? $scriptDir : '');
+        }
+        return $base . ($path ? '/' . ltrim($path, '/') : '');
     }
 }
 
 $currentPath = $_SERVER['REQUEST_URI'] ?? '/';
 $currentPath = parse_url($currentPath, PHP_URL_PATH);
 
-// Get primary color for active state with fallback
-try {
-    $primaryColor = function_exists('option') ? option('primary_color', '#0b3a63') : '#0b3a63';
-} catch (Exception $e) {
-    $primaryColor = '#0b3a63';
+// Get primary color for active state with fallback - don't call option() if it might fail
+$primaryColor = '#0b3a63';
+if (function_exists('option')) {
+    try {
+        $primaryColor = option('primary_color', '#0b3a63');
+        if (empty($primaryColor)) {
+            $primaryColor = '#0b3a63';
+        }
+    } catch (Exception $e) {
+        // Silently use default
+        error_log('Bottom nav: Could not get primary color: ' . $e->getMessage());
+    } catch (Error $e) {
+        // Silently use default
+        error_log('Bottom nav: Could not get primary color: ' . $e->getMessage());
+    }
 }
 
 // Determine active page
@@ -46,14 +56,23 @@ function isActive($path, $currentPath) {
     return false;
 }
 
-// Check which pages exist
-$rootDir = dirname(dirname(__DIR__));
-$pagesExist = [
-    'about' => file_exists($rootDir . '/about.php'),
-    'testimonials' => file_exists($rootDir . '/testimonials.php'),
-    'quote' => file_exists($rootDir . '/quote.php'),
-    'contact' => file_exists($rootDir . '/contact.php')
-];
+// Check which pages exist - with error handling
+try {
+    $rootDir = dirname(dirname(__DIR__));
+    $pagesExist = [
+        'about' => @file_exists($rootDir . '/about.php'),
+        'testimonials' => @file_exists($rootDir . '/testimonials.php'),
+        'quote' => @file_exists($rootDir . '/quote.php'),
+        'contact' => @file_exists($rootDir . '/contact.php')
+    ];
+} catch (Exception $e) {
+    $pagesExist = [
+        'about' => false,
+        'testimonials' => false,
+        'quote' => false,
+        'contact' => true // Default to true for contact
+    ];
+}
 
 $navItems = [
     [

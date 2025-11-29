@@ -364,6 +364,62 @@ include __DIR__ . '/includes/header.php';
         </div>
     </div>
 
+    <!-- Manual SQL Export Card (Recommended) -->
+    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-200 shadow-sm overflow-hidden mb-6">
+        <div class="px-6 py-5 bg-gradient-to-r from-blue-100 to-indigo-100 border-b border-blue-200">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-900">📥 Export SQL File (Recommended)</h2>
+                    <p class="text-sm text-gray-600 mt-0.5">Generate SQL file for manual upload to cPanel - Works perfectly!</p>
+                </div>
+            </div>
+        </div>
+        <div class="p-6">
+            <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <p class="text-sm text-blue-800">
+                    <strong>💡 Tip:</strong> If automated sync doesn't match exactly, use this method! 
+                    It generates a SQL file identical to phpMyAdmin export, ensuring perfect compatibility.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Data Mode</label>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="export-data-mode" value="overwrite" class="mr-2" checked>
+                            <span class="text-sm">Overwrite (DROP & CREATE - cPanel will match local exactly)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="export-data-mode" value="append" class="mr-2">
+                            <span class="text-sm">Append (CREATE IF NOT EXISTS & INSERT ... ON DUPLICATE KEY UPDATE)</span>
+                        </label>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Options</label>
+                    <label class="flex items-center">
+                        <input type="checkbox" id="export-include-data" checked class="mr-2">
+                        <span class="text-sm">Include data (uncheck for structure only)</span>
+                    </label>
+                </div>
+            </div>
+            <button type="button" id="export-sql-btn" class="w-full px-6 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all font-semibold text-base shadow-lg hover:shadow-xl">
+                <span class="flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    Generate & Download SQL File
+                </span>
+            </button>
+            <div id="export-status" class="mt-4 text-sm hidden"></div>
+        </div>
+    </div>
+
     <!-- Verification & Comparison Card -->
     <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border-2 border-purple-200 shadow-sm overflow-hidden">
         <div class="px-6 py-5 bg-gradient-to-r from-purple-100 to-pink-100 border-b border-purple-200">
@@ -1054,6 +1110,77 @@ document.addEventListener('DOMContentLoaded', function() {
         } finally {
             verifyBtn.disabled = false;
             verifyBtn.textContent = '🔍 Verify Sync Status';
+        }
+    });
+
+    // Export SQL File
+    document.getElementById('export-sql-btn').addEventListener('click', async () => {
+        const exportBtn = document.getElementById('export-sql-btn');
+        const statusDiv = document.getElementById('export-status');
+        
+        exportBtn.disabled = true;
+        exportBtn.textContent = '⏳ Generating SQL File...';
+        statusDiv.classList.remove('hidden');
+        statusDiv.textContent = 'Generating SQL export file...';
+        statusDiv.className = 'mt-4 text-sm text-blue-600';
+
+        try {
+            const dataMode = document.querySelector('input[name="export-data-mode"]:checked').value;
+            const includeData = document.getElementById('export-include-data').checked;
+            
+            const response = await fetch('/api/admin/database/export-sql.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    data_mode: dataMode,
+                    include_data: includeData,
+                }),
+            });
+
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                const data = result.data;
+                statusDiv.innerHTML = `
+                    <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
+                        <p class="text-green-800 font-semibold mb-2">✅ SQL file generated successfully!</p>
+                        <p class="text-sm text-green-700 mb-3">
+                            <strong>${data.tables}</strong> tables, <strong>${data.rows}</strong> rows
+                            (${(data.size / 1024).toFixed(2)} KB)
+                        </p>
+                        <a href="${data.download_url}" 
+                           class="inline-block px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                            📥 Download SQL File
+                        </a>
+                        <p class="text-xs text-green-600 mt-2">
+                            💡 Upload this file to cPanel phpMyAdmin → Import → Choose File → Go
+                        </p>
+                    </div>
+                `;
+                
+                // Auto-download after a short delay
+                setTimeout(() => {
+                    window.location.href = data.download_url;
+                }, 500);
+            } else {
+                throw new Error(result.message || 'Export failed');
+            }
+        } catch (error) {
+            statusDiv.innerHTML = `
+                <div class="p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <p class="text-red-800 font-semibold">❌ Export failed: ${error.message}</p>
+                </div>
+            `;
+        } finally {
+            exportBtn.disabled = false;
+            exportBtn.innerHTML = `
+                <span class="flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    Generate & Download SQL File
+                </span>
+            `;
         }
     });
 

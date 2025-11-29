@@ -42,6 +42,24 @@ try {
     }
     
     $products = $repository->all($filters);
+    
+    // Add category information to products (all() doesn't include category join)
+    if (!empty($products)) {
+        $categoryRepository = new \App\Domain\Catalog\CategoryRepository($db);
+        $allCategories = $categoryRepository->all();
+        $categoriesById = [];
+        foreach ($allCategories as $cat) {
+            $categoriesById[$cat['id']] = $cat;
+        }
+        
+        foreach ($products as &$product) {
+            if (isset($product['categoryId']) && isset($categoriesById[$product['categoryId']])) {
+                $product['category_name'] = $categoriesById[$product['categoryId']]['name'];
+                $product['category_slug'] = $categoriesById[$product['categoryId']]['slug'];
+            }
+        }
+        unset($product);
+    }
 } catch (\Exception $e) {
     error_log("Error fetching all products: " . $e->getMessage());
     $products = [];

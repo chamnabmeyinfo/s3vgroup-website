@@ -46,23 +46,67 @@
         if (empty($siteName) && isset($siteConfig['name'])) {
             $siteName = $siteConfig['name'];
         }
+        
+        // Safe helper function for option() calls
+        $safeOption = function($key, $default = '') use (&$error) {
+            if (!function_exists('option')) return $default;
+            try {
+                $value = option($key, $default);
+                return $value !== null ? $value : $default;
+            } catch (Exception $e) {
+                if (!isset($error)) $error = [];
+                $error[] = "Failed to get option '$key': " . $e->getMessage();
+                return $default;
+            } catch (Error $e) {
+                if (!isset($error)) $error = [];
+                $error[] = "Failed to get option '$key': " . $e->getMessage();
+                return $default;
+            }
+        };
+        
+        $siteLogo = $safeOption('site_logo', '');
+        $siteLogoUrl = $siteLogo && function_exists('fullImageUrl') ? fullImageUrl($siteLogo) : '';
+        $contactEmail = $safeOption('contact_email', $siteConfig['contact']['email'] ?? '');
+        $contactPhone = $safeOption('contact_phone', $siteConfig['contact']['phone'] ?? '');
+        $contactAddress = $safeOption('contact_address', $siteConfig['contact']['address'] ?? '');
+        $businessHours = $safeOption('business_hours', $siteConfig['contact']['hours'] ?? '');
+        $copyright = $safeOption('footer_copyright', '© ' . date('Y') . ' ' . $siteName . '. All rights reserved.');
+        $facebookUrl = $safeOption('facebook_url', '');
+        $linkedinUrl = $safeOption('linkedin_url', '');
+        $twitterUrl = $safeOption('twitter_url', '');
+        $youtubeUrl = $safeOption('youtube_url', '');
+        
     } catch (Throwable $e) {
-        error_log('Footer initialization error: ' . $e->getMessage());
+        error_log('Footer initialization error: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+        // Set safe defaults
         $primaryColor = '#086D3B';
         $footerBg = '#086D3B';
         $siteName = 'S3V Group';
+        $siteLogo = '';
+        $siteLogoUrl = '';
+        $contactEmail = '';
+        $contactPhone = '';
+        $contactAddress = '';
+        $businessHours = '';
+        $copyright = '© ' . date('Y') . ' ' . $siteName . '. All rights reserved.';
+        $facebookUrl = '';
+        $linkedinUrl = '';
+        $twitterUrl = '';
+        $youtubeUrl = '';
     }
-    $siteLogo = option('site_logo', '');
-    $siteLogoUrl = $siteLogo ? fullImageUrl($siteLogo) : '';
-    $contactEmail = option('contact_email', $siteConfig['contact']['email'] ?? '');
-    $contactPhone = option('contact_phone', $siteConfig['contact']['phone'] ?? '');
-    $contactAddress = option('contact_address', $siteConfig['contact']['address'] ?? '');
-    $businessHours = option('business_hours', $siteConfig['contact']['hours'] ?? '');
-    $copyright = option('footer_copyright', '© ' . date('Y') . ' ' . $siteName . '. All rights reserved.');
-    $facebookUrl = option('facebook_url', '');
-    $linkedinUrl = option('linkedin_url', '');
-    $twitterUrl = option('twitter_url', '');
-    $youtubeUrl = option('youtube_url', '');
+    
+    // Safe helper function for option() calls (outside try-catch for later use)
+    if (!function_exists('safe_option')) {
+        function safe_option($key, $default = '') {
+            if (!function_exists('option')) return $default;
+            try {
+                $value = option($key, $default);
+                return $value !== null ? $value : $default;
+            } catch (Throwable $e) {
+                return $default;
+            }
+        }
+    }
     ?>
     <footer class="modern-footer">
         <div class="modern-footer-container">

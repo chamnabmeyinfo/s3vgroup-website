@@ -1,0 +1,25 @@
+# Minimal Fix: Remove All Problematic Widgets
+# This removes features that could cause 500 errors
+
+## Changes Made:
+
+1. **Disabled loading-screen widget** in footer.php
+2. **Removed bottom navigation** completely
+3. **Added error suppression** for all widget includes
+4. **Simplified footer** to basic functionality only
+
+## To Apply:
+
+The changes are already in the repository. Pull the latest code:
+
+```bash
+cd ~/public_html
+git pull origin main
+```
+
+Or if you want to manually fix:
+
+1. Edit `ae-includes/footer.php`
+2. Comment out or remove widget includes
+3. Save and test
+

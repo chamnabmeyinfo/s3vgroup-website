@@ -242,7 +242,12 @@
         </div>
     </footer>
     
-    <?php include __DIR__ . '/widgets/loading-screen.php'; ?>
+    <?php 
+    // Disabled loading-screen widget to prevent errors
+    // if (file_exists(__DIR__ . '/widgets/loading-screen.php')) {
+    //     @include __DIR__ . '/widgets/loading-screen.php';
+    // }
+    ?>
     <?php
     // Use AssetVersion for proper cache busting (better than time())
     $assetVersion = class_exists('App\Support\AssetVersion') ? \App\Support\AssetVersion::get() : date('Ymd');
@@ -383,10 +388,6 @@
         <script><?php echo $customJSFooter; ?></script>
     <?php endif; ?>
     
-    <!-- Mobile Bottom Navigation - Disabled for production stability -->
-    <?php 
-    // Completely disabled to prevent any errors
-    // Re-enable after confirming production is stable
-    ?>
+    <!-- Mobile Bottom Navigation - Permanently Disabled -->
 </body>
 </html>
